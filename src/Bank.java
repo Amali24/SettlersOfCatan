@@ -412,35 +412,27 @@ public class Bank {
 
         while (continueTrading.equals("y")) {
 
-            int offeredResource = -1;
-            int offeredAmount = -1;
-            int requestedResource = -1;
-            int requestedAmount = -1;
+            Trade tradeDeal = new Trade(playerID);
+            tradeDeal.setBankTrade(true);
 
             Scanner sc = new Scanner(System.in);
 
             System.out.println("Which resource would you like to trade away?");
-            offeredResource = Integer.parseInt(sc.nextLine());
+            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()));
 
-            int xrate = exchangeRates[offeredResource];
+            int xrate = exchangeRates[tradeDeal.getOfferedResource()];
 
             System.out.println(xrate + " of this resource is enough to get one resource from the bank\n "
                     + "How much of that resource would you like to trade? (enter multiples of " + xrate + ")");
-
-            offeredAmount = Integer.parseInt(sc.nextLine());
+            tradeDeal.setOfferedAmount(Integer.parseInt(sc.nextLine()));
 
             System.out.println("Which resource would you like in return?");
-            requestedResource = Integer.parseInt(sc.nextLine());
+            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()));
 
-            requestedAmount = offeredAmount / xrate;
+            tradeDeal.setRequestedAmount(tradeDeal.getOfferedAmount() / xrate);
 
-            currentPlayer.deductResource(offeredResource, offeredAmount);
-            currentPlayer.addResource(requestedResource, requestedAmount);
-
-            System.out.println("You have traded " + offeredAmount + " of Resource " + offeredResource
-                    + "for " + requestedResource + "of Resource 1.");
-            currentPlayer.printResources();
-
+            Trade.executeTrade(tradeDeal);
+            
             System.out.println("Would you like to continue trading with the bank?");
 
             continueTrading = sc.nextLine();
