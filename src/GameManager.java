@@ -61,7 +61,11 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 18, 2016           AT          * Fixed error intersection coordinates to
                                                       (-1, -1)
-							
+                                                    * Started writing debug mode
+                                                    * Moved buildRoad and buildSettlement to Bank
+            November 19, 2016           AT          * Continued writing debug mode
+                                                    * Wrote robberSteal method
+                                                    * Tweaked moveRobber method
 
  */
 
@@ -119,7 +123,8 @@ public class GameManager {
     public static void main(String[] args) {
 
         buildGameboard();
-        Bank.generateDevelopmentCards();
+        Bank banker = new Bank();
+        banker.generateDevelopmentCards();
 
         String quit = "n";
 
@@ -211,14 +216,14 @@ public class GameManager {
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
                             switch (menuChoice) {
                                 case 1:
-                                    Bank.buildSettlement(activePlayerID, false);
+                                    banker.buildSettlement(activePlayerID, false);
                                     players[activePlayerID].printResources();
                                     break;
                                 case 2:
-                                    Bank.buildCity(activePlayerID);
+                                    banker.buildCity(activePlayerID);
                                     players[activePlayerID].printResources();
                                 case 3:
-                                    Bank.buildRoad(activePlayerID);
+                                    banker.buildRoad(activePlayerID);
                                     players[activePlayerID].printResources();
                                     break;
                                 case 4:
@@ -237,10 +242,10 @@ public class GameManager {
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
                             switch (menuChoice) {
                                 case 1:
-                                    Bank.playerTrade(activePlayerID);
+                                    banker.playerTrade(activePlayerID);
                                     break;
                                 case 2:
-                                    Bank.bankTrade(activePlayerID);
+                                    banker.bankTrade(activePlayerID);
                                     break;
                                 case 3:
                                     goBack = true;
@@ -258,11 +263,11 @@ public class GameManager {
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
                             switch (menuChoice) {
                                 case 1:
-                                    Bank.buyDevelopmentCard(activePlayerID);
+                                    banker.buyDevelopmentCard(activePlayerID);
                                     break;
                                 case 2:
-                                    boolean haveCard = Bank.findDevelopmentCards(activePlayerID);
-                                    if (!haveCard){
+                                    boolean haveCard = banker.findDevelopmentCards(activePlayerID);
+                                    if (!haveCard) {
                                         System.out.println("Player " + (activePlayerID + 1) + "does not have any development cards.");
                                     }
                                     break;
@@ -277,11 +282,16 @@ public class GameManager {
                         int die2 = HexTile.getRandInt(1, 6);
                         int sum = die1 + die2;
                         System.out.println("You rolled a " + sum);
-                        for (HexTile tile : tiles){
-                            if (tile.getNumRoll() == sum){
+                        for (HexTile tile : tiles) {
+                            if (tile.getNumRoll() == sum) {
                                 tile.yieldResources();
-                            }else if (sum == 7){
-                                GameManager.moveRobber(die2, activePlayerID);
+                            } else if (sum == 7) {
+                                System.out.println("You Rolled a 7. Choose where to move the robber");
+                                int tileChoice = Integer.parseInt(sc.nextLine());
+                                boolean moved = false;
+                                while(!moved){
+                                   moved = GameManager.moveRobber(tileChoice, activePlayerID);
+                                }
                             }
                         }
                         break;
@@ -336,7 +346,7 @@ public class GameManager {
                     + " own(s) settlements on this tile.\nChoose one to steal from: ");
 
             Scanner sc = new Scanner(System.in);
-            int playerChoice = sc.nextInt();
+            int playerChoice = Integer.parseInt(sc.nextLine());
 
             if (playerChoice == playerID) {
                 System.out.println("You cannot steal from yourself.");
@@ -352,9 +362,8 @@ public class GameManager {
                 playerLosing.deductResource(resourceSteal, 1);
                 playerGaining.addResource(resourceSteal, 1);
 
-                System.out.println("Player " + playerChoice + " now has " + playerLosing.getResourceCount(resourceSteal)
-                        + " of resource " + resourceSteal + " and player " + playerID + " now has "
-                        + playerGaining.getResourceCount(resourceSteal) + " of resource " + resourceSteal);
+                playerLosing.printResources();
+                playerGaining.printResources();
             }
 
             return true;
@@ -398,6 +407,25 @@ public class GameManager {
         // TODO: Write method to save to database
         // Will be called automatically upon the end of each turn once GUI is instated
         // This will enable autosaving and not require the user to save the game manually
+    }
+
+    static void robberSteal(int tileChoice, int playerID) {
+        Scanner sc = new Scanner(System.in);
+        for (Player player : players) {
+            if (player.resourceTotal > 7) {
+                int resourcesToLose = player.resourceTotal / 2;
+                while (resourcesToLose > 0) {
+                    System.out.println("Choose a resource to surrender:");
+                    int resourceSurrendered = Integer.parseInt(sc.nextLine());
+                    
+                    if (player.resourceMaterials[resourceSurrendered] > 0) {
+                        player.deductResource(resourceSurrendered, 1);
+                        resourcesToLose--;
+                    }
+                }
+            }
+        }
+        moveRobber(tileChoice, playerID);
     }
 
     static int buildGameboard() {

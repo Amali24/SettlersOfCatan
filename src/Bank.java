@@ -49,6 +49,14 @@ Activity:	  -Date-             -Person-               -Updates-
             
             November 17, 2016           AS          *Moved most trade methods to
                                                      a new Trade class
+            November 18, 2016           AT          * Moved buildRoad and 
+                                                      buildSettlement here
+                                                    * Made build methods deduct
+                                                      appropriate resources
+                                                    * Changed some properties to
+                                                      Not be static to allow for
+                                                      multiple simultaneous games
+                                                      on server eventually
                                                      
 
 
@@ -58,7 +66,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
 import java.util.Scanner;
 
-public abstract class Bank {
+public class Bank {
 
 //  				Class Properties
 //_____________________________________________________________________________
@@ -73,8 +81,8 @@ public abstract class Bank {
     static final int GENERAL_HARBOR = 5;
 
     private static final int DEVELOPMENT_CARD_COUNT = 25;
-    private static DevelopmentCard[] developmentCards = new DevelopmentCard[DEVELOPMENT_CARD_COUNT];
-    private static int remainingCards = 25;
+    private DevelopmentCard[] developmentCards = new DevelopmentCard[DEVELOPMENT_CARD_COUNT];
+    private int remainingCards = 25;
 
 //                                  Methods
 //_____________________________________________________________________________
@@ -253,7 +261,7 @@ public abstract class Bank {
         }
     }
 
-    public static void generateDevelopmentCards() {
+    public void generateDevelopmentCards() {
 
         for (int i = 0; i < DEVELOPMENT_CARD_COUNT; i++) {
 
@@ -282,7 +290,7 @@ public abstract class Bank {
         }
     }
 
-    public static void buyDevelopmentCard(int playerID) {
+    public void buyDevelopmentCard(int playerID) {
 
         Player currentPlayer = GameManager.players[playerID];
 
@@ -329,7 +337,7 @@ public abstract class Bank {
 
     }
 
-    public static boolean findDevelopmentCards(int playerID) {
+    public boolean findDevelopmentCards(int playerID) {
         
         boolean haveCard = false;
 
