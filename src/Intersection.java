@@ -1,5 +1,5 @@
 /*  
-                Location Resource Classes - Settlers of Catan
+                Intersection - Settlers of Catan
 
 Class:      Adjvanced Java - CIT-285-01
             Professor Miller, Fall 2016
@@ -19,22 +19,17 @@ Files:      Bank.java
 
 
 Classes:    Intersection
-            Boundary
-            Coordinate
+            Boundary (Moved to Boundary.java file)
+            Coordinate (Moved to Coordinate.java file)
 
                                     Summary:
- The following code includes three classes to be used in the computerized game 
- Settlers of Catan. The first two classes, Intersection and Boundary, are 
- resources for the game. The Intersection class represents the corners of each 
- hexagonal tile on the gameboard. The Boundary class represents the edges of 
- these hexagons. The last class, Coordinate, sets up an x-y ordered pair to be 
- used as the physical location for an intersection. Inside of the zip file 
- submission for this project, I've included a diagram of the gameboard and an 
- MS Word document containing the UML diagrams for these classes. There are print
- statements throughout this code meant to display progress statements to the 
- console for testing purposes. They are clearly marked with the words
- "Message for Testing" and are meant to be deleted before this code is 
- integrated into a larger project. 
+ The following code the class Intersection the computerized game Settlers of 
+ Catan. Each instance of this class will represent a unique corner of a hexagonal 
+ tile on the gameboard. The exact location of an intersection is set by passing a 
+ coordinate position to its constructor. Players have the option of settling an
+ intersection provided that no one else has settled it, no one has settled
+ any adjacent intersections, and they have a road that connects to its position 
+ (this road requirement is dropped durring the first 2 round of the game).
  
  
 Activity:	  -Date-             -Person-               -Updates-
@@ -48,22 +43,25 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 14, 2016		AS          *added searchIntersections and
                                                      searchBoundary methods
+                                       
+            November 18, 2016           AS          *Boundary and coordinate 
+                                                     classes moved to their 
+                                                     own .java files 
+                                                    *Added Javadoc documentation
+
 
  */
 
 import java.util.ArrayList;
 
-/*______________________________________________________________________________
 
-                              INTERSECTION CLASS                             
- Each instance of this class will represent a unique corner of a hexagonal tile 
- on the gameboard. The exact location of an intersection is set by passing a 
- coordinate position to its constructor. Players have the option of settling an
- intersection provided that no one else has settled it, no one has settled
- any adjacent intersections, and they have a road that connects to its position 
- (this road requirement is dropped durring the first 2 round of the game).
- _______________________________________________________________________________
+/**
+ * The <code> Intersection </code> class represents the corners of the hexagonal
+ * gameboard tiles, defined by <code> Coordinate </code> objects that establish
+ * physical gamebaord location.
+ *
  */
+
 public class Intersection {
 
 //                              Class Properties
@@ -84,12 +82,18 @@ public class Intersection {
 
 //                               Constructors
 // _____________________________________________________________________________
-    Intersection(Coordinate a) {
-        location = a;
+    /**
+     * <code> Intersection </code> Constructor
+     * 
+     * @param c <code> Coordinate </code> location 
+     */
+    Intersection(Coordinate c) {
+        location = c;
     }
 
 //                          Accessors and Mutators
 // _____________________________________________________________________________
+   
     //For setting to the conquering player's ID when intersection is settled
     void setPlayer(int p) {
         player = p;
@@ -116,23 +120,40 @@ public class Intersection {
         return settlementType;
     }
 
-    //Overloaded method for setting an intersections ajacent intersection
-    //An intersection can have either 2 or 3 adjacent intersections
-    //The integer adjacentIntersectionCount is set accordingly
+ 
+    /**
+     * This overloaded <code> setAdjacentIntersections </code> method sets an 
+     * <code> Intersection </code> object's ajacent <code> Intersections </code>
+     * when there are two ajacent <code> Intersections </code>.
+     * 
+     * @param a First adjacent <code> Intersection </code>
+     * @param b Second adjacent <code> Intersection </code>
+     */
     void setAdjacentIntersections(Intersection a, Intersection b) {
 
         adjacentIntersections[0] = a;
         adjacentIntersections[1] = b;
 
+        //The integer adjacentIntersectionCount is set accordingly
         adjacentIntersectionCount = 2;
     }
 
+    /**
+     * This overloaded <code> setAdjacentIntersections </code> method sets an 
+     * <code> Intersection </code> object's ajacent <code> Intersections </code>
+     * when there are three ajacent <code> Intersections </code>.
+     * 
+     * @param a First adjacent <code> Intersection </code>
+     * @param b Second adjacent <code> Intersection </code>
+     * @param c Third adjacent <code> Intersection </code>
+     */
     void setAdjacentIntersections(Intersection a, Intersection b, Intersection c) {
 
         adjacentIntersections[0] = a;
         adjacentIntersections[1] = b;
         adjacentIntersections[2] = c;
 
+        //The integer adjacentIntersectionCount is set accordingly
         adjacentIntersectionCount = 3;
     }
 
@@ -148,8 +169,12 @@ public class Intersection {
 
 //                                 Methods
 // _____________________________________________________________________________
-    //Returns a boolean indicating if the intersection has already been settled
-    //If the player number is => 0 (i.e. its not -1), returns true
+
+    /** The <code> occupied </code> method returns a boolean indicating if the
+     * <code> Intersection </code> is settled.
+     *
+     * @return boolean
+     */
     boolean occupied() {
         return player >= 0;
     }
@@ -159,6 +184,14 @@ public class Intersection {
     //1. Be unoccupied
     //2. Not be adjacent to a settlement
     //3. Be on a road built by the player (Waived durring first 2 rounds, the "setupPhase")
+    
+     /**
+     * The <code> isOccupiable </code> method determines whether a specific
+     * player may occupy (build a settlement on) an <code> Intersection </code>.
+     *
+     * @param playerID unique <code> int </code> associated with player
+     * @return boolean
+     */
     boolean isOccupiable(int playerID, boolean setupPhase) {
 
         boolean hasRoadAccess = false;
@@ -216,6 +249,15 @@ public class Intersection {
 
     //Searches for an intersection based on its coordinate point
     //Returns that intersection if successful, otherwise returns error
+    /**
+     * The <code> searchIntersections </code> method searches for an 
+     * <code> Intersection </code> based on its <code> Coordinate </code>
+     * location -
+     * Returns that intersection if successful, otherwise returns error.
+     * 
+     * @param coordinate
+     * @return Intersection
+     */
     static Intersection searchIntersections(Coordinate coordinate) {
 
         //for loop iterates through each intersection  and compares its location to the given coordinate

@@ -1,15 +1,61 @@
-/*_____________________________________________________________________________
+/*  
+                        Boundary - Settlers of Catan
 
-                                 BOUNDARY CLASS
- Each instance of this class will represent a unique edge of a hexagonal tile 
- on the gameboard. In this code, a boundary is defined by its two endpoints,
+Class:      Adjvanced Java - CIT-285-01
+            Professor Miller, Fall 2016
+
+Group:      RARA - Settlers of Catan
+            Ruchelly Almeida
+            Alessandra Shipman     
+            Oleksii Butakov
+            Andrew Thomas
+
+Files:      Bank.java
+            Boundary.java (Current File)
+            Coordinate.java
+            DevelopmentCard.java 
+            GameManager.java
+            HexTile.java
+            Intersection.java 
+            Player.java
+
+
+Classes:    Boundary
+
+                                    Summary:
+ Each instance of this class will represent a unique edge (boundary) of a hexagonal 
+ tile on the gameboard. In this code, a boundary is defined by its two endpoints,
  both of which are Intersection objects. A player has the option of building a 
  road on each boundary provided that no one else has already built a road there
  and the new road connects to either a road or settlement built by this player.
  Some external boundaries have harbors wich give players advantags when trading. 
- Harbors are randomly assigned to boarders at the start of each game (The code 
- for this is not contained in this class, but the harbor information is).
- _______________________________________________________________________________
+ Harbors are randomly assigned to boarders at the start of each game. The code 
+ for assigning these harbors to a boundary is contained within the GameManager
+ class.
+
+ 
+Activity:	  -Date-             -Person-               -Updates-
+            October 20, 2016		AS          *Created Boundary class 
+                                                     within the Intersection.java 
+                                                     file
+				
+            November 7, 2016		AS          *Standardized Documentation 
+                                                     and Formatting 
+
+            November 14, 2016		AS          *added searchBoundary method
+                                       
+            November 18, 2016           AS          *Moved Boundary class to this
+                                                     file
+                                                    *Added Javadoc documentation
+
+ */
+
+
+/**
+ * The <code> Boundary </code> class represents the edges of the hexagonal
+ * gameboard tiles, defined by two <code> Intersection </code> endpoints, on
+ * which players can build roads.
+ *
  */
 class Boundary {
 
@@ -21,19 +67,26 @@ class Boundary {
     //-1 value represents no player
 
     private int harbor = -1;    //-1 value = no harbor
-    //0 value = brick harbor
-    //1 value = lumber harbor
-    //2 value = ore harbor
-    //3 value = wheat harbor
-    //4 value = wool harbor
-    //5 value = general harbor
+                                //0 value = brick harbor
+                                //1 value = lumber harbor
+                                //2 value = ore harbor
+                                //3 value = wheat harbor
+                                //4 value = wool harbor
+                                //5 value = general harbor
 
 //                               Constructors
 // _____________________________________________________________________________
-    Boundary(Intersection a, Intersection b) {
+    
+    /**
+     * <code> Boundary </code> Constructor
+     *
+     * @param e1 First endpoint
+     * @param e2 Second endpoint
+     */
+    Boundary(Intersection e1, Intersection e2) {
 
-        endpointA = a;
-        endpointB = b;
+        endpointA = e1;
+        endpointB = e2;
 
     }
 
@@ -73,15 +126,23 @@ class Boundary {
 
 //                                 Methods
 // _____________________________________________________________________________
-    //Returns a boolean indicating if the intersection has already been settled
+    /**
+     * The <code> occupied </code> method returns a boolean indicating if the
+     * <code> Boundary </code> belongs to a player.
+     *
+     * @return boolean
+     */
     boolean occupied() {
         return player >= 0;
     }
 
-    //Method returns boolean value indicating if a a player may build a road
-    //To build a road, the boundary must:
-    //1. Be unoccupied
-    //2. Be adjacent to a settlement or road owned by the player
+    /**
+     * The <code> isOccupiable </code> method determines whether a specific
+     * player may occupy (build a road on) a <code> Boundary </code>.
+     *
+     * @param playerID unique <code> int </code> associated with player
+     * @return boolean
+     */
     boolean isOccupiable(int playerID) {
 
         //If road already exists, returns false
@@ -121,15 +182,23 @@ class Boundary {
 
     }
 
-    //Searches for a boundary based on its endpoints
-    //Returns that boundary if successful, otherwise returns error
-    static Boundary searchBoundary(Intersection i1, Intersection i2) {
+    
+    /**
+     * Searches for a <code> Boundary </code> based on given endpoints
+     * If found, that <code> Boundary </code> is returned; otherwise, 
+     * <code> errorBoundary </code> instance is returned.
+     * 
+     * @param e1 First endpoint
+     * @param e2 Second enpoint
+     * @return  Boundary
+     */
+    static Boundary searchBoundary(Intersection e1, Intersection e2) {
 
         //for loop iterates through each boundary and compares its endpoints to the given intersections
         //if the endpoints and intersections match, that boundary is returned
         for (Boundary b : GameManager.boundaries) {
 
-            if ((b.endpointA == i1 && b.endpointB == i2) || (b.endpointA == i2 && b.endpointB == i1)) {
+            if ((b.endpointA == e1 && b.endpointB == e2) || (b.endpointA == e2 && b.endpointB == e1)) {
                 System.out.println("Boundary found.");
                 return b;
             }

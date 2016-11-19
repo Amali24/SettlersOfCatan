@@ -14,6 +14,8 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
             DevelopmentCard.java (Current File)
             GameManager.java
             HexTile.java
