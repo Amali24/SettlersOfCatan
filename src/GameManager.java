@@ -11,6 +11,8 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
             DevelopmentCard.java 
             GameManager.java(Current File)
             HexTile.java
@@ -56,6 +58,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      Boundaries, and Hextile classes
                                                     *Wrote buildSettlement method
                                                     *Wrote buildRoad method
+
             November 18, 2016           AT          * Fixed error intersection coordinates to
                                                       (-1, -1)
 							

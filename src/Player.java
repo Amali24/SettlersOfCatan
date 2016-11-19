@@ -11,6 +11,8 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
@@ -36,20 +38,20 @@ Activity:	  -Date-             -Person-               -Updates-
             November 7, 2016   		AS          *Standardized Documentation 
                                                      and Formatting 
                                                     *Standardized variable names
-												*Added DevelopmentCard connections
-												*Added Victory Point logic
+                                                    *Added DevelopmentCard connections
+                                                    *Added Victory Point logic
 
-				November 14, 2016		AS		*Added player ID field, it is now
-												 a parameter of the constructor
-												*Wrote printResources Method
-												*Prevent overdrawing resource in 
-												 deductResource method
+            November 14, 2016		AS          *Added player ID field, it is now
+                                                     a parameter of the constructor
+                                                    *Wrote printResources Method
+                                                    *Prevent overdrawing resource in 
+                                                     deductResource method
 
  */
 
 public class Player {
 
-//  							Class Variables
+//  				Class Variables
 //_____________________________________________________________________________
     private int playerID = -1;
 
@@ -68,18 +70,19 @@ public class Player {
     //resource material array 
     //the constant value associated with this array is the position of that resource in this array
     int resourceMaterials[] = {0, 0, 0, 0, 0, 0};
+    int resourceTotal = 0;
 
     //Achievements
     private boolean longestRoad = false;
     private boolean largestArmy = false; //played the most knight cards
 
-// 								 Constructors
+// 				Constructors
 //_____________________________________________________________________________
     Player(int id) {
         playerID = id;
     }
 
-//  						Accessors and Mutators
+//                          Accessors and Mutators
 //_____________________________________________________________________________
     
     public int getPlayerID(){
@@ -158,6 +161,17 @@ public class Player {
 
     }
 
+    public int getResourceTotal() {
+
+        for (int count : resourceMaterials) {
+            resourceTotal += count;
+        }
+        return resourceTotal;
+    }
+    
+//                                 Methods
+// _____________________________________________________________________________
+    
     public void addResource(int position, int amount) {
         resourceMaterials[position] += amount;
     }
@@ -175,15 +189,6 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
-    public int getTotalResources() {
-
-        int total = 0;
-
-        for (int resourceCount : resourceMaterials) {
-            total += resourceCount;
-        }
-        return total;
-    }
 
     public void printResources(){
     	System.out.println("\nPlayer " + (playerID+1) + "'s current Resources:\n"
