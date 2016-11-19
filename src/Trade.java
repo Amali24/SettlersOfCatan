@@ -20,34 +20,23 @@ Files:      Bank.java
             Trade.java(Current File)
 
 
-Classes:    Bank
+Classes:    Trade
 
 
                                     Summary:
-The following code contains the Bank Class for the computerized game, 
-Settlers of Catan. This class facilitates trade of resource materials.
-This includes both trade between multiple players and trade between a 
-single player and the bank. This class also manages the quantity and 
-distribution of development cards.
+This class sets up trades for players. It allows a player to set the terms of 
+a trade request and then distributes that request among the other players.
 
 
 Activity:	  -Date-             -Person-               -Updates-
-            November 7, 2016   		AS          *Created Bank Class
-                                                    *DevelopmentCard Methods
+            November 17, 2016           AS          *Class Created
+                                                    *Wrote methods:
+                                                     distributeTradeRequest()
+                                                     tradePrompt()
+                                                     executeTrade()
 
-            November 14, 2016           AS          *Made buyDevelopmentCard method
-                                                    *Made findDevlopmentCard method
-                                                    *Made exchangeRates method
-                                                    *Made bankTrade method
-                                                    *Made playerTrade method
-                                                    *Made tradePrompt method
-                                                    
-
-                                        AT          *Debugged test code and the 
-                                                     find/buy methods
-            
-            November 17, 2016           AS          *Moved most trade methods to
-                                                     a new Test class
+            November 19, 2016           AS          *Updated documentation header
+                                                     
                                                      
 
 
@@ -70,6 +59,8 @@ class Trade {
 
     private boolean initialOffering;
     private boolean accepted;
+
+    private boolean bankTrade;
 
     private int requestingPlayer;
     private int tradingPartner;
@@ -123,6 +114,14 @@ class Trade {
         this.accepted = accepted;
     }
 
+    public boolean isBankTrade() {
+        return bankTrade;
+    }
+
+    public void setBankTrade(boolean bankTrade) {
+        this.bankTrade = bankTrade;
+    }
+    
     public int getRequestingPlayer() {
         return requestingPlayer;
     }
@@ -436,22 +435,22 @@ class Trade {
 
     }
 
-    public void executeTrade(Trade finalTrade) {
+    public static void executeTrade(Trade finalTrade) {
 
         Player rPlayer = GameManager.players[finalTrade.getRequestingPlayer()];
-        Player tPartner = GameManager.players[finalTrade.getTradingPartner()];
-
+        
         rPlayer.deductResource(finalTrade.offeredResource, finalTrade.offeredAmount);
         rPlayer.addResource(finalTrade.requestedResource, finalTrade.requestedAmount);
-
+        
+        System.out.println("Trade Complete.");
+        rPlayer.printResources();
+        
+        if(!finalTrade.isBankTrade()){
+        Player tPartner = GameManager.players[finalTrade.getTradingPartner()];
         tPartner.deductResource(finalTrade.requestedResource, finalTrade.requestedAmount);
         tPartner.addResource(finalTrade.offeredResource, finalTrade.offeredAmount);
-
-        System.out.println("Trade Complete.");
-
-        rPlayer.printResources();
         tPartner.printResources();
-
+        }
     }
 
 }
