@@ -47,6 +47,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Prevent overdrawing resource in 
                                                      deductResource method
 
+            November 18, 2016           AS          *Added
+
+            November 19,2016
+
  */
 
 public class Player {
@@ -159,11 +163,18 @@ public class Player {
         }
 
     }
+    
+        public int getResourceTotal() {
+
+            return resourceTotal;
+    }
 
 //                                 Methods
 // _____________________________________________________________________________
     public void addResource(int position, int amount) {
         resourceMaterials[position] += amount;
+        
+        resourceTotal += amount;
 
     }
 
@@ -172,6 +183,8 @@ public class Player {
         if (amount <= resourceMaterials[position]) {
 
             resourceMaterials[position] -= amount;
+            resourceTotal -= amount;
+            
         } else {
             System.out.println("You cannot deduct more resources than you have");
         }
@@ -181,15 +194,6 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
-    public int getResourceTotal() {
-
-        int total = 0;
-
-        for (int resourceCount : resourceMaterials) {
-            total += resourceCount;
-        }
-        return total;
-    }
 
     public void printResources() {
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
