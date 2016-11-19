@@ -158,7 +158,7 @@ class KnightCard extends DevelopmentCard {
 
             int tile = sc.nextInt();
             boolean moved = false;
-            
+
             while (!moved) {
                 moved = GameManager.moveRobber(tile, playerID);
             }
@@ -250,10 +250,10 @@ class RoadBuildingCard extends DevelopmentCard {
         } else {
 
             System.out.println("Build first road.");
-            GameManager.buildRoad(playerID);
+            Bank.buildRoad(playerID);
 
             System.out.println("Build second road.");
-            GameManager.buildRoad(playerID);
+            Bank.buildRoad(playerID);
 
             this.setPlayed(true);
         }

@@ -161,6 +161,10 @@ public class Player {
 
     }
 
+<<<<<<< HEAD
+    public void addResource(int type, int amount) {
+        resourceMaterials[type] += amount;
+=======
     public int getResourceTotal() {
 
         for (int count : resourceMaterials) {
@@ -174,6 +178,7 @@ public class Player {
     
     public void addResource(int position, int amount) {
         resourceMaterials[position] += amount;
+>>>>>>> master
     }
 
     public void deductResource(int position, int amount) {
@@ -189,6 +194,18 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
+<<<<<<< HEAD
+    public int getResourceTotal() {
+
+        int total = 0;
+
+        for (int resourceCount : resourceMaterials) {
+            total += resourceCount;
+        }
+        return total;
+    }
+=======
+>>>>>>> master
 
     public void printResources(){
     	System.out.println("\nPlayer " + (playerID+1) + "'s current Resources:\n"

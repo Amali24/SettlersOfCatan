@@ -64,7 +64,7 @@ Activity:	  -Date-             -Person-               -Updates-
 							
 
  */
-//THIS IS A TEST COMMENT
+
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -74,6 +74,7 @@ public class GameManager {
 //_____________________________________________________________________________
     // Static array of players to hold 4 active game players
     static Player[] players = {new Player(0), new Player(1), new Player(2), new Player(3)};
+    static int activePlayerID = 0;
 
     // "Constants" used to refer to resource type in various methods
     // general harbor is used in determining port placement
@@ -110,160 +111,196 @@ public class GameManager {
     static Boundary errorBoundary;
     static HexTile errorTile;
 
-    //During the first two round of the game, the "set up phase", the gameplay is different
+    //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
-
-    static Bank banker = new Bank();
-    
-    
 
 //  								Methods
 //_____________________________________________________________________________
     public static void main(String[] args) {
 
         buildGameboard();
-        banker.generateDevelopmentCards();
+        Bank.generateDevelopmentCards();
 
         String quit = "n";
 
         Scanner sc = new Scanner(System.in);
-        
-        for(Player p : players){
-            
-            p.addResource(BRICK, 5);
-            p.addResource(LUMBER, 5);
-            p.addResource(ORE, 5);
-            p.addResource(WHEAT, 5);
-            p.addResource(WOOL, 5);
-        }
 
-        System.out.println("PLAYER TRADING");
-        banker.playerTrade(1);
-        while (quit.equals("n")) {
+        System.out.println("Enter debug mode? Y/N: ");
+        boolean debug = (sc.nextLine().equals("y"));
 
-            String buy = "y";
-            boolean setupPhase = true;
+        if (debug) {
+            while (quit.equals("n")) {
+                System.out.print("\nPlease select a debug option"
+                        + "\n1 - Change Resource Totals"
+                        + "\n2 - Change Active Player"
+                        + "\n3 - Build Infrastructure Items"
+                        + "\n4 - Trade"
+                        + "\n5 - Development cards"
+                        + "\n6 - Roll Dice"
+                        + "\n7 - Print Player Information"
+                        + "\n8 - Reset All (Reverts to Default Game State)"
+                        + "\n9 - Quit\n"
+                );
+                short menuChoice = (short) Integer.parseInt(sc.nextLine());
+                boolean goBack = false;
+                switch (menuChoice) {
+                    case 1:
+                        while (!goBack) {
+                            System.out.print("\nSelect a resource option: "
+                                    + "\n1 - Add Resources"
+                                    + "\n2 - Remove Resources"
+                                    + "\n3 - Zero All Resources"
+                                    + "\n4 - Return to Main Menu\n"
+                            );
+                            menuChoice = (short) Integer.parseInt(sc.nextLine());
 
-            System.out.println("\n-----------DEMO PLAY, MOSTLY DEVELOPMENT CARDS-------------\n");
-            System.out.print("Enter player number:");
+                            switch (menuChoice) {
+                                case 1:
+                                    System.out.println("Select player to add resources to");
+                                    int playerID = Integer.parseInt(sc.nextLine());
+                                    System.out.println("Select resource to add");
+                                    int resourceToAdd = Integer.parseInt(sc.nextLine());
+                                    System.out.println("Select amount to add");
+                                    int amountToAdd = Integer.parseInt(sc.nextLine());
 
-            int playerID = Integer.parseInt(sc.nextLine());
+                                    players[playerID].addResource(resourceToAdd, amountToAdd);
+                                    players[playerID].printResources();
 
-            Player currentPlayer = players[playerID];
+                                    break;
+                                case 2:
+                                    System.out.println("Select player to deduct resources from");
+                                    playerID = Integer.parseInt(sc.nextLine());
+                                    System.out.println("Select resource to remove");
+                                    int resourceToRemove = Integer.parseInt(sc.nextLine());
+                                    System.out.println("Select amount to remove");
+                                    int amountToRemove = Integer.parseInt(sc.nextLine());
 
-            System.out.println("\nYour player has been given 5 each of ore, wool, and wheat. Enough for 5 development cards.");
-            currentPlayer.addResource(ORE, 5);
-            currentPlayer.addResource(WOOL, 5);
-            currentPlayer.addResource(WHEAT, 5);
+                                    players[playerID].deductResource(resourceToRemove, amountToRemove);
+                                    players[playerID].printResources();
 
-            System.out.println("--------BUILD A SETTLEMENT--------.");
-            buildSettlement(playerID, setupPhase);
-            System.out.println("--------BUYING DEVELOPMENT CARDS--------");
-            int o = 1;
-            while (buy.equals("y")) {
-                System.out.println("\n" + o++ + ": Would you like to buy a development card?");
-                buy = sc.nextLine();
-                if (buy.equals("y")) {
-                    banker.buyDevelopmentCard(playerID);
+                                    break;
+                                case 3:
+                                    System.out.println("Zeroing All Resources");
+                                    for (Player player : players) {
+                                        for (int i = 0; i < WOOL; i++) {
+                                            player.resetResource(i);
+                                        }
+                                        player.printResources();
+                                    }
+                                    break;
+                                case 4:
+                                    goBack = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Which player would you like to set to active?");
+                        activePlayerID = Integer.parseInt(sc.nextLine());
+                        System.out.println("Player " + (activePlayerID + 1) + " is now active.");
+                        break;
+                    case 3:
+                        goBack = false;
+                        while (!goBack) {
+                            System.out.print("\nChoose an Object to Build: "
+                                    + "\n1 - Settlement"
+                                    + "\n2 - City"
+                                    + "\n3 - Road"
+                                    + "\n4 - Return to Main Menu"
+                            );
+                            menuChoice = (short) Integer.parseInt(sc.nextLine());
+                            switch (menuChoice) {
+                                case 1:
+                                    Bank.buildSettlement(activePlayerID, false);
+                                    players[activePlayerID].printResources();
+                                    break;
+                                case 2:
+                                    Bank.buildCity(activePlayerID);
+                                    players[activePlayerID].printResources();
+                                case 3:
+                                    Bank.buildRoad(activePlayerID);
+                                    players[activePlayerID].printResources();
+                                    break;
+                                case 4:
+                                    goBack = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case 4:
+                        System.out.print("\nTrade with:"
+                                + "\n1 - Player"
+                                + "\n2 - Bank"
+                                + "\n3 - Return to Main Menu\n"
+                        );
+                        while (!goBack) {
+                            menuChoice = (short) Integer.parseInt(sc.nextLine());
+                            switch (menuChoice) {
+                                case 1:
+                                    Bank.playerTrade(activePlayerID);
+                                    break;
+                                case 2:
+                                    Bank.bankTrade(activePlayerID);
+                                    break;
+                                case 3:
+                                    goBack = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case 5:
+                        while (!goBack) {
+                            System.out.print("\nChoose Option:"
+                                    + "\n1 - Buy Development Card"
+                                    + "\n2 - Play Development Card"
+                                    + "\n3 - Return to Main Menu\n"
+                            );
+                            menuChoice = (short) Integer.parseInt(sc.nextLine());
+                            switch (menuChoice) {
+                                case 1:
+                                    Bank.buyDevelopmentCard(activePlayerID);
+                                    break;
+                                case 2:
+                                    boolean haveCard = Bank.findDevelopmentCards(activePlayerID);
+                                    if (!haveCard){
+                                        System.out.println("Player " + (activePlayerID + 1) + "does not have any development cards.");
+                                    }
+                                    break;
+                                case 3:
+                                    goBack = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case 6:
+                        int die1 = HexTile.getRandInt(1, 6);
+                        int die2 = HexTile.getRandInt(1, 6);
+                        int sum = die1 + die2;
+                        System.out.println("You rolled a " + sum);
+                        for (HexTile tile : tiles){
+                            if (tile.getNumRoll() == sum){
+                                tile.yieldResources();
+                            }else if (sum == 7){
+                                GameManager.moveRobber(die2, activePlayerID);
+                            }
+                        }
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        break;
+                    case 9:
+                        quit = "y";
+                        break;
                 }
             }
-
-            System.out.println("\n\n----------PLAYING DEVELOPMENT CARDS-----------");
-            banker.findDevelopmentCards(playerID);
-
-            System.out.println("\nWould you like to quit?");
-            quit = sc.nextLine();
         }
+
         sc.close();
     }
 
-    static int buildSettlement(int playerID, boolean setupPhase) {
-
-        Intersection settlementLocation;
-
-        //Scanners and print lines will be obsolete after Gui is made
-        Scanner sc = new Scanner(System.in);
-
-        //Gets coordinate location for intersection
-        System.out.println("Enter the x and y values of the location of your settlement:");
-        Double xVal = alphaToSqrt(sc.nextLine());
-        Double yVal = Double.parseDouble(sc.nextLine());
-
-        settlementLocation = Intersection.searchIntersections(new Coordinate(xVal, yVal));
-
-        //if there was a problem finding the intersection, -1 is returned
-        if (settlementLocation == errorIntersection) {
-            return -1;
-        }
-
-        if (settlementLocation.isOccupiable(playerID, setupPhase)) {
-            settlementLocation.setPlayer(playerID);
-            settlementLocation.setSettlementType(playerID);
-        }
-
-        return 0;
-
-    }
-
-    static int buildRoad(int playerID) {
-
-        Intersection endpointA;
-        Intersection endpointB;
-        Boundary roadLocation;
-
-        //Scanners and print lines will be obsolete after Gui is made
-        Scanner sc = new Scanner(System.in);
-
-        //Gets coordinate location for first  intersection at one end of road
-        System.out.println("Enter the x and y values of the first coordinate on one side of the road:");
-        Double xVal = sc.nextDouble();
-        Double yVal = sc.nextDouble();
-
-        //Finds first intersection and sets endpointA
-        endpointA = Intersection.searchIntersections(new Coordinate(xVal, yVal));
-
-        //if there was a problem finding the endpoint intersection, -1 is returned
-        if (endpointA == errorIntersection) {
-            return -1;
-        }
-
-        //Gets coordinate location for second intersection at other end of road
-        System.out.println("Enter the x and y values of the coordinate of the other side of the road:");
-
-        Double xVal2 = sc.nextDouble();
-        Double yVal2 = sc.nextDouble();
-
-        //Finds second intersection and sets endpointB
-        endpointB = Intersection.searchIntersections(new Coordinate(xVal2, yVal2));
-
-        //if there was a problem finding the endpoint intersection, -1 is returned
-        if (endpointB == errorIntersection) {
-            return -1;
-        }
-
-        //Finds road based on endpoints and sets roadLocation
-        roadLocation = Boundary.searchBoundary(endpointA, endpointB);
-
-        //if there was a problem finding the road, -1 is returned
-        if (endpointB == errorIntersection) {
-            return -1;
-        }
-
-        //checks to see if road is occupiable
-        //If occupiable, ownership of the road is set to the appropriate player
-        if (roadLocation.isOccupiable(playerID)) {
-            roadLocation.setPlayer(playerID);
-
-            //increment the player's road number
-            players[playerID].addRoad();
-        }
-
-        return 0;
-
-    }
-
     static boolean moveRobber(int tileChoice, int playerID) {
-       
+
         HexTile tile = tiles[tileChoice];
 
         if (tile.hasRobber() == false) {
