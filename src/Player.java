@@ -47,7 +47,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Prevent overdrawing resource in 
                                                      deductResource method
 
-            November 18, 2016           AS          *Added
+            November 18, 2016           AS          *Changed resourceTotal to be 
+                                                     updated in addResource() and
+                                                     deductResource()
 
             November 19,2016
 
