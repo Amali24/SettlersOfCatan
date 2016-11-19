@@ -140,4 +140,3 @@ class Boundary {
         return GameManager.errorBoundary;
     }
 }
-

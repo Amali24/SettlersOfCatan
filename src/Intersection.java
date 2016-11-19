@@ -232,4 +232,3 @@ public class Intersection {
         return GameManager.errorIntersection;
     }
 }
-

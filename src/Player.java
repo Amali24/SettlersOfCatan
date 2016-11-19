@@ -158,8 +158,8 @@ public class Player {
 
     }
 
-    public void addResource(int position, int amount) {
-        resourceMaterials[position] += amount;
+    public void addResource(int type, int amount) {
+        resourceMaterials[type] += amount;
     }
 
     public void deductResource(int position, int amount) {
@@ -175,7 +175,7 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
-    public int getTotalResources() {
+    public int getResourceTotal() {
 
         int total = 0;
 
