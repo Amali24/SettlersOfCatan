@@ -1,6 +1,6 @@
 
 /*  
-                            Bank - Settlers of Catan
+                            Trade - Settlers of Catan
 
 Class:      Advanced Java - CIT-285-01
             Professor Miller, Fall 2016
@@ -175,7 +175,7 @@ class Trade{
 				if(currentTradingPartner != requestingPlayer){
 				//Checks that player either has enough of the requested resource, if specified.
 				//If there is no specified requested resource, then a player in prompted as long as they have ANY resources to trade
-				if(p.getResourceCount(requestedResource) >= requestedAmount || (requestedResource == -1 && p.getTotalResources() > 0)){
+				if(p.getResourceCount(requestedResource) >= requestedAmount || (requestedResource == -1 && p.getResourceTotal() > 0)){
 					offerResponses[currentTradingPartner] = tradePrompt(currentTradingPartner);
 				}
 

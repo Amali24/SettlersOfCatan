@@ -11,6 +11,8 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java (Current File)
@@ -18,7 +20,7 @@ Files:      Bank.java
             Player.java
 
 
-Classes:    GameManager
+Classes:    HexTile
 
 
                                     Summary:
@@ -39,25 +41,33 @@ Activity:	  -Date-             -Person-               -Updates-
             November 9, 2016		AS          *Updated yieldResources().
                                                      It now works with player class.
 
+            November 18, 2016           AS          *Added Javadoc documentation
+
  */
 public class HexTile {
-
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~Properties~~~~~~~~~~~~~~~~~~~ */
+    
+//                              Class Properties
+// _____________________________________________________________________________
+    
     private int resourceYield; // Holds the type of resource tile will yield if numRoll is rolled
     private int numRoll; // Number if rolled, resources yielded
     private Intersection[] intersections; // Corner nodes for each corner of the HexTile
     private boolean robber; // is robber currently on tile?
     private boolean center; // center has no yield
 
-    /* ~~~~~~~~~~~~~~~~~~~~~~~Constructors~~~~~~~~~~~~~~~~~~~ */
-    // Same as above, but with predetermined corners
+
+//                               Constructors
+// _____________________________________________________________________________
+   
     HexTile(Intersection[] intersections) {
         robber = false;
         center = false;
         this.intersections = intersections;
     }
-
-    /* ~~~~~~~~~~~~~~~~~~~~~~~Methods~~~~~~~~~~~~~~~~~~~ */
+    
+//                          Accessors and Mutators
+// _____________________________________________________________________________
+   
     public int getResourceYield() {
         return this.resourceYield;
     }
@@ -107,6 +117,8 @@ public class HexTile {
         this.center = center;
     }
 
+//                                 Methods
+// _____________________________________________________________________________
     public void yieldResources() {
 
         // Tiles with robber and center tile do not yield resources
