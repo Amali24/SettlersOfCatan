@@ -107,12 +107,10 @@ class Trade {
 	}
 
      */
-
     public boolean isInitialOffering() {
         return initialOffering;
     }
 
-<<<<<<< HEAD
     public void setInitialOffering(boolean initial0ffering) {
         this.initialOffering = initial0ffering;
     }
@@ -269,103 +267,98 @@ class Trade {
                     System.out.println("Your trade has been denied");
                 }
             }
-=======
-		//if no trading partner was specified, a for loops executes to prompt a trade with each player 
-		
-		if(tradingPartner == -1){
-			
-			for(Player p : GameManager.players){
+            //if no trading partner was specified, a for loops executes to prompt a trade with each player 
 
-				int currentTradingPartner = p.getPlayerID();
-				//does not execute if on the iteration of the requestingPlayer
-				
-				if(currentTradingPartner != requestingPlayer){
-				//Checks that player either has enough of the requested resource, if specified.
-				//If there is no specified requested resource, then a player in prompted as long as they have ANY resources to trade
-				if(p.getResourceCount(requestedResource) >= requestedAmount || (requestedResource == -1 && p.getResourceTotal() > 0)){
-					offerResponses[currentTradingPartner] = tradePrompt(currentTradingPartner);
-				}
+            if (tradingPartner == -1) {
 
-			}
-		}
-			
-			int numAccepted = 0;
-                        
-                                System.out.println("BACK TO PLAYER " + (requestingPlayer+1) + "\n");
-                                
-			for( int i  = 0; i < offerResponses.length; i++){
-				
-				Trade offer = offerResponses[i];
-                                
-				if(i != requestingPlayer && offer.isAccepted()){
-					if(offeredResource == -1 || requestedResource == -1){
-					System.out.println("Player " + (i+1) + " has made a counter offer." );
-					System.out.println("They have offered to trade you " + offer.offeredAmount + " of resource " + offer.offeredResource
-							+ " in exchange for " + offer.requestedAmount +" of resource " + offer.requestedResource);
-					
-					numAccepted++;
-                                        }else{
-                                            System.out.println("Player " + (i+1) + " has accepted your offer" );
-                                            numAccepted++;
-                                        }
-                                        
-				}
-			}
-				int finalResponse;
+                for (Player p : GameManager.players) {
 
-				if(numAccepted == 0){
-					System.out.println("No one has accepted your trade");
-				}else{
-					System.out.println("Enter the number of the player you would like to trade with.");
-					System.out.println("If you reject these offers, enter -1.");
-					
-					finalResponse = Integer.parseInt(sc.nextLine());
-					
-					if(finalResponse != -1){
-                                            
-                                            Trade finalTrade = offerResponses[finalResponse];
-                                            
-                                            if(tradingPartner == -1){
-                                                finalTrade.setTradingPartner(finalResponse);
-                                            }
-                                            
-                                            executeTrade(finalTrade);
-                                                
-					}
-					
-					
-				}
-			
-		}else if(requestedResource == -1 || offeredResource == -1){
-                    Trade counterOffer = tradePrompt(tradingPartner);
-                    
-                    System.out.println("BACK TO PLAYER " + (requestingPlayer+1) + "\n");
-                    
-                    if(counterOffer.isAccepted()){
-                    
-                       
-                        System.out.println("Player " + (counterOffer.requestingPlayer +1) + " has made a counter offer." );
-			System.out.println("They have offered to trade you " + counterOffer.offeredAmount + " of resource " + counterOffer.offeredResource
-                                + " in exchange for " + counterOffer.requestedAmount +" of resource " + counterOffer.requestedResource);
-                        
-                        System.out.println("Do you accept this offer?");
-                        
-                        String accept = sc.nextLine();
-                        
-                        if(accept.equals("y")){
-                            executeTrade(counterOffer);
+                    int currentTradingPartner = p.getPlayerID();
+                    //does not execute if on the iteration of the requestingPlayer
+
+                    if (currentTradingPartner != requestingPlayer) {
+                        //Checks that player either has enough of the requested resource, if specified.
+                        //If there is no specified requested resource, then a player in prompted as long as they have ANY resources to trade
+                        if (p.getResourceCount(requestedResource) >= requestedAmount || (requestedResource == -1 && p.getResourceTotal() > 0)) {
+                            offerResponses[currentTradingPartner] = tradePrompt(currentTradingPartner);
                         }
-             
-                    
-                }else{
-			if(tradePrompt(tradingPartner).isAccepted()){
-				executeTrade(this);
-			}else{
-				System.out.println("Your trade has been denied");
-			}
-		}
->>>>>>> master
 
+                    }
+                }
+
+                int numAccepted = 0;
+
+                System.out.println("BACK TO PLAYER " + (requestingPlayer + 1) + "\n");
+
+                for (int i = 0; i < offerResponses.length; i++) {
+
+                    Trade offer = offerResponses[i];
+
+                    if (i != requestingPlayer && offer.isAccepted()) {
+                        if (offeredResource == -1 || requestedResource == -1) {
+                            System.out.println("Player " + (i + 1) + " has made a counter offer.");
+                            System.out.println("They have offered to trade you " + offer.offeredAmount + " of resource " + offer.offeredResource
+                                    + " in exchange for " + offer.requestedAmount + " of resource " + offer.requestedResource);
+
+                            numAccepted++;
+                        } else {
+                            System.out.println("Player " + (i + 1) + " has accepted your offer");
+                            numAccepted++;
+                        }
+
+                    }
+                }
+                int finalResponse;
+
+                if (numAccepted == 0) {
+                    System.out.println("No one has accepted your trade");
+                } else {
+                    System.out.println("Enter the number of the player you would like to trade with.");
+                    System.out.println("If you reject these offers, enter -1.");
+
+                    finalResponse = Integer.parseInt(sc.nextLine());
+
+                    if (finalResponse != -1) {
+
+                        Trade finalTrade = offerResponses[finalResponse];
+
+                        if (tradingPartner == -1) {
+                            finalTrade.setTradingPartner(finalResponse);
+                        }
+
+                        executeTrade(finalTrade);
+
+                    }
+
+                }
+
+            } else if (requestedResource == -1 || offeredResource == -1) {
+                counterOffer = tradePrompt(tradingPartner);
+
+                System.out.println("BACK TO PLAYER " + (requestingPlayer + 1) + "\n");
+
+                if (counterOffer.isAccepted()) {
+
+                    System.out.println("Player " + (counterOffer.requestingPlayer + 1) + " has made a counter offer.");
+                    System.out.println("They have offered to trade you " + counterOffer.offeredAmount + " of resource " + counterOffer.offeredResource
+                            + " in exchange for " + counterOffer.requestedAmount + " of resource " + counterOffer.requestedResource);
+
+                    System.out.println("Do you accept this offer?");
+
+                    String accept = sc.nextLine();
+
+                    if (accept.equals("y")) {
+                        executeTrade(counterOffer);
+                    }
+
+                } else {
+                    if (tradePrompt(tradingPartner).isAccepted()) {
+                        executeTrade(this);
+                    } else {
+                        System.out.println("Your trade has been denied");
+                    }
+                }
+            }
         }
     }
 

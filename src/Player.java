@@ -84,11 +84,10 @@ public class Player {
 
 //                          Accessors and Mutators
 //_____________________________________________________________________________
-    
-    public int getPlayerID(){
-    	return playerID;
-    }	
-    
+    public int getPlayerID() {
+        return playerID;
+    }
+
     public int getRoadCount() {
         return roadCount;
     }
@@ -151,50 +150,37 @@ public class Player {
     }
 
     public int getResourceCount(int position) {
-    	
-    	//if statement prevents index out of bounds exception
-    	if(position >= 0){
-        return resourceMaterials[position];
-    	}else{
-    		return -1;
-    }
 
-    }
-
-<<<<<<< HEAD
-    public void addResource(int type, int amount) {
-        resourceMaterials[type] += amount;
-=======
-    public int getResourceTotal() {
-
-        for (int count : resourceMaterials) {
-            resourceTotal += count;
+        //if statement prevents index out of bounds exception
+        if (position >= 0) {
+            return resourceMaterials[position];
+        } else {
+            return -1;
         }
-        return resourceTotal;
+
     }
-    
+
 //                                 Methods
 // _____________________________________________________________________________
-    
     public void addResource(int position, int amount) {
         resourceMaterials[position] += amount;
->>>>>>> master
+
     }
 
     public void deductResource(int position, int amount) {
 
-    	if(amount <= resourceMaterials[position]){
-            
-        resourceMaterials[position] -= amount;
-    	}else{
-    		System.out.println("You cannot deduct more resources than you have");
+        if (amount <= resourceMaterials[position]) {
+
+            resourceMaterials[position] -= amount;
+        } else {
+            System.out.println("You cannot deduct more resources than you have");
+        }
     }
-    }
+
     public void resetResource(int position) {
         resourceMaterials[position] = 0;
     }
 
-<<<<<<< HEAD
     public int getResourceTotal() {
 
         int total = 0;
@@ -204,18 +190,16 @@ public class Player {
         }
         return total;
     }
-=======
->>>>>>> master
 
-    public void printResources(){
-    	System.out.println("\nPlayer " + (playerID+1) + "'s current Resources:\n"
-    			+ "_____________________________\n"
-    			+ resourceMaterials[0] + " Brick\n"
-    			+ resourceMaterials[1] + " Lumber\n"
-    			+ resourceMaterials[2] + " Ore\n"
-    			+ resourceMaterials[3] + " Wool\n"
-    			+ resourceMaterials[4] + " Wheat\n");
-    			
-}
+    public void printResources() {
+        System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
+                + "_____________________________\n"
+                + resourceMaterials[0] + " Brick\n"
+                + resourceMaterials[1] + " Lumber\n"
+                + resourceMaterials[2] + " Ore\n"
+                + resourceMaterials[3] + " Wool\n"
+                + resourceMaterials[4] + " Wheat\n");
+
+    }
 
 }
