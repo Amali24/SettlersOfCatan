@@ -81,6 +81,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import javafx.application.Application;
 
 public class GameManager {
 
@@ -136,8 +137,8 @@ public class GameManager {
         
         buildGameboard();
         banker.generateDevelopmentCards();
+        Application.launch(ClientUI.class);
         debugMode();
-        
         Scanner sc = new Scanner(System.in);
 
        

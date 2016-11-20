@@ -1,3 +1,6 @@
+
+
+
 /*  
                     Client User Interface - Settlers of Catan
 
@@ -22,31 +25,53 @@ Files:      Bank.java
             Trade.java 
 
 
-Classes:    Coordinate
+Classes:    ClientUI
 
                                     Summary:
- This is a relatively simple class. Its purpose is simply to accept an x and y
- coordinate value which will then be used as the postition of intersection 
- objects and, by extension, boundaries.
+This class sets up the client-side user interface. It displays the game board,
+player information, dialog box prompts, buttons for play and various menus.
 
  
 Activity:	  -Date-             -Person-               -Updates-
-            October 20, 2016		AS          *Created Coordinate class 
-                                                     within the Intersection.java 
-                                                     file
+            November 20, 2016		AS          *Created ClientUI class
+                                                    *Created primaryStage titled
+                                                     "Settlers of Catan"
+                                                    *Created StackPane gameBoard
+                                                    
 				
-            November 7, 2016		AS          *Standardized Documentation 
-                                                     and Formatting 
-                                       
-            November 18, 2016           AS          *Moved Coordinate class to 
-                                                     this file
-                                                    *Added JavaDoc documentation
+
 
  */
 
+import java.awt.Color;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import static javafx.scene.layout.BorderStroke.*;
+import static javafx.scene.layout.BorderStrokeStyle.*;
+import static javafx.scene.layout.CornerRadii.*;
+import javafx.scene.layout.StackPane;
+import static javafx.scene.paint.Color.*;
+import javafx.stage.Stage;
 /**
  *
  */
-public class ClientUI {
-    
+public class ClientUI extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Settlers of Catan");
+        BorderPane bp = new BorderPane();
+        StackPane gameBoard = new StackPane();
+        Border b =new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
+        gameBoard.setBorder(b);
+        
+        
+        bp.setCenter(gameBoard);
+        Scene scene = new Scene(bp, 1280, 720);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 }
