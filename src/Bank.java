@@ -13,6 +13,7 @@ Group:      RARA - Settlers of Catan
 Files:      Bank.java (Current File)
             Boundary.java
             Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
@@ -25,11 +26,13 @@ Classes:    Bank
 
 
                                     Summary:
-The following code contains the Bank Class for the computerized game, 
-Settlers of Catan. This class facilitates trade of resource materials.
-This includes both trade between multiple players and trade between a 
-single player and the bank. This class also manages the quantity and 
-distribution of development cards.
+The following code contains the Bank Class for the computerized game, Settlers 
+of Catan. This class facilitates trade of resource materials. This includes both 
+trade between multiple players and trade between a single player and the bank. 
+This class also manages the quantity and distribution of development cards, 
+the building of roads, settlements, and cities, and it calculates which player
+has the longest road and the largest army.
+
 
 
 Activity:	  -Date-             -Person-               -Updates-

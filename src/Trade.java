@@ -12,21 +12,24 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
             Intersection.java
             Player.java
-            Trade.java(Current File)
-
+            Trade.java (Current File)
 
 Classes:    Trade
 
-
                                     Summary:
-This class sets up trades for players. It allows a player to set the terms of 
-a trade request and then distributes that request among the other players.
-
+This class sets up trades for players. It allows a player to create a trade object
+that includes all the terms for a trade, then disutribute that trade request to 
+other players. When a trade is agreed upon by all parties, it executes the trade
+deducting and addint resources to players' supplies according to the trade terms.
+This class is also used to execute trades between a player and the bank.
 
 Activity:	  -Date-             -Person-               -Updates-
             November 17, 2016           AS          *Class Created

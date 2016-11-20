@@ -13,8 +13,9 @@ Group:      RARA - Settlers of Catan
 Files:      Bank.java
             Boundary.java
             Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
-            GameManager.java(Current File)
+            GameManager.java (Current File)
             HexTile.java
             Intersection.java
             Player.java
@@ -69,15 +70,22 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Wrote robberSteal method
                                                     * Tweaked moveRobber method
 
+            November 20, 2016           AS          *Moved code for debugging to
+                                                     debugMode method
+                                                    *Changed banker to be a static,
+                                                     class level variable
+
+
 
  */
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import javafx.application.Application;
 
 public class GameManager {
 
-//  							 Class Properties
+//  				Class Properties
 //_____________________________________________________________________________
     // Static array of players to hold 4 active game players
     static Player[] players = {new Player(0), new Player(1), new Player(2), new Player(3)};
@@ -120,16 +128,26 @@ public class GameManager {
 
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
+    
+    static Bank banker = new Bank();
 
-//  								Methods
+//  				Methods
 //_____________________________________________________________________________
     public static void main(String[] args) {
-
+        
         buildGameboard();
-        Bank banker = new Bank();
         banker.generateDevelopmentCards();
+        Application.launch(ClientUI.class);
+        debugMode();
+        Scanner sc = new Scanner(System.in);
 
-        String quit = "n";
+       
+
+        sc.close();
+    }
+    
+    static void debugMode(){
+         String quit = "n";
 
         Scanner sc = new Scanner(System.in);
 
@@ -219,14 +237,14 @@ public class GameManager {
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
                             switch (menuChoice) {
                                 case 1:
-                                    banker.buildSettlement(activePlayerID, false);
+                                    Bank.buildSettlement(activePlayerID, false);
                                     players[activePlayerID].printResources();
                                     break;
                                 case 2:
-                                    banker.buildCity(activePlayerID);
+                                    Bank.buildCity(activePlayerID);
                                     players[activePlayerID].printResources();
                                 case 3:
-                                    banker.buildRoad(activePlayerID);
+                                    Bank.buildRoad(activePlayerID);
                                     players[activePlayerID].printResources();
                                     break;
                                 case 4:
@@ -245,10 +263,10 @@ public class GameManager {
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
                             switch (menuChoice) {
                                 case 1:
-                                    banker.playerTrade(activePlayerID);
+                                    Bank.playerTrade(activePlayerID);
                                     break;
                                 case 2:
-                                    banker.bankTrade(activePlayerID);
+                                    Bank.bankTrade(activePlayerID);
                                     break;
                                 case 3:
                                     goBack = true;
@@ -356,8 +374,6 @@ public class GameManager {
                 }
             }
         }
-
-        sc.close();
     }
 
     static boolean moveRobber(int tileChoice, int playerID) {
@@ -511,6 +527,8 @@ public class GameManager {
 
     static int buildGameboard() {
         try {
+            
+
 
             System.out.println("Setting up game board");
 

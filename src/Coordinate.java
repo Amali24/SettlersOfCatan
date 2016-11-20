@@ -12,12 +12,14 @@ Group:      RARA - Settlers of Catan
 
 Files:      Bank.java
             Boundary.java
+            ClientUI.java
             Coordinate.java (Current File)
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
             Intersection.java 
             Player.java
+            Trade.java 
 
 
 Classes:    Coordinate
