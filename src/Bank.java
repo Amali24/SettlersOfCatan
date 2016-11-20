@@ -13,6 +13,7 @@ Group:      RARA - Settlers of Catan
 Files:      Bank.java (Current File)
             Boundary.java
             Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java

@@ -11,12 +11,15 @@ Group:      RARA - Settlers of Catan
             Andrew Thomas
 
 Files:      Bank.java
+            Boundary.java
+            Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
             Intersection.java (Current File)
             Player.java
-
+            Trade.java 
 
 Classes:    Intersection
             Boundary (Moved to Boundary.java file)

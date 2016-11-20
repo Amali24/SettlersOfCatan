@@ -1,5 +1,5 @@
 /*  
-                        Coordinate - Settlers of Catan
+                    Client User Interface - Settlers of Catan
 
 Class:      Adjvanced Java - CIT-285-01
             Professor Miller, Fall 2016
@@ -12,8 +12,8 @@ Group:      RARA - Settlers of Catan
 
 Files:      Bank.java
             Boundary.java
-            ClientUI.java
-            Coordinate.java (Current File)
+            ClientUI.java (Current File)
+            Coordinate.java 
             DevelopmentCard.java 
             GameManager.java
             HexTile.java
@@ -45,44 +45,8 @@ Activity:	  -Date-             -Person-               -Updates-
  */
 
 /**
-* The <code> Coordinate </code> class accepts x and y coordinate values and is 
-* used to represent locations on the game board.
-*/
-
-class Coordinate {
-
-//                              Class Properties
-// _____________________________________________________________________________
-    //These hold the x and y coordinates of an ordered pair
-    private final double x;
-    private final double y;
-
-//                               Constructors
-// _____________________________________________________________________________
-   
-    /**
-     * <code> Coordinate </code> Constructor
-     * 
-     * @param xValue x coordinate value
-     * @param yValue y coordinate value
-     */
+ *
+ */
+public class ClientUI {
     
-    Coordinate(double xValue, double yValue) {
-        x = xValue;
-        y = yValue;
-    }
-
-//                          Accessors and Mutators
-// _____________________________________________________________________________
-   
-    //returns x value
-    double getX() {
-        return x;
-    }
-
-    //returns y value
-    double getY() {
-        return y;
-    }
-
 }
