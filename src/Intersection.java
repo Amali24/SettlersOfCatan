@@ -49,6 +49,8 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      own .java files 
                                                     *Added Javadoc documentation
 
+            November 19, 2016           AT          * Added getLocation method
+
 
  */
 
@@ -57,8 +59,8 @@ import java.util.ArrayList;
 
 /**
  * The <code> Intersection </code> class represents the corners of the hexagonal
- * gameboard tiles, defined by <code> Coordinate </code> objects that establish
- * physical gamebaord location.
+ * game board tiles, defined by <code> Coordinate </code> objects that establish
+ * physical game board location.
  *
  */
 
@@ -119,12 +121,16 @@ public class Intersection {
     int getSettlementType() {
         return settlementType;
     }
+    
+    Coordinate getLocation(){
+        return location;
+    }
 
  
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's ajacent <code> Intersections </code>
-     * when there are two ajacent <code> Intersections </code>.
+     * <code> Intersection </code> object's adjacent <code> Intersections </code>
+     * when there are two adjacent <code> Intersections </code>.
      * 
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
@@ -140,8 +146,8 @@ public class Intersection {
 
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's ajacent <code> Intersections </code>
-     * when there are three ajacent <code> Intersections </code>.
+     * <code> Intersection </code> object's adjacent <code> Intersections </code>
+     * when there are three adjacent <code> Intersections </code>.
      * 
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
@@ -273,4 +279,5 @@ public class Intersection {
         System.out.println("Error, no intersection found with that coordinate position.");
         return GameManager.errorIntersection;
     }
+
 }
