@@ -54,10 +54,15 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 19, 2016           AT          * Added getLocation method
 
+            November 20, 2016           AT          * Added Circle field for UI
+                                                      including getter and 
+                                                      constructor change
+
 
  */
 
 import java.util.ArrayList;
+import javafx.scene.shape.Circle;
 
 
 /**
@@ -84,6 +89,8 @@ public class Intersection {
     private Intersection[] adjacentIntersections = new Intersection[3];
     private int adjacentIntersectionCount;
     private ArrayList<Boundary> adjacentBoundaries = new ArrayList<>();
+    
+    private final Circle circle;
 
 //                               Constructors
 // _____________________________________________________________________________
@@ -94,6 +101,7 @@ public class Intersection {
      */
     Intersection(Coordinate c) {
         location = c;
+        circle = new Circle(location.getUIX(), location.getUIY(), ClientUI.circleSize);
     }
 
 //                          Accessors and Mutators
@@ -174,6 +182,10 @@ public class Intersection {
     //Adds an adjacent boundary to the ArrayList adjacentBoundaries
     void addAdjacentBoundary(Boundary a) {
         adjacentBoundaries.add(a);
+    }
+    
+    Circle getCircle(){
+        return circle;
     }
 
 //                                 Methods

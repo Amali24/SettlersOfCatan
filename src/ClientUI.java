@@ -1,6 +1,4 @@
 
-
-
 /*  
                     Client User Interface - Settlers of Catan
 
@@ -37,41 +35,148 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Created primaryStage titled
                                                      "Settlers of Catan"
                                                     *Created StackPane gameBoard
+                                        
+                                        AT          * Added lines and circles from
+                                                      Boundary and Intersection
+                                                      classes to draw gameboard
+                                                    * Added scaleFactor, circleSize,
+                                                      xOffset, and yOffset properties
+                                                      for ease of UI manipulation
+                                                    * Added findBuildableRoads
+                                                      and buildARoad method
+                                                      to allow UI-driven buying of
+                                                      roads
                                                     
 				
 
 
  */
-
-import java.awt.Color;
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.*;
 import static javafx.scene.layout.BorderStroke.*;
 import static javafx.scene.layout.BorderStrokeStyle.*;
 import static javafx.scene.layout.CornerRadii.*;
-import javafx.scene.layout.StackPane;
 import static javafx.scene.paint.Color.*;
+import javafx.scene.shape.*;
 import javafx.stage.Stage;
-/**
- *
- */
+
 public class ClientUI extends Application {
+
+    static double scaleFactor = 35;
+    static double xOffset = 1.3;
+    static double yOffset = .5;
+    static double circleSize = 5.0;
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
         BorderPane bp = new BorderPane();
-        StackPane gameBoard = new StackPane();
-        Border b =new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
+        Pane gameBoard = new Pane();
+        gameBoard.setMaxSize(700, 600);
+        gameBoard.setMinSize(700, 600);
+        Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
-        
-        
+
+        ArrayList<Line> lines = new ArrayList<>();
+
+        for (Boundary boundary : GameManager.boundaries) {
+            lines.add(boundary.getLine());
+        }
+
+        for (Line line : lines) {
+            gameBoard.getChildren().add(line);
+        }
+
+        for (Intersection intersection : GameManager.intersections) {
+            Circle circle = intersection.getCircle();
+            circle.setStroke(BLACK);
+            circle.setFill(WHITE);
+            gameBoard.getChildren().add(circle);
+        }
+
         bp.setCenter(gameBoard);
         Scene scene = new Scene(bp, 1280, 720);
+
         primaryStage.setScene(scene);
+
         primaryStage.show();
     }
+
+    ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
+
+        ArrayList<Boundary> buildableRoads = new ArrayList<>();
+
+        for (Boundary b : GameManager.boundaries) {
+            if (b.isOccupiable(currentPlayerID)) {
+                buildableRoads.add(b);
+            }
+        }
+
+        return buildableRoads;
+    }
+
+    void buildARoad(ArrayList<Boundary> buildableRoads, ArrayList<Line> lines, int activePlayerID) {
+
+        for (Line line : lines) {
+            for (Boundary road : buildableRoads) {
+                if (road.getLine() == line) {
+                    line.setStrokeWidth(4);
+                    line.setOnMouseClicked(e -> Bank.GUIBuildRoad(activePlayerID, road));
+                }
+            }
+        }
+    }
+
+    ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
+
+        ArrayList<Intersection> buildableIntersections = new ArrayList<>();
+
+        for (Intersection i : GameManager.intersections) {
+            if (i.isOccupiable(currentPlayerID, setUpPhase)) {
+                buildableIntersections.add(i);
+            }
+        }
+
+        return buildableIntersections;
+    }
+
+    void buildASettlement(ArrayList<Intersection> buildableSettlements, ArrayList<Circle> circles, int activePlayerID) {
+
+        for (Circle circle : circles) {
+            for (Intersection intersection : buildableSettlements) {
+                if (intersection.getCircle() == circle) {
+                    circle.setStrokeWidth(4);
+                    circle.setOnMouseClicked(e -> Bank.GUIBuildSettlement(activePlayerID, intersection));
+                }
+            }
+        }
+    }
+
+    ArrayList<Intersection> findBuildableCities(int currentPlayerID) {
+
+        ArrayList<Intersection> buildableCities = new ArrayList<>();
+
+        for (Intersection i : GameManager.intersections) {
+            if (i.getPlayer() == currentPlayerID) {
+                buildableCities.add(i);
+            }
+        }
+
+        return buildableCities;
+    }
+
+    void buildACity(ArrayList<Intersection> buildableCities, ArrayList<Circle> circles, int activePlayerID) {
+
+        for (Circle circle : circles) {
+            for (Intersection intersection : buildableCities) {
+                if (intersection.getCircle() == circle) {
+                    circle.setStrokeWidth(4);
+                    circle.setOnMouseClicked(e -> Bank.GUIBuildCity(activePlayerID, intersection));
+                }
+            }
+        }
+    }
+
 }

@@ -1,3 +1,7 @@
+
+import javafx.scene.paint.Color;
+import static javafx.scene.paint.Color.*;
+
 /*  
                         Player - Settlers of Catan
 
@@ -61,8 +65,11 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Added getters and setters
                                                      for largestArmy and 
                                                      longestRoad
- */
 
+            November 20, 2016           AT          * Added color field for UI elements
+                                                      along with necessary imports and
+                                                      methods
+ */
 public class Player {
 
 //  				Class Variables
@@ -75,13 +82,13 @@ public class Player {
     private int cityCount = 0; 			//max of 15
 
     private int developmentCardCount; //number of unplayed development cards held by this player
-    
+
     //victory points are earned by players during the game. 1st player w/ 10 pts wins the game
     //other players are able to see how may victory points a player has, except for those through victory point cards
     //total victory points = visible + cards
     private int visibleVictoryPoints = 0;
     private int victoryPointCards = 0;
-    
+
     private int knightCards = 0; //number of played knight cards
 
     //resource material array 
@@ -93,10 +100,28 @@ public class Player {
     private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
 
+    private final Color color;
+
 // 				Constructors
 //_____________________________________________________________________________
     Player(int id) {
         playerID = id;
+        switch (id) {
+            case 1:
+                color = BLUE;
+                break;
+            case 2:
+                color = RED;
+                break;
+            case 3:
+                color = GREEN;
+                break;
+            case 4:
+                color = YELLOW;
+                break;
+            default:
+                color = BLACK;
+        }
     }
 
 //                          Accessors and Mutators
@@ -128,16 +153,16 @@ public class Player {
     public void addCity() {
         cityCount++;
     }
-    
-    public int getDevelopmentCardCount(){
+
+    public int getDevelopmentCardCount() {
         return developmentCardCount;
     }
-    
-    public void addDevelopmentCard(){
+
+    public void addDevelopmentCard() {
         developmentCardCount++;
     }
-    
-    public void deductDevelopmentCard(){
+
+    public void deductDevelopmentCard() {
         developmentCardCount--;
     }
 
@@ -188,10 +213,10 @@ public class Player {
         }
 
     }
-    
-        public int getResourceTotal() {
 
-            return resourceTotal;
+    public int getResourceTotal() {
+
+        return resourceTotal;
     }
 
     public boolean isLongestRoad() {
@@ -201,7 +226,6 @@ public class Player {
     public void setLongestRoad(boolean longestRoad) {
         this.longestRoad = longestRoad;
     }
-    
 
     public boolean isLargestArmy() {
         return largestArmy;
@@ -210,7 +234,10 @@ public class Player {
     public void setLargestArmy(boolean largestArmy) {
         this.largestArmy = largestArmy;
     }
-    
+
+    public Color getColor() {
+        return color;
+    }
 
 //                                 Methods
 // _____________________________________________________________________________
@@ -226,7 +253,7 @@ public class Player {
 
             resourceMaterials[position] -= amount;
             resourceTotal -= amount;
-            
+
         } else {
             System.out.println("You cannot deduct more resources than you have");
         }
@@ -235,7 +262,6 @@ public class Player {
     public void resetResource(int position) {
         resourceMaterials[position] = 0;
     }
-
 
     public void printResources() {
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
