@@ -42,13 +42,19 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Made bankTrade method
                                                     *Made playerTrade method
                                                     *Made tradePrompt method
+
                                                     
 
                                         AT          *Debugged test code and the 
                                                      find/buy methods
             
-            November 17, 2016           AS          *Moved most trade methods to
-                                                     a new Trade class
+            November 17, 2016           AS          *Created new class Trade
+                                                     to facilitate trading
+                                                    *Moved tradePrompt() to trade 
+                                                     class
+                                                    *Altered playerTrade() to use
+                                                     Trade class
+
             November 18, 2016           AT          * Moved buildRoad and 
                                                       buildSettlement here
                                                     * Made build methods deduct
@@ -57,6 +63,14 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       Not be static to allow for
                                                       multiple simultaneous games
                                                       on server eventually
+
+                                        AS          *Altered bankTrade() to
+                                                     use Trade class
+                                                    *Added calculateLongestRoad()
+                                                     and calculateLargestArmy()
+                                                     methods
+                                                    *calculateLoungestRoad() is
+                                                     called inside buildRoad()
                                                      
 
 
@@ -241,9 +255,11 @@ public class Bank {
             //If occupiable, ownership of the road is set to the appropriate player
             if (roadLocation.isOccupiable(playerID)) {
                 roadLocation.setPlayer(playerID);
-
+                    
                 //increment the player's road number
                 GameManager.players[playerID].addRoad();
+                //recalculate longest road
+                calculateLongestRoad();
             }
 
             activePlayer.deductResource(LUMBER, 1);
@@ -259,6 +275,42 @@ public class Bank {
             System.out.println("Unknown Error. ¯\\_(ツ)_/¯");
             return -1;
         }
+    }
+    
+
+    public static void calculateLongestRoad(){
+
+        int longestRoadLength = 0;
+        int roadBuilderSupreme = -1;
+
+        for (Player p : GameManager.players) {
+            if (p.getRoadCount() > longestRoadLength) {
+                p.setLongestRoad(true);
+                roadBuilderSupreme = p.getPlayerID();
+
+            } else {
+                p.setLongestRoad(false);
+            }
+        }
+        System.out.println("Player " + (roadBuilderSupreme + 1) + " has the longest road.");
+    }
+
+        public static void calculateLargestArmy(){
+        
+        int largestArmySize = 0;
+        int warMonger = -1;
+        
+        for(Player p : GameManager.players){
+            if(p.getKnightCards() > largestArmySize){
+                p.setLargestArmy(true);
+                warMonger = p.getPlayerID();
+
+                
+            }else{
+                p.setLargestArmy(false);
+            }
+        }
+        System.out.println("Player " + (warMonger+1) + " has the longest road.");
     }
 
     public void generateDevelopmentCards() {

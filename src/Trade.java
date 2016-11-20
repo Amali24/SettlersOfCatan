@@ -30,12 +30,17 @@ a trade request and then distributes that request among the other players.
 
 Activity:	  -Date-             -Person-               -Updates-
             November 17, 2016           AS          *Class Created
+                                                    *Created variables and 
+                                                     getters and setters
                                                     *Wrote methods:
                                                      distributeTradeRequest()
                                                      tradePrompt()
                                                      executeTrade()
 
-            November 19, 2016           AS          *Updated documentation header
+            November 19, 2016           AS          *Wrote documentation header
+                                                    *Added bank trading capabilities
+                                                     with bankTrade boolean and
+                                                     changes to executeTrade()
                                                      
                                                      
 
