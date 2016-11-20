@@ -51,8 +51,13 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      updated in addResource() and
                                                      deductResource()
 
-            November 19,2016
-
+            November 19,2016            AS          *Added developmentCardCount,
+                                                     getDevelopmentCardCount, 
+                                                     addDevelopmentCard,
+                                                     and deductDelemopmntCard
+                                                    *Added getters and setters
+                                                     for largestArmy and 
+                                                     longestRoad
  */
 
 public class Player {
@@ -63,15 +68,18 @@ public class Player {
 
     // number of buildings a player has
     private int roadCount = 0; 			//max of 4
-    private int settlementCount = 0;	//max of 5
+    private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 15
 
-    //points earned by players during the game. 1st player w/ 10 pts wins the game
+    private int developmentCardCount; //number of unplayed development cards held by this player
+    
+    //victory points are earned by players during the game. 1st player w/ 10 pts wins the game
     //other players are able to see how may victory points a player has, except for those through victory point cards
     //total victory points = visible + cards
     private int visibleVictoryPoints = 0;
     private int victoryPointCards = 0;
-    private int knightCards = 0;
+    
+    private int knightCards = 0; //number of played knight cards
 
     //resource material array 
     //the constant value associated with this array is the position of that resource in this array
@@ -79,7 +87,7 @@ public class Player {
     int resourceTotal = 0;
 
     //Achievements
-    private boolean longestRoad = false;
+    private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
 
 // 				Constructors
@@ -116,6 +124,18 @@ public class Player {
 
     public void addCity() {
         cityCount++;
+    }
+    
+    public int getDevelopmentCardCount(){
+        return developmentCardCount;
+    }
+    
+    public void addDevelopmentCard(){
+        developmentCardCount++;
+    }
+    
+    public void deductDevelopmentCard(){
+        developmentCardCount--;
     }
 
     public int getVisibleVictoryPoints() {
@@ -171,11 +191,28 @@ public class Player {
             return resourceTotal;
     }
 
+    public boolean isLongestRoad() {
+        return longestRoad;
+    }
+
+    public void setLongestRoad(boolean longestRoad) {
+        this.longestRoad = longestRoad;
+    }
+    
+
+    public boolean isLargestArmy() {
+        return largestArmy;
+    }
+
+    public void setLargestArmy(boolean largestArmy) {
+        this.largestArmy = largestArmy;
+    }
+    
+
 //                                 Methods
 // _____________________________________________________________________________
     public void addResource(int position, int amount) {
         resourceMaterials[position] += amount;
-        
         resourceTotal += amount;
 
     }

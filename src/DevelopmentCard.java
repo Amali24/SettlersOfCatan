@@ -55,10 +55,20 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      method in GameManager
 
                                         AT          *Debugged test code and 
-                                                     various methods                       
- 												
+                                                     various methods
 
-
+            November 19, 2016           AS          *All child card classes 
+                                                     except victoryPointCard
+                                                     now deduct the current
+                                                     players's developmentCardCount
+                                                     at the end of their play methods
+                                                    *Monopoly and Year of Plenty 
+                                                     Card classes now print
+                                                     the updated resources
+                                                    *KnightCard class calls 
+                                                     Bank.calculateLargestArmy()
+                                                     inside play() method
+ 											
 
  */
 
@@ -73,14 +83,14 @@ Activity:	  -Date-             -Person-               -Updates-
  */
 public abstract class DevelopmentCard {
 
-    //  							Class Variables
+    //  			Class Variables
     //_____________________________________________________________________________
     private String title;
     private String description;
     private int player = -1;
     boolean played;
 
-    //							Accessors and Mutators
+    //                      Accessors and Mutators
     //_____________________________________________________________________________
     public String getTitle() {
         return title;
@@ -119,7 +129,7 @@ public abstract class DevelopmentCard {
 
 /*_____________________________________________________________________________
 
-							   KNIGHTCARD CLASS
+                              KNIGHTCARD CLASS
 
 This class is a subclass of DevelopmentCard and contains the attributes and
 methods unique to the Knight Card. There are 14 Knight Cards in each game of
@@ -131,7 +141,7 @@ _______________________________________________________________________________
  */
 class KnightCard extends DevelopmentCard {
 
-//   							  Constructors
+//   				Constructors
 //_____________________________________________________________________________
     KnightCard() {
 
@@ -142,7 +152,7 @@ class KnightCard extends DevelopmentCard {
 
     }
 
-//     								Methods
+//                                Methods
 //_____________________________________________________________________________
     public void play(int playerID) {
         System.out.println("\n\t\tPLAYING KNIGHT CARD");
@@ -164,6 +174,8 @@ class KnightCard extends DevelopmentCard {
             }
 
             currentPlayer.addKnightCard();
+            currentPlayer.deductDevelopmentCard();
+            Bank.calculateLargestArmy();
             this.setPlayed(true);
         }
     }
@@ -173,7 +185,7 @@ class KnightCard extends DevelopmentCard {
 
 /*_____________________________________________________________________________
 
-						  VICTORY POINT CARD CLASS
+                           VICTORY POINT CARD CLASS
 
 This class is a subclass of DevelopmentCard and contains the attributes and
 methods unique to the Victory Point Card. There are 5 Victory Point Cards in 
@@ -185,7 +197,7 @@ _______________________________________________________________________________
  */
 class VictoryPointCard extends DevelopmentCard {
 
-//	  							Constructors
+//	  			Constructors
 //_____________________________________________________________________________
     VictoryPointCard() {
 
@@ -196,7 +208,7 @@ class VictoryPointCard extends DevelopmentCard {
 
     }
 
-//									Methods
+//                                 Methods
 //_____________________________________________________________________________
     public void play(int playerID) {
 
@@ -218,7 +230,7 @@ class VictoryPointCard extends DevelopmentCard {
 
 /*_____________________________________________________________________________
 
-						  ROAD BUILDING CARD CLASS
+                            ROAD BUILDING CARD CLASS
 
 This class is a subclass of DevelopmentCard and contains the attributes and
 methods unique to the Road Building Card. There are 2 Road Building Cards in 
@@ -229,7 +241,7 @@ _______________________________________________________________________________
  */
 class RoadBuildingCard extends DevelopmentCard {
 
-//								Constructors
+//				  Constructors
 //_____________________________________________________________________________
     RoadBuildingCard() {
 
@@ -239,11 +251,13 @@ class RoadBuildingCard extends DevelopmentCard {
 
     }
 
-//									Methods
+//                                  Methods
 //_____________________________________________________________________________
     public void play(int playerID) {
 
         System.out.println("\n\t\tPLAYING ROAD BUILDING CARD");
+        
+        Player currentPlayer = GameManager.players[playerID];
 
         if (this.isPlayed() == true) {
             System.out.println("This development card was already played.");
@@ -255,6 +269,7 @@ class RoadBuildingCard extends DevelopmentCard {
             System.out.println("Build second road.");
             Bank.buildRoad(playerID);
 
+            currentPlayer.deductDevelopmentCard();
             this.setPlayed(true);
         }
     }
@@ -264,7 +279,7 @@ class RoadBuildingCard extends DevelopmentCard {
 
 /*_____________________________________________________________________________
 
-							 MONOPOLY CARD CLASS
+                            MONOPOLY CARD CLASS
 
 This class is a subclass of DevelopmentCard and contains the attributes and
 methods unique to the Monopoly Card. There are 2 Monopoly Cards in each game 
@@ -276,11 +291,11 @@ _______________________________________________________________________________
  */
 class MonopolyCard extends DevelopmentCard {
 
-//								Class Variables
+//			      Class Variables
 //_____________________________________________________________________________
     int totalResourceCount = 0;
 
-//								 Constructors
+//       			Constructors
 //_____________________________________________________________________________
     MonopolyCard() {
 
@@ -291,7 +306,7 @@ class MonopolyCard extends DevelopmentCard {
 
     }
 
-//									Methods
+//                                 Methods
 //_____________________________________________________________________________
     public void play(int playerID) {
 
@@ -313,7 +328,8 @@ class MonopolyCard extends DevelopmentCard {
             }
 
             currentPlayer.addResource(resource, totalResourceCount);
-            System.out.println("Player " + (playerID + 1) + " now has " + currentPlayer.resourceMaterials[resource] + " of resource " + resource + ".");
+            currentPlayer.printResources();
+            currentPlayer.deductDevelopmentCard();
             this.setPlayed(true);
         }
 
@@ -323,7 +339,7 @@ class MonopolyCard extends DevelopmentCard {
 
 /*_____________________________________________________________________________
 
-						 YEAR OF PLENTY CARD CLASS
+                            YEAR OF PLENTY CARD CLASS
 
 This class is a subclass of DevelopmentCard and contains the attributes and
 methods unique to the Year of Plenty Card. There are 2 Year of Plenty Cards 
@@ -334,7 +350,7 @@ _______________________________________________________________________________
  */
 class YearOfPlentyCard extends DevelopmentCard {
 
-//								Constructors
+//				  Constructors
 //_____________________________________________________________________________
     YearOfPlentyCard() {
 
@@ -344,7 +360,7 @@ class YearOfPlentyCard extends DevelopmentCard {
 
     }
 
-//									Methods
+//				    Methods
 //_____________________________________________________________________________
     public void play(int playerID) {
 
@@ -362,10 +378,8 @@ class YearOfPlentyCard extends DevelopmentCard {
         } else {
             currentPlayer.addResource(resource1, 1);
             currentPlayer.addResource(resource2, 1);
-
-            System.out.println("Player " + (playerID + 1) + " now has " + currentPlayer.resourceMaterials[resource1] + " of resource " + resource1
-                    + " and " + currentPlayer.resourceMaterials[resource2] + " of resource " + resource2 + ".");
-
+            currentPlayer.printResources();
+            currentPlayer.deductDevelopmentCard();
             this.setPlayed(true);
         }
 
