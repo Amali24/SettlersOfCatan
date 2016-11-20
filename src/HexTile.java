@@ -13,11 +13,13 @@ Group:      RARA - Settlers of Catan
 Files:      Bank.java
             Boundary.java
             Coordinate.java
+            ClientUI.java
             DevelopmentCard.java 
             GameManager.java
             HexTile.java (Current File)
-            Intersection.java 
+            Intersection.java
             Player.java
+            Trade.java
 
 
 Classes:    HexTile
