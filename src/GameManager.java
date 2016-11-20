@@ -63,6 +63,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       (-1, -1)
                                                     * Started writing debug mode
                                                     * Moved buildRoad and buildSettlement to Bank
+
             November 19, 2016           AT          * Continued writing debug mode
                                                     * Wrote robberSteal method
                                                     * Tweaked moveRobber method
