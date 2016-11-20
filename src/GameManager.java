@@ -63,9 +63,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       (-1, -1)
                                                     * Started writing debug mode
                                                     * Moved buildRoad and buildSettlement to Bank
+
             November 19, 2016           AT          * Continued writing debug mode
+                                                    * Nearly finished - needs testing
                                                     * Wrote robberSteal method
                                                     * Tweaked moveRobber method
+
 
  */
 
@@ -289,15 +292,63 @@ public class GameManager {
                                 System.out.println("You Rolled a 7. Choose where to move the robber");
                                 int tileChoice = Integer.parseInt(sc.nextLine());
                                 boolean moved = false;
-                                while(!moved){
-                                   moved = GameManager.moveRobber(tileChoice, activePlayerID);
+                                while (!moved) {
+                                    moved = GameManager.moveRobber(tileChoice, activePlayerID);
                                 }
                             }
                         }
                         break;
                     case 7:
+                        System.out.print("Choose information to print: "
+                                + "\n1 - Resources"
+                                + "\n2 - Settlements"
+                                + "\n3 - Roads"
+                                + "\n4 - Return to Main Menu"
+                        );
+                        menuChoice = (short) Integer.parseInt(sc.nextLine());
+                        while (!goBack) {
+                            switch (menuChoice) {
+                                case 1:
+                                    for (Player p : players) {
+                                        p.printResources();
+                                    }
+                                    break;
+                                case 2:
+                                    for (Intersection i : intersections) {
+                                        if (i.occupied()) {
+                                            System.out.println("Player " + (i.getPlayer() + 1) + " has a " + (i.getSettlementType() == 1 ? "Settlement" : "City")
+                                                    + " on point " + sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY()
+                                            );
+                                        }
+                                    }
+                                    break;
+                                case 3:
+                                    for (Boundary b : boundaries) {
+                                        if (b.occupied()) {
+                                            System.out.println("Player " + (b.getPlayer() + 1) + " has a road on boundary"
+                                                    + sqrtToAlpha(b.getEndpointA().getLocation().getX()) + b.getEndpointA().getLocation().getY()
+                                                    + sqrtToAlpha(b.getEndpointB().getLocation().getX()) + b.getEndpointB().getLocation().getY()
+                                            );
+                                        }
+                                    }
+                                    break;
+                                case 4:
+                                    goBack = true;
+                                    break;
+                            }
+                        }
                         break;
                     case 8:
+                        for (Player p : players) {
+                            for (int i = 0; i > 5; i++) {
+                                p.resetResource(i);
+                            }
+                        }
+                        for (Intersection i : intersections){
+                            i.setPlayer(-1);
+                            i.setSettlementType(0);
+                        }
+                        System.out.println("Game Status Reset");
                         break;
                     case 9:
                         quit = "y";
@@ -403,6 +454,36 @@ public class GameManager {
         }
     }
 
+    static char sqrtToAlpha(double sqrt) {
+        int sqrtInt = (int) sqrt;
+        switch (sqrtInt) {
+            case 0:
+                return 'A';
+            case 1:
+                return 'B';
+            case 3:
+                return 'C';
+            case 5:
+                return 'D';
+            case 6:
+                return 'E';
+            case 8:
+                return 'F';
+            case 10:
+                return 'G';
+            case 12:
+                return 'H';
+            case 13:
+                return 'I';
+            case 15:
+                return 'J';
+            case 17:
+                return 'K';
+            default:
+                return 'Z';
+        }
+    }
+
     static void writeToDB(HexTile[] tiles, Boundary[] boundaries, Intersection[] intersections) throws SQLException, ClassNotFoundException {
         // TODO: Write method to save to database
         // Will be called automatically upon the end of each turn once GUI is instated
@@ -417,7 +498,7 @@ public class GameManager {
                 while (resourcesToLose > 0) {
                     System.out.println("Choose a resource to surrender:");
                     int resourceSurrendered = Integer.parseInt(sc.nextLine());
-                    
+
                     if (player.resourceMaterials[resourceSurrendered] > 0) {
                         player.deductResource(resourceSurrendered, 1);
                         resourcesToLose--;
