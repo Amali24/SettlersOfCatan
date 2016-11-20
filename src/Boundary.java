@@ -1,3 +1,6 @@
+
+import javafx.scene.shape.Line;
+
 /*  
                         Boundary - Settlers of Catan
 
@@ -49,14 +52,16 @@ Activity:	  -Date-             -Person-               -Updates-
             November 18, 2016           AS          *Moved Boundary class to this
                                                      file
                                                     *Added Javadoc documentation
+            
+            November 19, 2016           AT          * Added line property for UI
+                                                      including constructor changes
+                                                      and getter
 
  */
-
-
 /**
- * The <code> Boundary </code> class represents the edges of the hexagonal
- * gameboard tiles, defined by two <code> Intersection </code> endpoints, on
- * which players can build roads.
+ * The <code> Boundary </code> class represents the edges of the hexagonal game
+ * board tiles, defined by two <code> Intersection </code> endpoints, on which
+ * players can build roads.
  *
  */
 class Boundary {
@@ -69,16 +74,17 @@ class Boundary {
     //-1 value represents no player
 
     private int harbor = -1;    //-1 value = no harbor
-                                //0 value = brick harbor
-                                //1 value = lumber harbor
-                                //2 value = ore harbor
-                                //3 value = wheat harbor
-                                //4 value = wool harbor
-                                //5 value = general harbor
+    //0 value = brick harbor
+    //1 value = lumber harbor
+    //2 value = ore harbor
+    //3 value = wheat harbor
+    //4 value = wool harbor
+    //5 value = general harbor
+
+    private Line line;
 
 //                               Constructors
 // _____________________________________________________________________________
-    
     /**
      * <code> Boundary </code> Constructor
      *
@@ -89,6 +95,13 @@ class Boundary {
 
         endpointA = e1;
         endpointB = e2;
+        
+        double lineStartX = endpointA.getLocation().getUIX();
+        double lineStartY = endpointA.getLocation().getUIY();
+        double lineEndX = endpointB.getLocation().getUIX();
+        double lineEndY = endpointB.getLocation().getUIY();
+
+        line = new Line(lineStartX, lineStartY, lineEndX, lineEndY);
 
     }
 
@@ -124,6 +137,10 @@ class Boundary {
     //returns type of harbor
     int getHarbor() {
         return harbor;
+    }
+    
+    Line getLine(){
+        return line;
     }
 
 //                                 Methods
@@ -184,15 +201,14 @@ class Boundary {
 
     }
 
-    
     /**
-     * Searches for a <code> Boundary </code> based on given endpoints
-     * If found, that <code> Boundary </code> is returned; otherwise, 
+     * Searches for a <code> Boundary </code> based on given endpoints If found,
+     * that <code> Boundary </code> is returned; otherwise, 
      * <code> errorBoundary </code> instance is returned.
-     * 
+     *
      * @param e1 First endpoint
-     * @param e2 Second enpoint
-     * @return  Boundary
+     * @param e2 Second endpoint
+     * @return Boundary
      */
     static Boundary searchBoundary(Intersection e1, Intersection e2) {
 

@@ -42,6 +42,11 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      this file
                                                     *Added JavaDoc documentation
 
+            November 20, 2016           AT          * Added getUIX and getUIY methods
+                                                      which return X and Y coordinates
+                                                      including UI offsets and scale
+                                                      factors
+
  */
 
 /**
@@ -79,10 +84,18 @@ class Coordinate {
     double getX() {
         return x;
     }
+    
+    double getUIX(){
+        return (x + ClientUI.xOffset) * ClientUI.scaleFactor;
+    }
 
     //returns y value
     double getY() {
         return y;
+    }
+    
+    double getUIY(){
+        return (y + ClientUI.yOffset) * ClientUI.scaleFactor;
     }
 
 }

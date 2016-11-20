@@ -74,10 +74,16 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      methods
                                                     *calculateLoungestRoad() is
                                                      called inside buildRoad()
-                                                     
-
-
-
+                                        
+            November 20, 2016           AT          * Added GUIBuildRoad method
+                                                      to allow building of roads
+                                                      without using console
+                                                    * Also tweaked console method
+                                                      to prevent errors with nextDouble
+                                                      method
+                                                    * Added GUIBuildSettlement method
+                                                      to allow building of roads
+                                                      without using console
 
  */
 
@@ -131,7 +137,7 @@ public class Bank {
                 settlementLocation.setPlayer(playerID);
                 settlementLocation.setSettlementType(1);
             }
-            
+
             activePlayer.deductResource(BRICK, 1);
             activePlayer.deductResource(LUMBER, 1);
             activePlayer.deductResource(WOOL, 1);
@@ -156,13 +162,23 @@ public class Bank {
         }
 
     }
-    
-    public static int buildCity(int playerID){
-        
+
+    public static void GUIBuildSettlement(int activePlayerID, Intersection settlementToBuy) {
+        Player activePlayer = GameManager.players[activePlayerID];
+        settlementToBuy.setPlayer(activePlayerID);
+        settlementToBuy.getCircle().setStroke(activePlayer.getColor());
+        GameManager.players[activePlayerID].deductResource(BRICK, 1);
+        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
+        GameManager.players[activePlayerID].deductResource(WOOL, 1);
+        GameManager.players[activePlayerID].deductResource(WHEAT, 1);
+    }
+
+    public static int buildCity(int playerID) {
+
         Player activePlayer = GameManager.players[playerID];
 
         Intersection settlementLocation;
-        
+
         if (activePlayer.resourceMaterials[GameManager.ORE] >= 3 || activePlayer.resourceMaterials[GameManager.WHEAT] >= 2) {
 
             //Scanners and print lines will be obsolete after Gui is made
@@ -174,8 +190,8 @@ public class Bank {
             Double yVal = Double.parseDouble(sc.nextLine());
 
             settlementLocation = Intersection.searchIntersections(new Coordinate(xVal, yVal));
-            
-            if (settlementLocation.getPlayer() != playerID){
+
+            if (settlementLocation.getPlayer() != playerID) {
                 System.out.println("you must have a settlement on the location before you can build a city");
                 return -1;
             }
@@ -206,6 +222,14 @@ public class Bank {
 
     }
 
+    public static void GUIBuildCity(int activePlayerID, Intersection settlementToBuy) {
+        Player activePlayer = GameManager.players[activePlayerID];
+        settlementToBuy.setPlayer(activePlayerID);
+        settlementToBuy.getCircle().setFill(activePlayer.getColor());
+        GameManager.players[activePlayerID].deductResource(ORE, 3);
+        GameManager.players[activePlayerID].deductResource(WHEAT, 2);
+    }
+
     public static int buildRoad(int playerID) {
 
         Intersection endpointA;
@@ -221,8 +245,8 @@ public class Bank {
 
             //Gets coordinate location for first  intersection at one end of road
             System.out.println("Enter the x and y values of the first coordinate on one side of the road:");
-            Double xVal = sc.nextDouble();
-            Double yVal = sc.nextDouble();
+            Double xVal = Double.parseDouble(sc.nextLine());
+            Double yVal = Double.parseDouble(sc.nextLine());
 
             //Finds first intersection and sets endpointA
             endpointA = Intersection.searchIntersections(new Coordinate(xVal, yVal));
@@ -235,8 +259,8 @@ public class Bank {
             //Gets coordinate location for second intersection at other end of road
             System.out.println("Enter the x and y values of the coordinate of the other side of the road:");
 
-            Double xVal2 = sc.nextDouble();
-            Double yVal2 = sc.nextDouble();
+            Double xVal2 = Double.parseDouble(sc.nextLine());
+            Double yVal2 = Double.parseDouble(sc.nextLine());
 
             //Finds second intersection and sets endpointB
             endpointB = Intersection.searchIntersections(new Coordinate(xVal2, yVal2));
@@ -258,7 +282,7 @@ public class Bank {
             //If occupiable, ownership of the road is set to the appropriate player
             if (roadLocation.isOccupiable(playerID)) {
                 roadLocation.setPlayer(playerID);
-                    
+
                 //increment the player's road number
                 GameManager.players[playerID].addRoad();
                 //recalculate longest road
@@ -279,9 +303,17 @@ public class Bank {
             return -1;
         }
     }
-    
 
-    public static void calculateLongestRoad(){
+    public static void GUIBuildRoad(int activePlayerID, Boundary roadToBuy) {
+        Player activePlayer = GameManager.players[activePlayerID];
+        roadToBuy.getLine().setStrokeWidth(4);
+        roadToBuy.getLine().setStroke(activePlayer.getColor());
+        roadToBuy.setPlayer(activePlayerID);
+        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
+        GameManager.players[activePlayerID].deductResource(BRICK, 1);
+    }
+
+    public static void calculateLongestRoad() {
 
         int longestRoadLength = 0;
         int roadBuilderSupreme = -1;
@@ -298,22 +330,21 @@ public class Bank {
         System.out.println("Player " + (roadBuilderSupreme + 1) + " has the longest road.");
     }
 
-        public static void calculateLargestArmy(){
-        
+    public static void calculateLargestArmy() {
+
         int largestArmySize = 0;
         int warMonger = -1;
-        
-        for(Player p : GameManager.players){
-            if(p.getKnightCards() > largestArmySize){
+
+        for (Player p : GameManager.players) {
+            if (p.getKnightCards() > largestArmySize) {
                 p.setLargestArmy(true);
                 warMonger = p.getPlayerID();
 
-                
-            }else{
+            } else {
                 p.setLargestArmy(false);
             }
         }
-        System.out.println("Player " + (warMonger+1) + " has the longest road.");
+        System.out.println("Player " + (warMonger + 1) + " has the longest road.");
     }
 
     public void generateDevelopmentCards() {
@@ -393,7 +424,7 @@ public class Bank {
     }
 
     public boolean findDevelopmentCards(int playerID) {
-        
+
         boolean haveCard = false;
 
         for (DevelopmentCard d : developmentCards) {
@@ -403,7 +434,7 @@ public class Bank {
                 String cardType = d.getTitle();
 
                 System.out.println("You have a playable " + cardType + " Card. Would you like to play it? ");
-                
+
                 haveCard = true;
 
                 Scanner sc = new Scanner(System.in);
@@ -425,7 +456,7 @@ public class Bank {
                 }
             }
         }
-        
+
         return haveCard;
     }
 
@@ -487,7 +518,7 @@ public class Bank {
             tradeDeal.setRequestedAmount(tradeDeal.getOfferedAmount() / xrate);
 
             Trade.executeTrade(tradeDeal);
-            
+
             System.out.println("Would you like to continue trading with the bank?");
 
             continueTrading = sc.nextLine();
