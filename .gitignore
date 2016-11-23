@@ -66,3 +66,5 @@ $RECYCLE.BIN/
 /dist/
 nbproject/private/private.xml
 *.properties
+=======
+nbproject/private/private.xml
