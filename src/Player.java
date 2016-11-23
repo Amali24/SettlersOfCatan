@@ -71,6 +71,8 @@ Activity:	  -Date-             -Person-               -Updates-
             November 20, 2016           AT          * Added color field for UI elements
                                                       along with necessary imports and
                                                       methods
+
+            November 23, 2016           AT          * Minor commenting
  */
 public class Player {
 
@@ -109,6 +111,7 @@ public class Player {
     Player(int id) {
         playerID = id;
         switch (id) {
+            // Assign a color based upon playerID for UI
             case 1:
                 color = BLUE;
                 break;
@@ -244,6 +247,7 @@ public class Player {
 //                                 Methods
 // _____________________________________________________________________________
     public void addResource(int position, int amount) {
+        //add amount to resource at position
         resourceMaterials[position] += amount;
         resourceTotal += amount;
 
@@ -252,11 +256,12 @@ public class Player {
     public void deductResource(int position, int amount) {
 
         if (amount <= resourceMaterials[position]) {
-
+            // Deduct amount from resource at position
             resourceMaterials[position] -= amount;
             resourceTotal -= amount;
 
         } else {
+            // Prevent negative amounts
             System.out.println("You cannot deduct more resources than you have");
         }
     }
@@ -266,6 +271,7 @@ public class Player {
     }
 
     public void printResources() {
+        // Prints player's resource total for each resource
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
                 + "_____________________________\n"
                 + resourceMaterials[0] + " Brick\n"
