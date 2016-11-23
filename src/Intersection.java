@@ -19,7 +19,9 @@ Files:      Bank.java
             HexTile.java
             Intersection.java (Current File)
             Player.java
-            Trade.java 
+            Trade.java
+            READ_THIS_FIRST.txt
+            CatanGameboard.jpeg
 
 Classes:    Intersection
             Boundary (Moved to Boundary.java file)
