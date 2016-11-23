@@ -22,7 +22,9 @@ Files:      Bank.java
             HexTile.java
             Intersection.java 
             Player.java
-            Trade.java 
+            Trade.java
+            READ_THIS_FIRST.txt
+            CatanGameboard.jpeg
 
 
 Classes:    Boundary

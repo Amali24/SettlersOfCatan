@@ -24,6 +24,8 @@ Files:      Bank.java
             Intersection.java
             Player.java (Current File)
             Trade.java
+            READ_THIS_FIRST.txt
+            CatanGameboard.jpeg
 
 
 
