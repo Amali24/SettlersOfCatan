@@ -79,6 +79,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Moved GUI launch to after debug menu
                                                     * Added comments to all methods
+                                                    * Fixed some logical errors
 
 
 
