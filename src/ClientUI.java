@@ -48,6 +48,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       and buildARoad method
                                                       to allow UI-driven buying of
                                                       roads
+
+            November 23, 2016           AT          * Added comments to every method
+                                                    * Fixed some small logical errors
+                                                      in build functions
+                                                    * Added known issue of not sizing clickable
+                                                      nodes after they are clicked to tracker
                                                     
 				
 
