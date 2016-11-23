@@ -2,11 +2,14 @@
 Advanced Java Group Project - Merged Version
 
 Advanced Java Group Project – as of 11/23/16
-What’s in the .zip:
+
+What’s in the project:
+
 1. NetBeans Project and associated files
+
 2. CatanGameboard.jpeg
 	Provides a visual reference for the coordinates referenced in the game. 
-	This will be especially useful in debug mode in the console. 
+	This will be especially useful in debug mode in the console.
 	The console supports using letters for x-coords (e.g. A [enter] 7 [enter]).
 3. Bank.java
 	Handles trading, doesn’t “do” much on its own, but is used by GameManager
@@ -50,12 +53,14 @@ What’s in the .zip:
 	This text file.
 
 What we’ve done:
+
 	We’ve made just about every method we can think of for making the game fully playable.
 	We’ve made every method in all the “logic” classes (i.e. not the UI) testable via the console. 
 	We’ve begun creating our UI and have laid the groundwork for making the roads and intersections clickable
-	   based upon some conditions that will allow the player to perform build functions through the GUI.
+	based upon some conditions that will allow the player to perform build functions through the GUI.
 
 What we haven’t done:
+
 	We have not yet implemented any client-server interaction. This will be done soon. 
 	The GameManager will handle the logic of what is going on in the game and will thus be run server-side. 
 	Only UI functions will take place client-side. This data hiding will help to prevent cheating.
@@ -69,14 +74,14 @@ What we haven’t done:
 	We haven’t yet gotten the JavaDoc commenting to work. You will see some comments that are in (or close to) the 
 	proper formatting, but it didn’t seem to work quite right. This was not a top priority at the time, so we have not
 	taken the time to try to solve the issues we were having. This will hopefully be fixed in the next update.
-
+	
 	We have not fully implemented ports/harbors into the game. This should not be terribly difficult and will be
 	done by the next update.
-
+	
 	We have not yet created an actual game. I know this seems like a major undertaking that should not have been 
 	left for this late in the semester, but it’s relatively minor. We have all the methods we will need to make 
 	the game playable, it’s just a matter of finishing the UI and “attaching” it to those methods, so to speak.
-
+	
 	Last, we have yet to create a rules/instructions file. We will do so before the project is finished, 
 	but we were not able to before this update was due. If you go to 
 	http://www.catan.com/files/downloads/catan_5th_ed_rules_eng_150303.pdf
