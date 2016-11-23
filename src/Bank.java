@@ -406,6 +406,7 @@ public class Bank {
         // Print owner of largest army
         System.out.println("Player " + (warMonger + 1) + " has the largest army.");
     }
+
     // Creates "deck" of DevelopmentCards
     public void generateDevelopmentCards() {
         // Sets up deck the same way every game
@@ -436,11 +437,6 @@ public class Bank {
 
         System.out.println("Development Cards Generated.");
 
-        int i = 0;
-        // Prints deck to ensure created properly
-        for (DevelopmentCard d : developmentCards) {
-            System.out.println(i++ + " " + d.getTitle());
-        }
     }
 
     public void buyDevelopmentCard(int playerID) {
@@ -505,12 +501,12 @@ public class Bank {
         boolean haveCard = false;
 
         for (DevelopmentCard d : developmentCards) {
-            
+
             // If an owned, unplayed card is found
             if (d.getPlayer() == playerID && !d.isPlayed()) {
                 // Print the title and ask user if they want to play it
                 String cardType = d.getTitle();
-                
+
                 System.out.println("You have a playable " + cardType + " Card. Would you like to play it? ");
 
                 haveCard = true;
@@ -546,16 +542,15 @@ public class Bank {
         int[] exchangeRates = {4, 4, 4, 4, 4};
 
         for (Boundary b : GameManager.externalBoundaries) {
-            
+
             // Iterate through the arraay of external Boundaries
             // (i.e. the ones that may have harbors)
-
             // Assign the harbor value to harbor
             int harbor = b.getHarbor();
 
             // If the harbor is owned by the player and is actually a harbor
             if (b.getPlayer() == playerID && harbor != NO_RESOURCE) {
-                
+
                 // If it's a general harbor
                 if (harbor == GENERAL_HARBOR) {
                     // Change all exchange rates from 4 to 3
@@ -595,7 +590,7 @@ public class Bank {
 
             // Ask resource to give
             System.out.println("Which resource would you like to trade away?");
-            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()) - 1);
 
             // Get exchange rate for that resource
             int xrate = exchangeRates[tradeDeal.getOfferedResource()];
@@ -608,7 +603,7 @@ public class Bank {
 
             // Ask player for the resource to receive
             System.out.println("Which resource would you like in return?");
-            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()) - 1);
 
             // Set requested amount to amount offered divided by exchange rate
             // NOTE: these are integers and if you enter 7 instead of 6,
@@ -637,24 +632,24 @@ public class Bank {
             Scanner sc = new Scanner(System.in);
 
             // Prompt player to select resource to GIVE
-            System.out.println("Which resource would you like to trade away? Enter -1 to represent any resource.");
-            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()));
-            
+            System.out.println("Which resource would you like to trade away? Enter 0 to represent any resource.");
+            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()) - 1);
+
             // Amount to GIVE
             System.out.println("How much of this resource would you like to trade?");
             tradeDeal.setOfferedAmount(Integer.parseInt(sc.nextLine()));
 
             // Type to RECEIVE
-            System.out.println("Which resource would you like in return? Enter -1 to represent any resource.");
-            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()));
+            System.out.println("Which resource would you like in return? Enter 0 to represent any resource.");
+            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()) - 1);
 
             // Amount to RECEIVE
             System.out.println("How much of this resource would you like in return?");
             tradeDeal.setRequestedAmount(Integer.parseInt(sc.nextLine()));
 
             // Player to offer trade to
-            System.out.println("To whom would you like to offer this trade? Enter -1 to represent all other players.");
-            tradeDeal.setTradingPartner(Integer.parseInt(sc.nextLine()));
+            System.out.println("To whom would you like to offer this trade? Enter 0 to represent all other players.");
+            tradeDeal.setTradingPartner(Integer.parseInt(sc.nextLine()) - 1);
 
             // Offer trade (includes getting response/counter-offer
             tradeDeal.distributeTradeRequest();

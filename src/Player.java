@@ -73,6 +73,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       methods
 
             November 23, 2016           AT          * Minor commenting
+			
+			            November 23, 2016           AS          *Swiched order of wool and wood
+                                                     in printResources method
  */
 public class Player {
 
@@ -277,8 +280,8 @@ public class Player {
                 + resourceMaterials[0] + " Brick\n"
                 + resourceMaterials[1] + " Lumber\n"
                 + resourceMaterials[2] + " Ore\n"
-                + resourceMaterials[3] + " Wool\n"
-                + resourceMaterials[4] + " Wheat\n");
+                + resourceMaterials[3] + " Wheat\n"
+                + resourceMaterials[4] + " Wool\n");
 
     }
 
