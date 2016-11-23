@@ -47,6 +47,8 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 18, 2016           AS          *Added Javadoc documentation
 
+            November 23, 2016           AT          * Minor comment addition
+
  */
 public class HexTile {
     
@@ -129,11 +131,15 @@ public class HexTile {
         if (!this.hasRobber() && !this.isCenter()) {
             // For each intersection in array of intersections, give the occupying player(s) (if any) resources
             for (Intersection intersection : getIntersections()) {
+                // If intersection has a settlement on it
                 if (intersection.occupied()) {
-
+                    
+                    // Player object for ease of use, represents owning player
                     Player currentPlayer = GameManager.players[intersection.getPlayer()];
+                    // Yield resources corresponding to type of settlement
                     int yieldSize = intersection.getSettlementType();
 
+                    // Add the relevant resource in the relevant quantity
                     currentPlayer.addResource(this.getResourceYield(), yieldSize);
 
                 }

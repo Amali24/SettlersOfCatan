@@ -71,6 +71,11 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *KnightCard class calls 
                                                      Bank.calculateLargestArmy()
                                                      inside play() method
+            
+            November 23, 2016           AT          * Added many method comments
+                                                    * Changed nextInt calls to
+                                                      parseInt calls to avoid
+                                                      scanner errors
  											
 
  */
@@ -160,25 +165,34 @@ class KnightCard extends DevelopmentCard {
     public void play(int playerID) {
         System.out.println("\n\t\tPLAYING KNIGHT CARD");
 
+        // Player object for ease of use
         Player currentPlayer = GameManager.players[playerID];
 
+        // If card is already played, print that to console
         if (this.isPlayed() == true) {
             System.out.println("This development card was already played.");
         } else {
-            //TODO: add move robber capability
-            System.out.println("Select a tile to move robber to.");
             Scanner sc = new Scanner(System.in);
 
-            int tile = sc.nextInt();
+            int tile;
+
             boolean moved = false;
 
+            // Loop until player selects a valid location (not the current one)
             while (!moved) {
+                // Allow player to select tile to move robber to
+                System.out.println("Select a tile to move robber to.");
+                tile = Integer.parseInt(sc.nextLine());
                 moved = GameManager.moveRobber(tile, playerID);
             }
 
+            // Add card to player's total played
             currentPlayer.addKnightCard();
+            // Deduct card from the number the player has available
             currentPlayer.deductDevelopmentCard();
+            // Re-calculate largest army
             Bank.calculateLargestArmy();
+            // Mark card as played
             this.setPlayed(true);
         }
     }
@@ -259,7 +273,7 @@ class RoadBuildingCard extends DevelopmentCard {
     public void play(int playerID) {
 
         System.out.println("\n\t\tPLAYING ROAD BUILDING CARD");
-        
+
         Player currentPlayer = GameManager.players[playerID];
 
         if (this.isPlayed() == true) {
@@ -317,7 +331,7 @@ class MonopolyCard extends DevelopmentCard {
         System.out.println("Enter the resource you would like to take from everyone: ");
 
         Scanner sc = new Scanner(System.in);
-        int resource = sc.nextInt();
+        int resource = Integer.parseInt(sc.nextLine());
 
         Player currentPlayer = GameManager.players[playerID];
 
@@ -325,14 +339,20 @@ class MonopolyCard extends DevelopmentCard {
             System.out.println("This development card was already played.");
         } else {
             for (Player player : GameManager.players) {
-
+                // Calculate the total number of the chosen resource that all players have
+                // Including the current player
                 totalResourceCount += player.getResourceCount(resource);
+                // Set every player's current number of resources to zero
                 player.resetResource(resource);
             }
 
+            // Add the "pool" of resources to the player who played the card
             currentPlayer.addResource(resource, totalResourceCount);
+            // Print the player's resources after stealing
             currentPlayer.printResources();
+            // Deduct the card
             currentPlayer.deductDevelopmentCard();
+            // Mark card as played
             this.setPlayed(true);
         }
 
@@ -369,20 +389,26 @@ class YearOfPlentyCard extends DevelopmentCard {
 
         System.out.println("\n\t\tPLAYING YEAR OF PLENTY CARD");
         System.out.println("Enter the integer values for the two resources you would like: ");
-
+        
+        // Player selects two resources
         Scanner sc = new Scanner(System.in);
-        int resource1 = sc.nextInt();
-        int resource2 = sc.nextInt();
+        int resource1 = Integer.parseInt(sc.nextLine());
+        int resource2 = Integer.parseInt(sc.nextLine());
 
         Player currentPlayer = GameManager.players[playerID];
 
         if (this.isPlayed() == true) {
             System.out.println("This development card was already played.");
         } else {
+            // Gain one of each of the resources selected
             currentPlayer.addResource(resource1, 1);
             currentPlayer.addResource(resource2, 1);
+            
+            // Print resource total
             currentPlayer.printResources();
+            // Deduct card
             currentPlayer.deductDevelopmentCard();
+            // Mark card as played
             this.setPlayed(true);
         }
 
