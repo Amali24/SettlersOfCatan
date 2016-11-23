@@ -59,6 +59,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       including constructor changes
                                                       and getter
 
+            November 23, 2016           AT          * Added comments regarding Line object
+                                                    * Made Line object final
+
  */
 /**
  * The <code> Boundary </code> class represents the edges of the hexagonal game
@@ -83,7 +86,7 @@ class Boundary {
     //4 value = wool harbor
     //5 value = general harbor
 
-    private Line line;
+    private final Line line;
 
 //                               Constructors
 // _____________________________________________________________________________
@@ -98,6 +101,7 @@ class Boundary {
         endpointA = e1;
         endpointB = e2;
         
+        // Creates a Line object at the location of the road for GUI
         double lineStartX = endpointA.getLocation().getUIX();
         double lineStartY = endpointA.getLocation().getUIY();
         double lineEndX = endpointB.getLocation().getUIX();
@@ -141,6 +145,7 @@ class Boundary {
         return harbor;
     }
     
+    // returns GUI Line object
     Line getLine(){
         return line;
     }
