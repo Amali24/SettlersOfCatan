@@ -60,6 +60,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       including getter and 
                                                       constructor change
 
+            November 23, 2016           AT          * Added minor commenting
+                                                    * Changed location, adjacentIntersections
+                                                      and adjacentBoundaries to final
+
 
  */
 
@@ -78,7 +82,7 @@ public class Intersection {
 
 //                              Class Properties
 // _____________________________________________________________________________
-    private Coordinate location;        //Holds coordinate position of object
+    private final Coordinate location;        //Holds coordinate position of object
     //Will be used when constructing GUI
 
     private int player = -1;            //Player who has settled intersection
@@ -88,9 +92,9 @@ public class Intersection {
     //1 value = base settlement
     //2 value = city
 
-    private Intersection[] adjacentIntersections = new Intersection[3];
+    private final Intersection[] adjacentIntersections = new Intersection[3];
     private int adjacentIntersectionCount;
-    private ArrayList<Boundary> adjacentBoundaries = new ArrayList<>();
+    private final ArrayList<Boundary> adjacentBoundaries = new ArrayList<>();
     
     private final Circle circle;
 
@@ -103,6 +107,7 @@ public class Intersection {
      */
     Intersection(Coordinate c) {
         location = c;
+        // Create circle at location c for UI
         circle = new Circle(location.getUIX(), location.getUIY(), ClientUI.circleSize);
     }
 

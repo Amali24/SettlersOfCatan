@@ -47,6 +47,8 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 18, 2016           AS          *Added Javadoc documentation
 
+            November 23, 2016           AT          * Minor comment addition
+
  */
 public class HexTile {
     
