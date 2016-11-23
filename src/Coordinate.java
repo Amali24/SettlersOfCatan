@@ -49,6 +49,8 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       including UI offsets and scale
                                                       factors
 
+            November 23, 2016           AT          * Added comments for getUIX and getUIY
+
  */
 
 /**
@@ -87,6 +89,7 @@ class Coordinate {
         return x;
     }
     
+    // returns x value adjusted for GUI
     double getUIX(){
         return (x + ClientUI.xOffset) * ClientUI.scaleFactor;
     }
@@ -96,6 +99,7 @@ class Coordinate {
         return y;
     }
     
+    // returns y value adjusted for GUI
     double getUIY(){
         return (y + ClientUI.yOffset) * ClientUI.scaleFactor;
     }
