@@ -27,10 +27,8 @@ Classes:    HexTile
 
                                     Summary:
 The following code contains the HexTile Class for the computerized game, 
-Settlers of Catan. This class facilitates most of the game play by setting up
-the gameboard, handling player turns and dice rice rolls, and allocating resource
-materials. Ultimately this class connects the player experience with the logic
-of the game.
+Settlers of Catan. This class creates objects to represent the hexagonal tiles of
+the settlers of catan game board.
 
 
 Activity:	  -Date-             -Person-               -Updates-

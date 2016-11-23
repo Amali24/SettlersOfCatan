@@ -370,10 +370,6 @@ public class Bank {
 
         System.out.println("Development Cards Generated.");
 
-        int i = 0;
-        for (DevelopmentCard d : developmentCards) {
-            System.out.println(i++ + " " + d.getTitle());
-        }
     }
 
     public void buyDevelopmentCard(int playerID) {
@@ -504,7 +500,7 @@ public class Bank {
             Scanner sc = new Scanner(System.in);
 
             System.out.println("Which resource would you like to trade away?");
-            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine())-1);
 
             int xrate = exchangeRates[tradeDeal.getOfferedResource()];
 
@@ -513,7 +509,7 @@ public class Bank {
             tradeDeal.setOfferedAmount(Integer.parseInt(sc.nextLine()));
 
             System.out.println("Which resource would you like in return?");
-            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine())-1);
 
             tradeDeal.setRequestedAmount(tradeDeal.getOfferedAmount() / xrate);
 
@@ -538,19 +534,19 @@ public class Bank {
             Scanner sc = new Scanner(System.in);
 
             System.out.println("Which resource would you like to trade away? Enter -1 to represent any resource.");
-            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setOfferedResource(Integer.parseInt(sc.nextLine())-1);
 
             System.out.println("How much of this resource would you like to trade?");
             tradeDeal.setOfferedAmount(Integer.parseInt(sc.nextLine()));
 
             System.out.println("Which resource would you like in return? Enter -1 to represent any resource.");
-            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setRequestedResource(Integer.parseInt(sc.nextLine())-1);
 
             System.out.println("How much of this resource would you like in return?");
             tradeDeal.setRequestedAmount(Integer.parseInt(sc.nextLine()));
 
             System.out.println("To whom would you like to offer this trade? Enter -1 to represent all other players.");
-            tradeDeal.setTradingPartner(Integer.parseInt(sc.nextLine()));
+            tradeDeal.setTradingPartner(Integer.parseInt(sc.nextLine())-1);
 
             tradeDeal.distributeTradeRequest();
 

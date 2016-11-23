@@ -69,6 +69,9 @@ Activity:	  -Date-             -Person-               -Updates-
             November 20, 2016           AT          * Added color field for UI elements
                                                       along with necessary imports and
                                                       methods
+
+            November 23, 2016           AS          *Swiched order of wool and wood
+                                                     in printResources method
  */
 public class Player {
 
@@ -269,8 +272,8 @@ public class Player {
                 + resourceMaterials[0] + " Brick\n"
                 + resourceMaterials[1] + " Lumber\n"
                 + resourceMaterials[2] + " Ore\n"
-                + resourceMaterials[3] + " Wool\n"
-                + resourceMaterials[4] + " Wheat\n");
+                + resourceMaterials[3] + " Wheat\n"
+                + resourceMaterials[4] + " Wool\n");
 
     }
 

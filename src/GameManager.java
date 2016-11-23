@@ -75,6 +75,13 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Changed banker to be a static,
                                                      class level variable
 
+            November 23, 2016           AS          *Added set all resources capability
+                                                     to debug mode
+                                                    *Made input guide message method
+                                                    *Added instructions to top
+                                                    *Changed input to adjust for
+                                                     array index
+
 
 
  */
@@ -136,9 +143,10 @@ public class GameManager {
     public static void main(String[] args) {
         
         buildGameboard();
-        banker.generateDevelopmentCards();
-        Application.launch(ClientUI.class);
+        banker.generateDevelopmentCards();    
         debugMode();
+        Application.launch(ClientUI.class);
+    
         Scanner sc = new Scanner(System.in);
 
        
@@ -151,7 +159,18 @@ public class GameManager {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Enter debug mode? Y/N: ");
+        System.out.println("\nTo get started, either enter the debug mode to test "
+                + "\nout all of the program's methods or pass it to see our progress"
+                + "\non the game board");
+        
+        System.out.println("\nIMPORTANT: the text based version of this program has"
+                + "\nno checks for valid input, so valid input MUST be entered."
+                + "\nA guide to all valid input can be found in the debug mode "
+                + "\nmenu. It is the 9th option, titled \"Input Guide\"."
+                + "\nPlease look there if unfamiliar with program.\n");
+        
+        
+        System.out.println("Enter debug mode? y/n: ");
         boolean debug = (sc.nextLine().equals("y"));
 
         if (debug) {
@@ -165,7 +184,8 @@ public class GameManager {
                         + "\n6 - Roll Dice"
                         + "\n7 - Print Player Information"
                         + "\n8 - Reset All (Reverts to Default Game State)"
-                        + "\n9 - Quit\n"
+                        + "\n9 - Input Guide"
+                        + "\n10 - Quit\n"
                 );
                 short menuChoice = (short) Integer.parseInt(sc.nextLine());
                 boolean goBack = false;
@@ -176,16 +196,17 @@ public class GameManager {
                                     + "\n1 - Add Resources"
                                     + "\n2 - Remove Resources"
                                     + "\n3 - Zero All Resources"
-                                    + "\n4 - Return to Main Menu\n"
+                                    + "\n4 - Set All Resources"
+                                    + "\n5 - Return to Main Menu\n"
                             );
                             menuChoice = (short) Integer.parseInt(sc.nextLine());
 
                             switch (menuChoice) {
                                 case 1:
                                     System.out.println("Select player to add resources to");
-                                    int playerID = Integer.parseInt(sc.nextLine());
+                                    int playerID = Integer.parseInt(sc.nextLine())-1;
                                     System.out.println("Select resource to add");
-                                    int resourceToAdd = Integer.parseInt(sc.nextLine());
+                                    int resourceToAdd = Integer.parseInt(sc.nextLine())-1;
                                     System.out.println("Select amount to add");
                                     int amountToAdd = Integer.parseInt(sc.nextLine());
 
@@ -195,9 +216,9 @@ public class GameManager {
                                     break;
                                 case 2:
                                     System.out.println("Select player to deduct resources from");
-                                    playerID = Integer.parseInt(sc.nextLine());
+                                    playerID = Integer.parseInt(sc.nextLine())-1;
                                     System.out.println("Select resource to remove");
-                                    int resourceToRemove = Integer.parseInt(sc.nextLine());
+                                    int resourceToRemove = Integer.parseInt(sc.nextLine())-1;
                                     System.out.println("Select amount to remove");
                                     int amountToRemove = Integer.parseInt(sc.nextLine());
 
@@ -208,13 +229,28 @@ public class GameManager {
                                 case 3:
                                     System.out.println("Zeroing All Resources");
                                     for (Player player : players) {
-                                        for (int i = 0; i < WOOL; i++) {
+                                        for (int i = 0; i <= WOOL; i++) {
                                             player.resetResource(i);
                                         }
                                         player.printResources();
                                     }
                                     break;
                                 case 4:
+                                    int setNum;
+                                    
+                                    System.out.println("How much of each resource would you like every player to have?");
+                                    setNum = Integer.parseInt(sc.nextLine());
+                                    
+                                    System.out.println("Setting All Resources");
+                                    for (Player player : players) {
+                                        for (int i = 0; i <= WOOL; i++) {
+                                            player.resetResource(i);
+                                            player.addResource(i, setNum);
+                                        }
+                                        player.printResources();
+                                    }
+                                    break;
+                                case 5:
                                     goBack = true;
                                     break;
                             }
@@ -222,7 +258,7 @@ public class GameManager {
                         break;
                     case 2:
                         System.out.println("Which player would you like to set to active?");
-                        activePlayerID = Integer.parseInt(sc.nextLine());
+                        activePlayerID = Integer.parseInt(sc.nextLine())-1;
                         System.out.println("Player " + (activePlayerID + 1) + " is now active.");
                         break;
                     case 3:
@@ -369,6 +405,11 @@ public class GameManager {
                         System.out.println("Game Status Reset");
                         break;
                     case 9:
+                        printInputGuide();
+                        sc.nextLine();
+                        break;
+                        
+                    case 10:
                         quit = "y";
                         break;
                 }
@@ -376,6 +417,63 @@ public class GameManager {
         }
     }
 
+    static void printInputGuide(){
+        
+                System.out.println(""
+                + "\n                        INPUT GUIDE"
+                + "\n____________________________________________________________\n");
+        
+        System.out.println(""
+                + "\n                        Yes/No Input"
+                + "\n                       ______________"
+                + "\nWhen prompted for yes or no input, a lowercase y represents"
+                + "\nyes and a lowercase n represets no.");
+    
+        System.out.println(""
+                + "\n                        Player Input"
+                + "\n                       ______________"
+                + "\nWhen prompted to enter a Player enter  1, 2, 3, or 4."
+                + "\nEach of these integers corresponds to its own player "
+                + "\n(i.e. 1 represents Player 1).");
+
+        System.out.println(""
+                + "\n                       Resource Input"
+                + "\n                      ________________"
+                + "\nWhen prompted to enter a resource, an integer is expected."
+                + "\nThe following are the accepted integers and what resource "
+                + "\neach represents: "
+                + "\n 1 - Brick"
+                + "\n 2 - Lumber"
+                + "\n 3 - Ore"
+                + "\n 4 - Wheat"
+                + "\n 5 - Wool;");
+        
+        System.out.println(""
+                + "\n                         Tile Input"
+                + "\n                        ____________"
+                + "\nWhen prompted to enter a tile, enter the corresponding"
+                + "\nnumber as provided in the model gameboard in CatanGameboard.jpeg."
+                + "\nExample tile input: 19");
+        
+        
+        System.out.println(""
+                + "\n                Intersection or Boundary Input"
+                + "\n               ________________________________"
+                + "\nWhen prompted to enter an intersection or boundary"
+                + "\nenter the corresponding name as provided in CatanGameboard.jpeg."
+                + "\nEnter each character in the name, then click enter. "
+                + "\nLetters are captalized."
+                + "\n"
+               + "\nExample input for intersection A7:"
+                + "\nA"
+                + "\n7"
+                + "\n\nExample input for boundary A7A9:"
+                + "\nA"
+                + "\n7"
+                + "\nA"
+                + "\n9");
+        
+    }
     static boolean moveRobber(int tileChoice, int playerID) {
 
         HexTile tile = tiles[tileChoice];
@@ -413,7 +511,7 @@ public class GameManager {
                     + " own(s) settlements on this tile.\nChoose one to steal from: ");
 
             Scanner sc = new Scanner(System.in);
-            int playerChoice = Integer.parseInt(sc.nextLine());
+            int playerChoice = Integer.parseInt(sc.nextLine())-1;
 
             if (playerChoice == playerID) {
                 System.out.println("You cannot steal from yourself.");
@@ -513,7 +611,7 @@ public class GameManager {
                 int resourcesToLose = player.resourceTotal / 2;
                 while (resourcesToLose > 0) {
                     System.out.println("Choose a resource to surrender:");
-                    int resourceSurrendered = Integer.parseInt(sc.nextLine());
+                    int resourceSurrendered = Integer.parseInt(sc.nextLine())-1;
 
                     if (player.resourceMaterials[resourceSurrendered] > 0) {
                         player.deductResource(resourceSurrendered, 1);
