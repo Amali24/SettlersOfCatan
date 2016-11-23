@@ -74,6 +74,8 @@ What we haven’t done:
 	left for this late in the semester, but it’s relatively minor. We have all the methods we will need to make 
 	the game playable, it’s just a matter of finishing the UI and “attaching” it to those methods, so to speak.
 
+	We have not yet implemented or tested the startup phase. This has slightly different rules from normal gameplay.
+
 	Last, we have yet to create a rules/instructions file. We will do so before the project is finished, 
 	but we were not able to before this update was due. If you go to 
 	http://www.catan.com/files/downloads/catan_5th_ed_rules_eng_150303.pdf
