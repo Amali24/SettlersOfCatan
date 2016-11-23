@@ -52,7 +52,7 @@ What we’ve done:
 	We’ve begun creating our UI and have laid the groundwork for making the roads and intersections clickable
 	   based upon some conditions that will allow the player to perform build functions through the GUI.
 
-What we haven’t done:
+What we haven’t done (incl. known issues):
 	We have not yet implemented any client-server interaction. This will be done soon. 
 	The GameManager will handle the logic of what is going on in the game and will thus be run server-side. 
 	Only UI functions will take place client-side. This data hiding will help to prevent cheating.
@@ -75,6 +75,9 @@ What we haven’t done:
 	the game playable, it’s just a matter of finishing the UI and “attaching” it to those methods, so to speak.
 
 	We have not yet implemented or tested the startup phase. This has slightly different rules from normal gameplay.
+
+	There is currently no method in the GUI that makes all the lines and circles smaller again after one is clicked.
+	Currently they get bigger to make it more obvious that they are clickable, but they never resize back down.
 
 	Last, we have yet to create a rules/instructions file. We will do so before the project is finished, 
 	but we were not able to before this update was due. If you go to 

@@ -66,9 +66,14 @@ import javafx.stage.Stage;
 
 public class ClientUI extends Application {
 
+    // Scale factor multiplies the coordinates of each point by a consistent ratio
+    // To scale UI up to desired size
     static double scaleFactor = 35;
+    // X and Y offsets are a hacky way to center the game board
+    // Will hopefully come up with a better and more scalable way to do this
     static double xOffset = 1.3;
     static double yOffset = .5;
+    // Default size for circles
     static double circleSize = 5.0;
 
     @Override
@@ -76,29 +81,34 @@ public class ClientUI extends Application {
         primaryStage.setTitle("Settlers of Catan");
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
+        // Min size and max size are currently the same
+        // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
         gameBoard.setMinSize(700, 600);
+       
+        // Creates a black boundary
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
 
-        ArrayList<Line> lines = new ArrayList<>();
-
+        // Iterate over all boundaries and add their respective lines to the GUI
         for (Boundary boundary : GameManager.boundaries) {
-            lines.add(boundary.getLine());
+            gameBoard.getChildren().add(boundary.getLine());
         }
-
-        for (Line line : lines) {
-            gameBoard.getChildren().add(line);
-        }
-
+        
+        // Iterate over intersections and add their circles to the GUI
         for (Intersection intersection : GameManager.intersections) {
             Circle circle = intersection.getCircle();
+            
+            // Set all circles to hollow black
             circle.setStroke(BLACK);
             circle.setFill(WHITE);
+            
             gameBoard.getChildren().add(circle);
         }
 
+        // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+        // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
 
         primaryStage.setScene(scene);
@@ -108,22 +118,32 @@ public class ClientUI extends Application {
 
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
+        // Create an ArrayList to hold roads the active player can build on
         ArrayList<Boundary> buildableRoads = new ArrayList<>();
 
         for (Boundary b : GameManager.boundaries) {
             if (b.isOccupiable(currentPlayerID)) {
+                // For each boundary, if it is buildable, add it to the ArrayList
                 buildableRoads.add(b);
             }
         }
 
+        // Return the ArrayList
         return buildableRoads;
     }
 
-    void buildARoad(ArrayList<Boundary> buildableRoads, ArrayList<Line> lines, int activePlayerID) {
-
-        for (Line line : lines) {
+    void buildARoad(ArrayList<Boundary> buildableRoads, Boundary[] boundaries, int activePlayerID) {
+        
+        // For each boundary in the game,
+        for (Boundary b : boundaries) {
+            // Check against every buildableRoad (number should be relatively low)
             for (Boundary road : buildableRoads) {
+                // Create a Line object for ease of use
+                Line line = b.getLine();
+                
+                // If the buildable road is equal to the current road
                 if (road.getLine() == line) {
+                    // Make it wider and setOnClick to GUIBuildRoad method
                     line.setStrokeWidth(4);
                     line.setOnMouseClicked(e -> Bank.GUIBuildRoad(activePlayerID, road));
                 }
@@ -132,23 +152,31 @@ public class ClientUI extends Application {
     }
 
     ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
-
+        
+       // Create an ArrayList to hold Intersections the active player can build on
         ArrayList<Intersection> buildableIntersections = new ArrayList<>();
 
         for (Intersection i : GameManager.intersections) {
             if (i.isOccupiable(currentPlayerID, setUpPhase)) {
+                // If the intersection is occupiable, add it
                 buildableIntersections.add(i);
             }
         }
 
+        // Return list
         return buildableIntersections;
     }
 
-    void buildASettlement(ArrayList<Intersection> buildableSettlements, ArrayList<Circle> circles, int activePlayerID) {
+    void buildASettlement(ArrayList<Intersection> buildableSettlements, Intersection[] intersections, int activePlayerID) {
 
-        for (Circle circle : circles) {
+        for (Intersection i : intersections) {
+            // For each intersection in the game, create a Circle from its circle
+            Circle circle = i.getCircle();
+            
             for (Intersection intersection : buildableSettlements) {
+                // Compare each circle to buildableSettlements
                 if (intersection.getCircle() == circle) {
+                    // Make stroke thicker and set clickable if its buildable
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> Bank.GUIBuildSettlement(activePlayerID, intersection));
                 }
@@ -162,18 +190,23 @@ public class ClientUI extends Application {
 
         for (Intersection i : GameManager.intersections) {
             if (i.getPlayer() == currentPlayerID) {
+                // You can only build a city where you already have a settlement
                 buildableCities.add(i);
             }
         }
-
+        // Return ArrayList of all buildable locations for cities
         return buildableCities;
     }
 
-    void buildACity(ArrayList<Intersection> buildableCities, ArrayList<Circle> circles, int activePlayerID) {
+    void buildACity(ArrayList<Intersection> buildableCities, Intersection[] intersections, int activePlayerID) {
 
-        for (Circle circle : circles) {
+        for (Intersection i : intersections) {
+            // For every intersection create a circle from its circle
+            Circle circle = i.getCircle();
+            // Compare to the buildable cities
             for (Intersection intersection : buildableCities) {
                 if (intersection.getCircle() == circle) {
+                    // Make it bigger and clickable
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> Bank.GUIBuildCity(activePlayerID, intersection));
                 }
