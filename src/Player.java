@@ -58,7 +58,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 18, 2016           AS          *Changed resourceTotal to be 
                                                      updated in addResource() and
-                                                     deductResource()
+                                                   deductResource()
 
             November 19,2016            AS          *Added developmentCardCount,
                                                      getDevelopmentCardCount, 
@@ -76,6 +76,13 @@ Activity:	  -Date-             -Person-               -Updates-
 			
 			            November 23, 2016           AS          *Swiched order of wool and wood
                                                      in printResources method
+			
+	    November 24, 2016		RA	    * Corrected the maximum number of buildings
+	    					      according to boardgame rules
+	    					    * Validated addRoad, addSettlement and 
+						      addCity methods
+	    					    * Created printRoads, printSettlement and 
+						      printCities methods
  */
 public class Player {
 
@@ -84,9 +91,9 @@ public class Player {
     private int playerID = -1;
 
     // number of buildings a player has
-    private int roadCount = 0; 			//max of 4
+    private int roadCount = 0; 			//max of 15
     private int settlementCount = 0;            //max of 5
-    private int cityCount = 0; 			//max of 15
+    private int cityCount = 0; 			//max of 4
 
     private int developmentCardCount; //number of unplayed development cards held by this player
 
@@ -120,7 +127,7 @@ public class Player {
                 break;
             case 2:
                 color = RED;
-                break;
+f                break;
             case 3:
                 color = GREEN;
                 break;
@@ -139,11 +146,17 @@ public class Player {
     }
 
     public int getRoadCount() {
+	    
         return roadCount;
     }
 
     public void addRoad() {
-        roadCount++;
+        if(roadCount >= 15){
+		System.out.println("You have exceeded the number of roads available");
+		return;
+	}
+	else
+	    roadCount++;
     }
 
     public int getSettlementCount() {
@@ -151,15 +164,25 @@ public class Player {
     }
 
     public void addSettlement() {
-        settlementCount++;
+	if(settlementCount >= 5){
+		System.out.println("You have exceeded the number of settlements available");
+	        return;
+	}
+	else
+            settlementCount++;
     }
 
-    public int getCityCount() {
-        return cityCount;
+    public int getCityCount() {	
+            return cityCount;
     }
 
     public void addCity() {
-        cityCount++;
+	if(cityCount >= 4){
+		System.out.println("You have exceeded the number of cities available");
+	        return;
+	}
+	else       
+            cityCount++;
     }
 
     public int getDevelopmentCardCount() {
@@ -184,6 +207,7 @@ public class Player {
         if (longestRoad) {
             visibleVictoryPoints += 2;
         }
+	    
         if (largestArmy) {
             visibleVictoryPoints += 2;
         }
@@ -219,7 +243,6 @@ public class Player {
         } else {
             return -1;
         }
-
     }
 
     public int getResourceTotal() {
@@ -228,7 +251,8 @@ public class Player {
     }
 
     public boolean isLongestRoad() {
-        return longestRoad;
+
+	    return longestRoad;
     }
 
     public void setLongestRoad(boolean longestRoad) {
@@ -284,5 +308,22 @@ public class Player {
                 + resourceMaterials[4] + " Wool\n");
 
     }
-
+	
+    public void printRoads() { 
+	 // Prints player's current number of roads  
+	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of roads:\n"
+		+ roadCount + "\n";
+    }
+			    
+    public void printSettlements() {
+	 // Prints player's current number of settlements  
+	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of settlements:\n"
+		+ settlementCount + "\n";
+    }
+			    
+    public void printCities() {
+	 // Prints player's current number of cities 
+	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of cities:\n"
+		+ cityCount + "\n";
+    }
 }
