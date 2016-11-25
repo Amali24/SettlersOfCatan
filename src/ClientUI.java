@@ -99,6 +99,11 @@ public class ClientUI extends Application {
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
 
+        for (HexTile tile : GameManager.tiles) {
+            Polygon hex = tile.hexagon;
+            gameBoard.getChildren().add(hex);
+        }
+
         // Iterate over all boundaries and add their respective lines to the GUI
         for (Boundary boundary : GameManager.boundaries) {
             gameBoard.getChildren().add(boundary.getLine());
@@ -144,27 +149,27 @@ public class ClientUI extends Application {
 
                     HBox btnBox = new HBox(25);
                     Button btnBuildRoad = new Button("Build a Road");
-                    btnBuildRoad.setOnAction(e1 ->{
+                    btnBuildRoad.setOnAction(e1 -> {
                         ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
                         buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
                     });
-                    
+
                     Button btnBuildSettlement = new Button("Build a Settlement");
-                    
+
                     Button btnBuildCity = new Button("Build a City");
-                    
+
                     Button btnCancel = new Button("Cancel");
-                    
+
                     btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
 
                     Text txtBuild = new Text("Select a type of Improvement to Build:");
                     txtBuild.setFont(new Font(14));
                     txtBuild.setTextAlignment(TextAlignment.CENTER);
-                    
+
                     BorderPane boPa = new BorderPane();
                     boPa.setCenter(btnBox);
                     boPa.setTop(txtBuild);
-                    
+
                     buildMenu.initModality(Modality.APPLICATION_MODAL);
 
                     buildMenu.setScene(new Scene(boPa));
