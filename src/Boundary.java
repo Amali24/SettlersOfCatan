@@ -61,7 +61,11 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Added comments regarding Line object
                                                     * Made Line object final
-
+						    
+  	    November 24, 2016		RA	    * Added validation statement from line 
+	    					      186 to 193 to make sure player does
+						      not build more roads than the maximum
+						      amount allowed
  */
 /**
  * The <code> Boundary </code> class represents the edges of the hexagonal game
@@ -180,7 +184,16 @@ class Boundary {
                     + (player + 1) + " already has.");
             return false;
 
-        } else {
+        } 
+	   // If player already has the maximum amount of roads, returns false
+	   else if (playerInfo.getRoadCount() >= 15) {
+		System.out.println("Player " + (playerID + 1)
+                    + " is unable to build a road here because"
+		    + " it has exceeded the amount of roads available.");
+		return false;
+		
+	} 
+	    else {
 
             //if any adjacent adjacent boundary or intersection has a road or 
             //settlement belonging to the current player, returns true
