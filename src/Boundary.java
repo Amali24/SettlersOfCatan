@@ -175,6 +175,8 @@ class Boundary {
      */
     boolean isOccupiable(int playerID) {
 
+        Player playerInfo = GameManager.players[playerID];
+        
         //If road already exists, returns false
         if (occupied()) {
 

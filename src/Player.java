@@ -74,7 +74,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Minor commenting
 			
-			            November 23, 2016           AS          *Swiched order of wool and wood
+	    November 23, 2016           AS          *Switched order of wool and wood
                                                      in printResources method
 			
 	    November 24, 2016		RA	    * Corrected the maximum number of buildings
@@ -127,7 +127,7 @@ public class Player {
                 break;
             case 2:
                 color = RED;
-f                break;
+                break;
             case 3:
                 color = GREEN;
                 break;
@@ -312,18 +312,18 @@ f                break;
     public void printRoads() { 
 	 // Prints player's current number of roads  
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of roads:\n"
-		+ roadCount + "\n";
+		+ roadCount + "\n");
     }
 			    
     public void printSettlements() {
 	 // Prints player's current number of settlements  
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of settlements:\n"
-		+ settlementCount + "\n";
+		+ settlementCount + "\n");
     }
 			    
     public void printCities() {
 	 // Prints player's current number of cities 
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of cities:\n"
-		+ cityCount + "\n";
+		+ cityCount + "\n");
     }
 }
