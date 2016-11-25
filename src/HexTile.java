@@ -50,6 +50,8 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Minor comment addition
 
+            November 25, 2016           AS          *Added Polygon hexagon
+
  */
 
 
@@ -89,6 +91,7 @@ public class HexTile {
 //                          Accessors and Mutators
 // _____________________________________________________________________________
    
+ 
     public int getResourceYield() {
         return this.resourceYield;
     }

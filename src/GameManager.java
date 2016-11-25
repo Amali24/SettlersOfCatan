@@ -88,6 +88,8 @@ Activity:	  -Date-             -Person-               -Updates-
 import java.sql.SQLException;
 import java.util.Scanner;
 import javafx.application.Application;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 public class GameManager {
 
@@ -131,6 +133,12 @@ public class GameManager {
     static Intersection errorIntersection;
     static Boundary errorBoundary;
     static HexTile errorTile;
+    
+    static Image brickImage = new Image("brick.jpg");
+    static Image lumberImage = new Image("trees.jpg");
+    static Image oreImage = new Image("ore.jpg");
+    static Image wheatImage = new Image("wheat.jpg");
+    static Image woolImage = new Image("wool.jpg");
 
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
@@ -1086,12 +1094,15 @@ public class GameManager {
                         case BRICK:
                             if (brickTiles < maxBrick) {
                                 brickTiles++;
+                                tile.hexagon.setFill(new ImagePattern(brickImage));
+                                
                                 yieldIsValid = true;
                             }
                             break;
                         case LUMBER:
                             if (lumberTiles < maxLumber) {
                                 lumberTiles++;
+                                tile.hexagon.setFill(new ImagePattern(lumberImage));
                                 yieldIsValid = true;
                             }
                             break;
@@ -1104,12 +1115,14 @@ public class GameManager {
                         case WHEAT:
                             if (wheatTiles < maxWheat) {
                                 wheatTiles++;
+                                tile.hexagon.setFill(new ImagePattern(wheatImage));
                                 yieldIsValid = true;
                             }
                             break;
                         case WOOL:
                             if (woolTiles < maxWool) {
                                 woolTiles++;
+                                tile.hexagon.setFill(new ImagePattern(woolImage));
                                 yieldIsValid = true;
                             }
                             break;
