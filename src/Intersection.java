@@ -36,7 +36,7 @@ Classes:    Intersection
  any adjacent intersections, and they have a road that connects to its position 
  (this road requirement is dropped durring the first 2 round of the game).
  
- 
+  
 Activity:	  -Date-             -Person-               -Updates-
             October 20, 2016		AS          *Created Intersection Class
                                                     *Created Boundary Class
@@ -44,7 +44,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Submitted as AS's project 1
 				
             November 7, 2016		AS          *Standardized Documentation 
-                                                     and Formatting 
+                                                    and Formatting 
 
             November 14, 2016		AS          *added searchIntersections and
                                                      searchBoundary methods
@@ -63,7 +63,10 @@ Activity:	  -Date-             -Person-               -Updates-
             November 23, 2016           AT          * Added minor commenting
                                                     * Changed location, adjacentIntersections
                                                       and adjacentBoundaries to final
-
+						      
+ 	    November 24, 2016		RA	    * Added validation statements from line 245  
+	    					      to 265, to  make sure settlements and cities 
+						      have not exceeded maximum amount
 
  */
 
@@ -97,6 +100,7 @@ public class Intersection {
     private final ArrayList<Boundary> adjacentBoundaries = new ArrayList<>();
     
     private final Circle circle;
+    private Player playerInfo;
 
 //                               Constructors
 // _____________________________________________________________________________
@@ -198,7 +202,8 @@ public class Intersection {
 //                                 Methods
 // _____________________________________________________________________________
 
-    /** The <code> occupied </code> method returns a boolean indicating if the
+
+	/** The <code> occupied </code> method returns a boolean indicating if the
      * <code> Intersection </code> is settled.
      *
      * @return boolean
@@ -237,6 +242,27 @@ public class Intersection {
 
         }
 
+	// If player wants to build a settlement, but alreary has 5, returns false
+        else if(settlementType == 1 && playerInfo.getSettlementCount() >= 5){
+            
+            System.out.println("Player " + (playerID + 1) 
+                    + " is unable to settle this intersection because it "
+                    + " has exceeded the amount of settlements available.");
+            
+            return false;
+        }
+        
+        // If player wants to build a city, but alreary has 4, returns false
+        else if(settlementType == 2 && playerInfo.getCityCount() >= 4){
+            
+            System.out.println("Player " + (playerID + 1)
+                    + " is unable to settle this intersection because it "
+                    + " has exceeded the amount of cities available.");
+            
+            return false;
+		
+        }
+	    
         //For-loop iterates through adjacent intersections and boundaries
         for (int i = 0; i < adjacentIntersectionCount; i++) {
 
