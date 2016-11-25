@@ -721,6 +721,13 @@ public class GameManager {
             }
         }
     }
+    
+    static int rollDice(){
+        int die1 = HexTile.getRandInt(1,6);
+        int die2 = HexTile.getRandInt(1,6);
+        int sum = die1 + die2;
+        return sum;
+    }
 
     static int buildGameboard() {
         System.out.println("Setting up game board");

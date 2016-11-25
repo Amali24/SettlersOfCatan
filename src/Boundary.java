@@ -218,7 +218,7 @@ class Boundary {
         //Message for Testing
         System.out.println("Player " + (playerID + 1)
                 + " is unable to build a road here because"
-                + " she has no adjactent roads or settlements.");
+                + " she has no adjacent roads or settlements.");
         return false;
 
     }

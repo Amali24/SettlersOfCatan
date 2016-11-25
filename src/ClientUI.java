@@ -60,15 +60,18 @@ Activity:	  -Date-             -Person-               -Updates-
 
  */
 import java.util.ArrayList;
-import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BorderStroke.*;
 import static javafx.scene.layout.BorderStrokeStyle.*;
 import static javafx.scene.layout.CornerRadii.*;
 import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.*;
-import javafx.stage.Stage;
+import javafx.scene.text.*;
+import javafx.stage.*;
 
 public class ClientUI extends Application {
 
@@ -91,7 +94,7 @@ public class ClientUI extends Application {
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
         gameBoard.setMinSize(700, 600);
-       
+
         // Creates a black boundary
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
@@ -100,20 +103,82 @@ public class ClientUI extends Application {
         for (Boundary boundary : GameManager.boundaries) {
             gameBoard.getChildren().add(boundary.getLine());
         }
-        
+
         // Iterate over intersections and add their circles to the GUI
         for (Intersection intersection : GameManager.intersections) {
             Circle circle = intersection.getCircle();
-            
+
             // Set all circles to hollow black
             circle.setStroke(BLACK);
             circle.setFill(WHITE);
-            
+
             gameBoard.getChildren().add(circle);
         }
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+
+        HBox hBoxButtons = new HBox(25);
+
+        Button btnRoll = new Button("Roll");
+        btnRoll.setOnAction(e
+                -> {
+            int diceRoll = GameManager.rollDice();
+            for (HexTile tile : GameManager.tiles) {
+                if (tile.getNumRoll() == diceRoll) {
+                    tile.yieldResources();
+                }
+            }
+        });
+
+        /*Button btnBuildRoad = new Button("Build a Road");
+        btnBuildRoad.setOnAction(e
+                -> {
+            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+        });*/
+        Button btnBuild = new Button("Build Improvements");
+        btnBuild.setOnAction(
+                e -> {
+                    Stage buildMenu = new Stage();
+
+                    HBox btnBox = new HBox(25);
+                    Button btnBuildRoad = new Button("Build a Road");
+                    btnBuildRoad.setOnAction(e1 ->{
+                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+                    });
+                    
+                    Button btnBuildSettlement = new Button("Build a Settlement");
+                    
+                    Button btnBuildCity = new Button("Build a City");
+                    
+                    Button btnCancel = new Button("Cancel");
+                    
+                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
+
+                    Text txtBuild = new Text("Select a type of Improvement to Build:");
+                    txtBuild.setFont(new Font(14));
+                    txtBuild.setTextAlignment(TextAlignment.CENTER);
+                    
+                    BorderPane boPa = new BorderPane();
+                    boPa.setCenter(btnBox);
+                    boPa.setTop(txtBuild);
+                    
+                    buildMenu.initModality(Modality.APPLICATION_MODAL);
+
+                    buildMenu.setScene(new Scene(boPa));
+                    buildMenu.setTitle("Build Menu");
+                    buildMenu.show();
+                });
+        Button btnDevCards = new Button("Development Cards");
+        Button btnTrade = new Button("Trade");
+        Button btnEndTurn = new Button("End Turn");
+
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
+        hBoxButtons.setAlignment(Pos.CENTER);
+        bp.setBottom(hBoxButtons);
+
         // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
 
@@ -139,14 +204,14 @@ public class ClientUI extends Application {
     }
 
     void buildARoad(ArrayList<Boundary> buildableRoads, Boundary[] boundaries, int activePlayerID) {
-        
+
         // For each boundary in the game,
         for (Boundary b : boundaries) {
             // Check against every buildableRoad (number should be relatively low)
             for (Boundary road : buildableRoads) {
                 // Create a Line object for ease of use
                 Line line = b.getLine();
-                
+
                 // If the buildable road is equal to the current road
                 if (road.getLine() == line) {
                     // Make it wider and setOnClick to GUIBuildRoad method
@@ -158,8 +223,8 @@ public class ClientUI extends Application {
     }
 
     ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
-        
-       // Create an ArrayList to hold Intersections the active player can build on
+
+        // Create an ArrayList to hold Intersections the active player can build on
         ArrayList<Intersection> buildableIntersections = new ArrayList<>();
 
         for (Intersection i : GameManager.intersections) {
@@ -178,7 +243,7 @@ public class ClientUI extends Application {
         for (Intersection i : intersections) {
             // For each intersection in the game, create a Circle from its circle
             Circle circle = i.getCircle();
-            
+
             for (Intersection intersection : buildableSettlements) {
                 // Compare each circle to buildableSettlements
                 if (intersection.getCircle() == circle) {
