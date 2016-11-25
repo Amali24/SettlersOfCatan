@@ -83,6 +83,7 @@ Activity:	  -Date-             -Person-               -Updates-
 						      addCity methods
 	    					    * Created printRoads, printSettlement and 
 						      printCities methods
+
  */
 public class Player {
 
@@ -127,7 +128,7 @@ public class Player {
                 break;
             case 2:
                 color = RED;
-f                break;
+                break;
             case 3:
                 color = GREEN;
                 break;
@@ -308,22 +309,41 @@ f                break;
                 + resourceMaterials[4] + " Wool\n");
 
     }
+    
+     public String toStringResources() {
+        
+        String resources = "";
+        
+        // Creates a string with player's resource total
+        resources = "\nPlayer " + (playerID + 1) + "'s current Resources:\n"
+                + "_____________________________\n"
+                + resourceMaterials[0] + " Brick\n"
+                + resourceMaterials[1] + " Lumber\n"
+                + resourceMaterials[2] + " Ore\n"
+                + resourceMaterials[3] + " Wheat\n"
+                + resourceMaterials[4] + " Wool\n";
+        
+        return resources;
+
+    }
 	
     public void printRoads() { 
 	 // Prints player's current number of roads  
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of roads:\n"
-		+ roadCount + "\n";
+		+ roadCount + "\n");
     }
 			    
     public void printSettlements() {
 	 // Prints player's current number of settlements  
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of settlements:\n"
-		+ settlementCount + "\n";
+		+ settlementCount + "\n");
     }
 			    
     public void printCities() {
 	 // Prints player's current number of cities 
 	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of cities:\n"
-		+ cityCount + "\n";
+		+ cityCount + "\n");
     }
+    
+    
 }

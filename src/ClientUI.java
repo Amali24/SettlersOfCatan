@@ -54,13 +54,33 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       in build functions
                                                     * Added known issue of not sizing clickable
                                                       nodes after they are clicked to tracker
+
+           November 24, 2016            OB          * Created panes that holds player's info
+                                                    * Added methods that initialize JPanels, 
+                                                      so they display player's info 
+                                                        ~createAndSetStatsPanel(final SwingNode, int) 
+                                                             - for displaying particular player's stats
+                                                        ~createAndSetResourcePanel(final SwingNode) 
+                                                             - for displaying current player available resuources
+                                                        ~createAndSetButtonPanel(final SwingNode) 
+                                                             - for displaying action-buttons
+
+
+                                                    
+                                                    
+
                                                     
 				
 
 
  */
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import javafx.application.Application;
+import javafx.embed.swing.SwingNode;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BorderStroke.*;
@@ -69,6 +89,11 @@ import static javafx.scene.layout.CornerRadii.*;
 import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class ClientUI extends Application {
 
@@ -114,6 +139,42 @@ public class ClientUI extends Application {
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+        
+        
+        VBox leftStatsVBox = new VBox(50);
+        VBox rightStatsVBox = new VBox(50);
+        
+        final SwingNode player1Stats = new SwingNode();
+        final SwingNode player2Stats = new SwingNode();
+        final SwingNode player3Stats = new SwingNode();
+        final SwingNode player4Stats = new SwingNode();
+        
+        // Initializing stats panels 
+        createAndSetStatsPanel(player1Stats, 0);
+        createAndSetStatsPanel(player2Stats, 1);
+        createAndSetStatsPanel(player3Stats, 2);
+        createAndSetStatsPanel(player4Stats, 3);
+        
+        
+        leftStatsVBox.getChildren().addAll(player1Stats , player2Stats);
+        rightStatsVBox.getChildren().addAll(player3Stats, player4Stats);
+     
+        HBox bottomHBox = new HBox(50);
+        
+        final SwingNode resourcePanel = new SwingNode();
+        createAndSetResourcePanel(resourcePanel);
+
+        final SwingNode buttonPanel = new SwingNode();
+        createAndSetButtonPanel(buttonPanel);
+        
+        bottomHBox.getChildren().addAll(resourcePanel, buttonPanel);
+        bottomHBox.setAlignment(Pos.CENTER);
+        
+        bp.setBottom(bottomHBox);
+        bp.setLeft(leftStatsVBox);
+        bp.setRight(rightStatsVBox);
+        
+        
         // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
 
@@ -121,7 +182,217 @@ public class ClientUI extends Application {
 
         primaryStage.show();
     }
+    
+    private void createAndSetResourcePanel(final SwingNode swingNode) {
+             SwingUtilities.invokeLater(new Runnable() {
+                 @Override
+                 public void run() {
+                     
+                    JLabel labelBrick = new JLabel("Brick");
+                    JLabel labelLumber = new JLabel("Lumber");
+                    JLabel labelOre = new JLabel("Ore");
+                    JLabel labelWheat = new JLabel("Wheat");
+                    JLabel labelWool = new JLabel("Wool");
+                    
+                    JLabel labelBrickCount = new JLabel("");
+                    labelBrickCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
+                                    .resourceMaterials[GameManager.BRICK]));
+                    
+                    JLabel labelLumberCount = new JLabel("");
+                    labelLumberCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
+                                    .resourceMaterials[GameManager.LUMBER]));
+                  
+                    JLabel labelOreCount = new JLabel("");
+                    labelOreCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
+                                    .resourceMaterials[GameManager.ORE]));
+                    
+                    JLabel labelWheatCount = new JLabel("");
+                    labelWheatCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
+                                    .resourceMaterials[GameManager.WHEAT]));
+                    
+                    JLabel labelWoolCount = new JLabel("");
+                    labelWoolCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
+                                    .resourceMaterials[GameManager.WOOL]));
+                    
+    
+                     // create a new panel with GridBagLayout manager
+                    JPanel reseourcesPanel = new JPanel(new GridBagLayout());
+                    
+                    GridBagConstraints constraints = new GridBagConstraints();
+                    constraints.anchor = GridBagConstraints.WEST;
+                    constraints.insets = new Insets(10, 10, 10, 10);
+         
+                    // add components to the panel
+                    constraints.gridx = 0;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelBrick, constraints);
+                    
+                    constraints.gridy = 1;
+                    reseourcesPanel.add(labelBrickCount, constraints);
+                    
+                    constraints.gridx = 1;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelLumber, constraints);
+                    
+                    constraints.gridy = 1;
+                    reseourcesPanel.add(labelLumberCount, constraints);
+                    
+                    constraints.gridx = 2;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelOre, constraints);
+                    
+                    constraints.gridy = 1;
+                    reseourcesPanel.add(labelOreCount, constraints);
+                    
+                    constraints.gridx = 3;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelWheat, constraints);
+                    
+                    constraints.gridy = 1;
+                    reseourcesPanel.add(labelWheatCount, constraints);
+                    
+                    constraints.gridx =4;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelWool, constraints);
+                    
+                    constraints.gridy = 1;
+                    reseourcesPanel.add(labelWoolCount, constraints);
+                    
+                     // set border for the panel
+                    reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
+                            BorderFactory.createEtchedBorder(), "Player " + (GameManager.activePlayerID + 1) + " (current) " + "Resources" ));
 
+                    JPanel panel = new JPanel();
+                    panel.add(reseourcesPanel);
+                    swingNode.setContent(panel);
+                 }
+             });
+         }
+    
+    private void createAndSetStatsPanel(final SwingNode swingNode, int playerID) {
+             SwingUtilities.invokeLater(new Runnable() {
+                 @Override
+                 public void run() {
+                     
+                    JLabel labelResource = new JLabel("Resource Count:");
+                    JLabel labelDevCards = new JLabel("Development Cards:");
+                    JLabel labelVictroyPoints = new JLabel("Victory Points:");
+                    JLabel labelKnightCards = new JLabel("Knight Cards:");
+                    JLabel labelRoad = new JLabel("Road Count:");
+                    
+                    JLabel labelResourceCount = new JLabel("");
+                    labelResourceCount.setText(String.valueOf(GameManager.players[playerID].getResourceTotal()));
+                    
+                    JLabel labelDevCardsCount = new JLabel("");
+                    labelDevCardsCount.setText(String.valueOf(GameManager.players[playerID].getDevelopmentCardCount()));
+                  
+                    JLabel labelVictroyPointsCount = new JLabel("");
+                    labelVictroyPointsCount.setText(String.valueOf(GameManager.players[playerID].getTotalVictoryPoints()));
+                    
+                    JLabel labelKnightCardsCount = new JLabel("");
+                    labelKnightCardsCount.setText(String.valueOf(GameManager.players[playerID].getKnightCards()));
+                    
+                    JLabel labelRoadCount = new JLabel("");
+                    labelRoadCount.setText(String.valueOf(GameManager.players[playerID].getRoadCount()));
+                    
+    
+                     // create a new panel with GridBagLayout manager
+                    JPanel reseourcesPanel = new JPanel(new GridBagLayout());
+                    
+                    GridBagConstraints constraints = new GridBagConstraints();
+                    constraints.anchor = GridBagConstraints.WEST;
+                    constraints.insets = new Insets(10, 10, 10, 10);
+         
+                    // add components to the panel
+                    constraints.gridx = 0;
+                    constraints.gridy = 0;     
+                    reseourcesPanel.add(labelResource, constraints);
+                    
+                    constraints.gridx = 1;
+                    reseourcesPanel.add(labelResourceCount, constraints);
+                    
+                    constraints.gridx = 0;
+                    constraints.gridy = 1;     
+                    reseourcesPanel.add(labelDevCards, constraints);
+                    
+                    constraints.gridx = 1;
+                    reseourcesPanel.add(labelDevCardsCount, constraints);
+                    
+                    constraints.gridx = 0;
+                    constraints.gridy = 2;     
+                    reseourcesPanel.add(labelVictroyPoints, constraints);
+                    
+                    constraints.gridx = 1;
+                    reseourcesPanel.add(labelVictroyPointsCount, constraints);
+                    
+                    constraints.gridx = 0;
+                    constraints.gridy = 3;     
+                    reseourcesPanel.add(labelKnightCards, constraints);
+                    
+                    constraints.gridx = 1;
+                    reseourcesPanel.add(labelKnightCardsCount, constraints);
+                    
+                    constraints.gridx =0;
+                    constraints.gridy = 4;     
+                    reseourcesPanel.add(labelRoad, constraints);
+                    
+                    constraints.gridx = 1;
+                    reseourcesPanel.add(labelRoadCount, constraints);
+                    
+                     // set border for the panel
+                    reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
+                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + " Stats"));
+
+                    JPanel panel = new JPanel();
+                    panel.add(reseourcesPanel);
+                    swingNode.setContent(panel);
+                 }
+             });
+         }
+    
+    private void createAndSetButtonPanel(final SwingNode swingNode) {
+             SwingUtilities.invokeLater(new Runnable() {
+                 @Override
+                 public void run() {
+                     
+                    JButton btnBuy = new JButton("Buy");
+                    JButton btnRoll = new JButton("Roll");
+                    JButton btnTrade = new JButton("Trade");
+                    JButton btnEndTurn = new JButton("End Turn");
+
+                     // create a new panel with GridBagLayout manager
+                    JPanel buttonPanel = new JPanel(new GridBagLayout());
+                    
+                    GridBagConstraints constraints = new GridBagConstraints();
+                    constraints.anchor = GridBagConstraints.WEST;
+                    constraints.insets = new Insets(5, 5, 5, 5);
+         
+                    // add components to the panel
+                    constraints.gridx = 0;
+                    constraints.gridy = 0;     
+                    buttonPanel.add(btnBuy, constraints);
+                    
+                    constraints.gridx = 1;
+                    buttonPanel.add(btnRoll, constraints);
+                    
+                    constraints.gridx = 0;
+                    constraints.gridy = 1;     
+                    buttonPanel.add(btnTrade, constraints);
+                    
+                    constraints.gridx = 1;
+                    buttonPanel.add(btnEndTurn, constraints);
+                    
+                     // set border for the panel
+                    buttonPanel.setBorder(BorderFactory.createTitledBorder(
+                            BorderFactory.createEtchedBorder(), "Actions:"));
+
+                    JPanel panel = new JPanel();
+                    panel.add(buttonPanel);
+                    swingNode.setContent(panel);
+                 }
+             });
+         }
+   
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
         // Create an ArrayList to hold roads the active player can build on
