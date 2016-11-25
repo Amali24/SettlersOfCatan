@@ -341,7 +341,7 @@ public class ClientUI extends Application {
                     
                      // set border for the panel
                     reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + " Resources"));
+                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + " Stats"));
 
                     JPanel panel = new JPanel();
                     panel.add(reseourcesPanel);
