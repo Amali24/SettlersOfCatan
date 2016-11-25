@@ -62,6 +62,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                              - for displaying particular player's stats
                                                         ~createAndSetResourcePanel(final SwingNode) 
                                                              - for displaying current player available resuources
+                                                        ~createAndSetButtonPanel(final SwingNode) 
+                                                             - for displaying action-buttons
+
 
                                                     
                                                     
@@ -77,6 +80,7 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.embed.swing.SwingNode;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BorderStroke.*;
@@ -86,6 +90,7 @@ import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -155,12 +160,17 @@ public class ClientUI extends Application {
         rightStatsVBox.getChildren().addAll(player3Stats, player4Stats);
      
         HBox bottomHBox = new HBox(50);
+        
         final SwingNode resourcePanel = new SwingNode();
         createAndSetResourcePanel(resourcePanel);
 
-        bottomHBox.getChildren().add(resourcePanel);
+        final SwingNode buttonPanel = new SwingNode();
+        createAndSetButtonPanel(buttonPanel);
         
-        bp.setBottom(resourcePanel);
+        bottomHBox.getChildren().addAll(resourcePanel, buttonPanel);
+        bottomHBox.setAlignment(Pos.CENTER);
+        
+        bp.setBottom(bottomHBox);
         bp.setLeft(leftStatsVBox);
         bp.setRight(rightStatsVBox);
         
@@ -250,7 +260,7 @@ public class ClientUI extends Application {
                     
                      // set border for the panel
                     reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Player " + (GameManager.activePlayerID + 1) + "'s Resources"));
+                            BorderFactory.createEtchedBorder(), "Player " + (GameManager.activePlayerID + 1) + " (current) " + "Resources" ));
 
                     JPanel panel = new JPanel();
                     panel.add(reseourcesPanel);
@@ -331,10 +341,53 @@ public class ClientUI extends Application {
                     
                      // set border for the panel
                     reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + "'s Resources"));
+                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + " Resources"));
 
                     JPanel panel = new JPanel();
                     panel.add(reseourcesPanel);
+                    swingNode.setContent(panel);
+                 }
+             });
+         }
+    
+    private void createAndSetButtonPanel(final SwingNode swingNode) {
+             SwingUtilities.invokeLater(new Runnable() {
+                 @Override
+                 public void run() {
+                     
+                    JButton btnBuy = new JButton("Buy");
+                    JButton btnRoll = new JButton("Roll");
+                    JButton btnTrade = new JButton("Trade");
+                    JButton btnEndTurn = new JButton("End Turn");
+
+                     // create a new panel with GridBagLayout manager
+                    JPanel buttonPanel = new JPanel(new GridBagLayout());
+                    
+                    GridBagConstraints constraints = new GridBagConstraints();
+                    constraints.anchor = GridBagConstraints.WEST;
+                    constraints.insets = new Insets(5, 5, 5, 5);
+         
+                    // add components to the panel
+                    constraints.gridx = 0;
+                    constraints.gridy = 0;     
+                    buttonPanel.add(btnBuy, constraints);
+                    
+                    constraints.gridx = 1;
+                    buttonPanel.add(btnRoll, constraints);
+                    
+                    constraints.gridx = 0;
+                    constraints.gridy = 1;     
+                    buttonPanel.add(btnTrade, constraints);
+                    
+                    constraints.gridx = 1;
+                    buttonPanel.add(btnEndTurn, constraints);
+                    
+                     // set border for the panel
+                    buttonPanel.setBorder(BorderFactory.createTitledBorder(
+                            BorderFactory.createEtchedBorder(), "Actions:"));
+
+                    JPanel panel = new JPanel();
+                    panel.add(buttonPanel);
                     swingNode.setContent(panel);
                  }
              });
