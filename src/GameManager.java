@@ -81,6 +81,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Added comments to all methods
                                                     * Fixed some logical errors
 
+            November 27, 2016           AS          *Added pictures displayed in
+                                                     hextiles
+
 
 
  */
@@ -133,12 +136,13 @@ public class GameManager {
     static Intersection errorIntersection;
     static Boundary errorBoundary;
     static HexTile errorTile;
-    
-    static Image brickImage = new Image("brick.jpg");
-    static Image lumberImage = new Image("trees.jpg");
-    static Image oreImage = new Image("ore.jpg");
-    static Image wheatImage = new Image("wheat.jpg");
-    static Image woolImage = new Image("wool.jpg");
+
+    Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/brick2.jpg"));
+    Image lumberImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/trees3.jpg"));
+    Image oreImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/ore2.jpg"));
+    Image wheatImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wheat2.jpg"));
+    Image woolImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wool2.jpg"));
+    Image desertImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/desert2.jpg"));
 
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
@@ -151,7 +155,8 @@ public class GameManager {
         // create the deck of development cards [not random]
         banker.generateDevelopmentCards();
         // build the game board with randomly generated yields and numbers to roll
-        buildGameboard();
+        GameManager gm1 = new GameManager();
+        gm1.buildGameboard();
         // Open debug mode, a "no" answer skips this
         debugMode();
         // Launch GUI shell
@@ -729,15 +734,15 @@ public class GameManager {
             }
         }
     }
-    
-    static int rollDice(){
-        int die1 = HexTile.getRandInt(1,6);
-        int die2 = HexTile.getRandInt(1,6);
+
+    static int rollDice() {
+        int die1 = HexTile.getRandInt(1, 6);
+        int die2 = HexTile.getRandInt(1, 6);
         int sum = die1 + die2;
         return sum;
     }
 
-    static int buildGameboard() {
+    int buildGameboard() {
         System.out.println("Setting up game board");
 
         //~~~~~~~~~~~~~ Creating Intersections~~~~~~~~~~~~~~~~\\
@@ -1064,6 +1069,7 @@ public class GameManager {
         }
         // T10 will always be the center (desert) tile
         T10.setCenter(true);
+        T10.hexagon.setFill(new ImagePattern(desertImage));
         // The robber always starts in the center
         T10.setRobber(true);
 
@@ -1095,7 +1101,7 @@ public class GameManager {
                             if (brickTiles < maxBrick) {
                                 brickTiles++;
                                 tile.hexagon.setFill(new ImagePattern(brickImage));
-                                
+
                                 yieldIsValid = true;
                             }
                             break;
@@ -1109,6 +1115,7 @@ public class GameManager {
                         case ORE:
                             if (oreTiles < maxOre) {
                                 oreTiles++;
+                                tile.hexagon.setFill(new ImagePattern(oreImage));
                                 yieldIsValid = true;
                             }
                             break;
