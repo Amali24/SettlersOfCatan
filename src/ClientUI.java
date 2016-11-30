@@ -55,45 +55,26 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Added known issue of not sizing clickable
                                                       nodes after they are clicked to tracker
 
-           November 24, 2016            OB          * Created panes that holds player's info
-                                                    * Added methods that initialize JPanels, 
-                                                      so they display player's info 
-                                                        ~createAndSetStatsPanel(final SwingNode, int) 
-                                                             - for displaying particular player's stats
-                                                        ~createAndSetResourcePanel(final SwingNode) 
-                                                             - for displaying current player available resuources
-                                                        ~createAndSetButtonPanel(final SwingNode) 
-                                                             - for displaying action-buttons
-
-
-                                                    
-                                                    
-
-                                                    
+            November 30, 2016           OB          * Added Resources Panel 
+                                                    * Added CSS styling for buttons 
+                                                   
 				
 
 
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ArrayList;
-import javafx.application.Application;
-import javafx.embed.swing.SwingNode;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BorderStroke.*;
 import static javafx.scene.layout.BorderStrokeStyle.*;
 import static javafx.scene.layout.CornerRadii.*;
 import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.*;
-import javafx.stage.Stage;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javafx.scene.text.*;
+import javafx.stage.*;
 
 public class ClientUI extends Application {
 
@@ -116,65 +97,140 @@ public class ClientUI extends Application {
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
         gameBoard.setMinSize(700, 600);
-       
+
         // Creates a black boundary
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
+
+        for (HexTile tile : GameManager.tiles) {
+            Polygon hex = tile.hexagon;
+            gameBoard.getChildren().add(hex);
+        }
 
         // Iterate over all boundaries and add their respective lines to the GUI
         for (Boundary boundary : GameManager.boundaries) {
             gameBoard.getChildren().add(boundary.getLine());
         }
-        
+
         // Iterate over intersections and add their circles to the GUI
         for (Intersection intersection : GameManager.intersections) {
             Circle circle = intersection.getCircle();
-            
+
             // Set all circles to hollow black
             circle.setStroke(BLACK);
             circle.setFill(WHITE);
-            
+
             gameBoard.getChildren().add(circle);
         }
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
-        
-        
-        VBox leftStatsVBox = new VBox(50);
-        VBox rightStatsVBox = new VBox(50);
-        
-        final SwingNode player1Stats = new SwingNode();
-        final SwingNode player2Stats = new SwingNode();
-        final SwingNode player3Stats = new SwingNode();
-        final SwingNode player4Stats = new SwingNode();
-        
-        // Initializing stats panels 
-        createAndSetStatsPanel(player1Stats, 0);
-        createAndSetStatsPanel(player2Stats, 1);
-        createAndSetStatsPanel(player3Stats, 2);
-        createAndSetStatsPanel(player4Stats, 3);
-        
-        
-        leftStatsVBox.getChildren().addAll(player1Stats , player2Stats);
-        rightStatsVBox.getChildren().addAll(player3Stats, player4Stats);
-     
-        HBox bottomHBox = new HBox(50);
-        
-        final SwingNode resourcePanel = new SwingNode();
-        createAndSetResourcePanel(resourcePanel);
 
-        final SwingNode buttonPanel = new SwingNode();
-        createAndSetButtonPanel(buttonPanel);
-        
-        bottomHBox.getChildren().addAll(resourcePanel, buttonPanel);
-        bottomHBox.setAlignment(Pos.CENTER);
-        
-        bp.setBottom(bottomHBox);
-        bp.setLeft(leftStatsVBox);
-        bp.setRight(rightStatsVBox);
-        
-        
+        // ___________________________  Buttons ___________________________
+        // Button styling using CSS. 
+        String btnStyle
+                = "-fx-text-fill: white;\n"
+                + "-fx-font-family: \"Arial Narrow\";\n"
+                + "-fx-font-weight: bold;\n"
+                + "-fx-font-size: 11pt;\n"
+                + "-fx-background-color: linear-gradient(#61a2b1, #2A5058);\n"
+                + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
+                + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
+
+        HBox hBoxButtons = new HBox(25);
+
+        Button btnRoll = new Button("Roll");
+        // Applying predefined Style for each button
+        btnRoll.setStyle(btnStyle);
+        btnRoll.setOnAction(e
+                -> {
+            int diceRoll = GameManager.rollDice();
+            for (HexTile tile : GameManager.tiles) {
+                if (tile.getNumRoll() == diceRoll) {
+                    tile.yieldResources();
+                }
+            }
+        });
+
+        /*Button btnBuildRoad = new Button("Build a Road");
+        btnBuildRoad.setOnAction(e
+                -> {
+            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+        });*/
+        Button btnBuild = new Button("Build Improvements");
+        btnBuild.setStyle(btnStyle);
+        btnBuild.setOnAction(
+                e -> {
+                    Stage buildMenu = new Stage();
+
+                    HBox btnBox = new HBox(25);
+                    Button btnBuildRoad = new Button("Build a Road");
+                    btnBuildRoad.setOnAction(e1 -> {
+                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+                    });
+
+                    Button btnBuildSettlement = new Button("Build a Settlement");
+
+                    Button btnBuildCity = new Button("Build a City");
+
+                    Button btnCancel = new Button("Cancel");
+
+                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
+
+                    Text txtBuild = new Text("Select a type of Improvement to Build:");
+                    txtBuild.setFont(new Font(14));
+                    txtBuild.setTextAlignment(TextAlignment.CENTER);
+
+                    BorderPane boPa = new BorderPane();
+                    boPa.setCenter(btnBox);
+                    boPa.setTop(txtBuild);
+
+                    buildMenu.initModality(Modality.APPLICATION_MODAL);
+
+                    buildMenu.setScene(new Scene(boPa));
+                    buildMenu.setTitle("Build Menu");
+                    buildMenu.show();
+                });
+        Button btnDevCards = new Button("Development Cards");
+        btnDevCards.setStyle(btnStyle);
+
+        Button btnTrade = new Button("Trade");
+        btnTrade.setStyle(btnStyle);
+
+        Button btnEndTurn = new Button("End Turn");
+        btnEndTurn.setStyle(btnStyle);
+
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
+        hBoxButtons.setAlignment(Pos.CENTER);
+
+        // ________________________  Resource Panel ____________________________
+        // VBox that holds Button and Available Resources Panels, 
+        // and located at the bottom of BorderPanel
+        VBox vBoxButtom = new VBox(5);
+
+        // This HBox holds StackPane that displays available resources 
+        // for the Active Player
+        HBox resourcesHBox = new HBox(300);
+
+        // Panel that deisplays available resources to the active player
+        StackPane resourcePanel = new StackPane();
+        resourcePanel.setAlignment(new Label("Available Resources"), Pos.CENTER);
+
+        // Calling method that fills our Resource Pane with up-to-date information
+        createResoursePanel(resourcePanel);
+
+        resourcesHBox.getChildren().add(resourcePanel);
+        resourcesHBox.setAlignment(Pos.CENTER);
+
+        // Adding Resources and Button panels to the VBox
+        vBoxButtom.getChildren().addAll(resourcesHBox, hBoxButtons);
+        // _____________________________________________________________________
+
+        // Adding vBoxButtom to the bottom of Boarder Pane
+        bp.setBottom(vBoxButtom);
+
         // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
 
@@ -182,217 +238,7 @@ public class ClientUI extends Application {
 
         primaryStage.show();
     }
-    
-    private void createAndSetResourcePanel(final SwingNode swingNode) {
-             SwingUtilities.invokeLater(new Runnable() {
-                 @Override
-                 public void run() {
-                     
-                    JLabel labelBrick = new JLabel("Brick");
-                    JLabel labelLumber = new JLabel("Lumber");
-                    JLabel labelOre = new JLabel("Ore");
-                    JLabel labelWheat = new JLabel("Wheat");
-                    JLabel labelWool = new JLabel("Wool");
-                    
-                    JLabel labelBrickCount = new JLabel("");
-                    labelBrickCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
-                                    .resourceMaterials[GameManager.BRICK]));
-                    
-                    JLabel labelLumberCount = new JLabel("");
-                    labelLumberCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
-                                    .resourceMaterials[GameManager.LUMBER]));
-                  
-                    JLabel labelOreCount = new JLabel("");
-                    labelOreCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
-                                    .resourceMaterials[GameManager.ORE]));
-                    
-                    JLabel labelWheatCount = new JLabel("");
-                    labelWheatCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
-                                    .resourceMaterials[GameManager.WHEAT]));
-                    
-                    JLabel labelWoolCount = new JLabel("");
-                    labelWoolCount.setText(String.valueOf(GameManager.players[GameManager.activePlayerID]
-                                    .resourceMaterials[GameManager.WOOL]));
-                    
-    
-                     // create a new panel with GridBagLayout manager
-                    JPanel reseourcesPanel = new JPanel(new GridBagLayout());
-                    
-                    GridBagConstraints constraints = new GridBagConstraints();
-                    constraints.anchor = GridBagConstraints.WEST;
-                    constraints.insets = new Insets(10, 10, 10, 10);
-         
-                    // add components to the panel
-                    constraints.gridx = 0;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelBrick, constraints);
-                    
-                    constraints.gridy = 1;
-                    reseourcesPanel.add(labelBrickCount, constraints);
-                    
-                    constraints.gridx = 1;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelLumber, constraints);
-                    
-                    constraints.gridy = 1;
-                    reseourcesPanel.add(labelLumberCount, constraints);
-                    
-                    constraints.gridx = 2;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelOre, constraints);
-                    
-                    constraints.gridy = 1;
-                    reseourcesPanel.add(labelOreCount, constraints);
-                    
-                    constraints.gridx = 3;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelWheat, constraints);
-                    
-                    constraints.gridy = 1;
-                    reseourcesPanel.add(labelWheatCount, constraints);
-                    
-                    constraints.gridx =4;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelWool, constraints);
-                    
-                    constraints.gridy = 1;
-                    reseourcesPanel.add(labelWoolCount, constraints);
-                    
-                     // set border for the panel
-                    reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Player " + (GameManager.activePlayerID + 1) + " (current) " + "Resources" ));
 
-                    JPanel panel = new JPanel();
-                    panel.add(reseourcesPanel);
-                    swingNode.setContent(panel);
-                 }
-             });
-         }
-    
-    private void createAndSetStatsPanel(final SwingNode swingNode, int playerID) {
-             SwingUtilities.invokeLater(new Runnable() {
-                 @Override
-                 public void run() {
-                     
-                    JLabel labelResource = new JLabel("Resource Count:");
-                    JLabel labelDevCards = new JLabel("Development Cards:");
-                    JLabel labelVictroyPoints = new JLabel("Victory Points:");
-                    JLabel labelKnightCards = new JLabel("Knight Cards:");
-                    JLabel labelRoad = new JLabel("Road Count:");
-                    
-                    JLabel labelResourceCount = new JLabel("");
-                    labelResourceCount.setText(String.valueOf(GameManager.players[playerID].getResourceTotal()));
-                    
-                    JLabel labelDevCardsCount = new JLabel("");
-                    labelDevCardsCount.setText(String.valueOf(GameManager.players[playerID].getDevelopmentCardCount()));
-                  
-                    JLabel labelVictroyPointsCount = new JLabel("");
-                    labelVictroyPointsCount.setText(String.valueOf(GameManager.players[playerID].getTotalVictoryPoints()));
-                    
-                    JLabel labelKnightCardsCount = new JLabel("");
-                    labelKnightCardsCount.setText(String.valueOf(GameManager.players[playerID].getKnightCards()));
-                    
-                    JLabel labelRoadCount = new JLabel("");
-                    labelRoadCount.setText(String.valueOf(GameManager.players[playerID].getRoadCount()));
-                    
-    
-                     // create a new panel with GridBagLayout manager
-                    JPanel reseourcesPanel = new JPanel(new GridBagLayout());
-                    
-                    GridBagConstraints constraints = new GridBagConstraints();
-                    constraints.anchor = GridBagConstraints.WEST;
-                    constraints.insets = new Insets(10, 10, 10, 10);
-         
-                    // add components to the panel
-                    constraints.gridx = 0;
-                    constraints.gridy = 0;     
-                    reseourcesPanel.add(labelResource, constraints);
-                    
-                    constraints.gridx = 1;
-                    reseourcesPanel.add(labelResourceCount, constraints);
-                    
-                    constraints.gridx = 0;
-                    constraints.gridy = 1;     
-                    reseourcesPanel.add(labelDevCards, constraints);
-                    
-                    constraints.gridx = 1;
-                    reseourcesPanel.add(labelDevCardsCount, constraints);
-                    
-                    constraints.gridx = 0;
-                    constraints.gridy = 2;     
-                    reseourcesPanel.add(labelVictroyPoints, constraints);
-                    
-                    constraints.gridx = 1;
-                    reseourcesPanel.add(labelVictroyPointsCount, constraints);
-                    
-                    constraints.gridx = 0;
-                    constraints.gridy = 3;     
-                    reseourcesPanel.add(labelKnightCards, constraints);
-                    
-                    constraints.gridx = 1;
-                    reseourcesPanel.add(labelKnightCardsCount, constraints);
-                    
-                    constraints.gridx =0;
-                    constraints.gridy = 4;     
-                    reseourcesPanel.add(labelRoad, constraints);
-                    
-                    constraints.gridx = 1;
-                    reseourcesPanel.add(labelRoadCount, constraints);
-                    
-                     // set border for the panel
-                    reseourcesPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Player " + (playerID + 1)  + " Stats"));
-
-                    JPanel panel = new JPanel();
-                    panel.add(reseourcesPanel);
-                    swingNode.setContent(panel);
-                 }
-             });
-         }
-    
-    private void createAndSetButtonPanel(final SwingNode swingNode) {
-             SwingUtilities.invokeLater(new Runnable() {
-                 @Override
-                 public void run() {
-                     
-                    JButton btnBuy = new JButton("Buy");
-                    JButton btnRoll = new JButton("Roll");
-                    JButton btnTrade = new JButton("Trade");
-                    JButton btnEndTurn = new JButton("End Turn");
-
-                     // create a new panel with GridBagLayout manager
-                    JPanel buttonPanel = new JPanel(new GridBagLayout());
-                    
-                    GridBagConstraints constraints = new GridBagConstraints();
-                    constraints.anchor = GridBagConstraints.WEST;
-                    constraints.insets = new Insets(5, 5, 5, 5);
-         
-                    // add components to the panel
-                    constraints.gridx = 0;
-                    constraints.gridy = 0;     
-                    buttonPanel.add(btnBuy, constraints);
-                    
-                    constraints.gridx = 1;
-                    buttonPanel.add(btnRoll, constraints);
-                    
-                    constraints.gridx = 0;
-                    constraints.gridy = 1;     
-                    buttonPanel.add(btnTrade, constraints);
-                    
-                    constraints.gridx = 1;
-                    buttonPanel.add(btnEndTurn, constraints);
-                    
-                     // set border for the panel
-                    buttonPanel.setBorder(BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(), "Actions:"));
-
-                    JPanel panel = new JPanel();
-                    panel.add(buttonPanel);
-                    swingNode.setContent(panel);
-                 }
-             });
-         }
-   
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
         // Create an ArrayList to hold roads the active player can build on
@@ -410,14 +256,14 @@ public class ClientUI extends Application {
     }
 
     void buildARoad(ArrayList<Boundary> buildableRoads, Boundary[] boundaries, int activePlayerID) {
-        
+
         // For each boundary in the game,
         for (Boundary b : boundaries) {
             // Check against every buildableRoad (number should be relatively low)
             for (Boundary road : buildableRoads) {
                 // Create a Line object for ease of use
                 Line line = b.getLine();
-                
+
                 // If the buildable road is equal to the current road
                 if (road.getLine() == line) {
                     // Make it wider and setOnClick to GUIBuildRoad method
@@ -428,9 +274,47 @@ public class ClientUI extends Application {
         }
     }
 
+    // Creates Pane that contains information about the resources 
+    // of the current player
+    public void createResoursePanel(Pane pane) {
+        // Creates grid to hold player's informations
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);;
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
+
+        gridPane.add(new Label("Brick"), 0, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.BRICK])), 0, 1);
+
+        gridPane.add(new Label("Lumber"), 1, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.LUMBER])), 1, 1);
+
+        gridPane.add(new Label("Ore"), 2, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.ORE])), 2, 1);
+
+        gridPane.add(new Label("Wheat"), 3, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WHEAT])), 3, 1);
+
+        gridPane.add(new Label("Wool"), 4, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WOOL])), 4, 1);
+
+        // Adds a border to the pane(panel)
+        final String cssDefault
+                = "-fx-border-color: #C8C8C8;\n"
+                + "-fx-border-insets: 2;\n"
+                + "-fx-font-size: 12pt;\n"
+                + "-fx-border-width: 5;\n"
+                + "-fx-box-shadow: 5px;\n"
+                + "-fx-background-color: linear-gradient(white,#DDDDDD);\n"
+                + "-fx-background-radius: 5;\n";
+        pane.setStyle(cssDefault);
+
+        pane.getChildren().add(gridPane);
+    }
+
     ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
-        
-       // Create an ArrayList to hold Intersections the active player can build on
+
+        // Create an ArrayList to hold Intersections the active player can build on
         ArrayList<Intersection> buildableIntersections = new ArrayList<>();
 
         for (Intersection i : GameManager.intersections) {
@@ -449,7 +333,7 @@ public class ClientUI extends Application {
         for (Intersection i : intersections) {
             // For each intersection in the game, create a Circle from its circle
             Circle circle = i.getCircle();
-            
+
             for (Intersection intersection : buildableSettlements) {
                 // Compare each circle to buildableSettlements
                 if (intersection.getCircle() == circle) {
