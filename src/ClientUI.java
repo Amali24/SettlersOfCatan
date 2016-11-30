@@ -45,7 +45,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       xOffset, and yOffset properties
                                                       for ease of UI manipulation
                                                     * Added findBuildableRoads
-                                                      and buildARoad method
+						      and buildARoad method
                                                       to allow UI-driven buying of
                                                       roads
 
@@ -55,7 +55,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Added known issue of not sizing clickable
                                                       nodes after they are clicked to tracker
                                                     
-				
+	    November 26, 2016		RA	    * Created createStatsPanel method, lines 164
+	    					      to 212 and placed it in a StackPane 
+						      Added panels to scene 				
 
 
  */
@@ -85,11 +87,39 @@ public class ClientUI extends Application {
     // Default size for circles
     static double circleSize = 5.0;
 
+    Insets insets = new Insets(12);
+    DropShadow ds = new DropShadow();
+	
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
+	    
+	// Panel to hold Player's information
+	StackPane player1Panel = new StackPane();
+        StackPane player2Panel = new StackPane();
+        StackPane player3Panel = new StackPane();
+        StackPane player4Panel = new StackPane();
+	    
+	 // Creates player's information panels (Pane, playerId, background)
+        createStatsPanel(player1Panel, 0,"bluePlayer3.png");
+        createStatsPanel(player2Panel, 1,"redPlayer3.png");
+        createStatsPanel(player3Panel, 2,"greenPlayer2.png");
+        createStatsPanel(player4Panel, 3,"yellowPlayer.png");  
+	    
+	// Displays panels of players 1 and  3
+        VBox left = new VBox();
+        left.getChildren().addAll(player1Panel,player3Panel);
+        left.setAlignment(Pos.TOP_LEFT);
+        left.setSpacing(330);
+	    
+	// Displays panels of players 2 and 4
+        VBox right = new VBox();
+        right.getChildren().addAll(player2Panel, player4Panel);
+        right.setAlignment(Pos.TOP_RIGHT);
+        right.setSpacing(330);  
+	    
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
@@ -122,6 +152,10 @@ public class ClientUI extends Application {
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+	// Put players 1 and 3 information panels on the left of frame
+        bp.setLeft(left);    
+	// Put players 2 and 4 information panels on the right of frame
+        bp.setRight(right);   
 
         HBox hBoxButtons = new HBox(25);
 
@@ -177,7 +211,7 @@ public class ClientUI extends Application {
                     buildMenu.show();
                 });
         Button btnDevCards = new Button("Development Cards");
-        Button btnTrade = new Button("Trade");
+       Button btnTrade = new Button("Trade");
         Button btnEndTurn = new Button("End Turn");
 
         hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
@@ -186,12 +220,62 @@ public class ClientUI extends Application {
 
         // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
-
+		    
         primaryStage.setScene(scene);
 
         primaryStage.show();
     }
 
+    // Creates panels with player's information during game
+    public void createStatsPanel(Pane pane,int playerId, String 
+            backgroundAddress)throws FileNotFoundException{               
+
+        FileInputStream input = new FileInputStream(backgroundAddress);
+        Image image = new Image(input);
+        ImageView imageView = new ImageView(image);      
+                            
+        // Creates text for player number
+        Text txtPlayer = new Text("   Player " + (playerId + 1));
+        txtPlayer.setFill(WHITE);
+        txtPlayer.setCache(true);
+        txtPlayer.setEffect(ds);
+        txtPlayer.setFont(Font.font(null, FontWeight.BOLD, 18));
+        txtPlayer.setTextAlignment(TextAlignment.CENTER);        
+
+        // Creates grid to hold player's informations
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(insets);
+        gridPane.add(txtPlayer,0,0);
+        gridPane.add(new Label(" "),0,1);
+        gridPane.add(new Text("Resource Count: "),0,2);    
+        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
+                getResourceTotal())),1,2);
+        gridPane.add(new Text("Devel. cards: "),0,3);
+        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
+                getDevelopmentCardCount())),1,3);
+        gridPane.add(new Text("Victory Points: "),0,4);
+        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
+                getVisibleVictoryPoints())),1,4);
+        gridPane.add(new Text("Knight cards: "),0,5);
+        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
+                getKnightCards())),1,5);
+        gridPane.add(new Text("Roads Count: "),0,6);
+        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
+                getRoadCount())),1,6);  
+
+        // Adds a border to the pane(panel)
+        final String cssDefault = "-fx-border-color: firebrick;\n"
+                + "-fx-border-insets: 2;\n"
+                + "-fx-border-width: 10;\n"
+                + "-fx-background-radius: 5;\n";
+        pane.setStyle(cssDefault);        
+
+        // Adds background(imageView) and player's info(gridPane) to pane
+        pane.getChildren().add(imageView);
+        pane.getChildren().add(gridPane);        
+
+    }     
+	
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
         // Create an ArrayList to hold roads the active player can build on
