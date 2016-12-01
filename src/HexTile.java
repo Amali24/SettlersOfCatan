@@ -84,7 +84,7 @@ public class HexTile {
             hexagon.getPoints().add(i.getLocation().getUIX());
             hexagon.getPoints().add(i.getLocation().getUIY());
         }
-        
+
         hexagon.setFill(ALICEBLUE);
     }
     

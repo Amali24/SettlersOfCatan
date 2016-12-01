@@ -137,17 +137,19 @@ public class GameManager {
     static Boundary errorBoundary;
     static HexTile errorTile;
 
-    Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/brick2.jpg"));
-    Image lumberImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/trees3.jpg"));
-    Image oreImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/ore2.jpg"));
-    Image wheatImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wheat2.jpg"));
-    Image woolImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wool2.jpg"));
-    Image desertImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/desert2.jpg"));
+    Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/brickCrop.jpg"));
+    Image lumberImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/lumberCrop.jpg"));
+    Image oreImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/ore.jpg"));
+    Image wheatImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wheat.jpg"));
+    Image woolImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/woolCrop.jpg"));
+    Image desertImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/desert.jpg"));
 
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
 
     static Bank banker = new Bank();
+    
+    static GameManager gm1;
 
 //  				Methods
 //_____________________________________________________________________________
@@ -155,7 +157,7 @@ public class GameManager {
         // create the deck of development cards [not random]
         banker.generateDevelopmentCards();
         // build the game board with randomly generated yields and numbers to roll
-        GameManager gm1 = new GameManager();
+        gm1 = new GameManager();
         gm1.buildGameboard();
         // Open debug mode, a "no" answer skips this
         debugMode();
