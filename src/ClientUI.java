@@ -66,7 +66,11 @@ import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import static javafx.scene.layout.BackgroundPosition.*;
+import static javafx.scene.layout.BackgroundSize.*;
+import static javafx.scene.layout.BackgroundRepeat.*;
 import static javafx.scene.layout.BorderStroke.*;
 import static javafx.scene.layout.BorderStrokeStyle.*;
 import static javafx.scene.layout.CornerRadii.*;
@@ -95,6 +99,7 @@ public class ClientUI extends Application {
         primaryStage.setTitle("Settlers of Catan");
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
+
 	    
 	// Panel to hold Player's information
 	StackPane player1Panel = new StackPane();
@@ -120,6 +125,13 @@ public class ClientUI extends Application {
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(330);  
 	    
+||||||| merged common ancestors
+=======
+        Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
+        BackgroundImage bgWater = new BackgroundImage(waterImage,NO_REPEAT,NO_REPEAT,CENTER,BackgroundSize.DEFAULT);
+        
+        bp.setBackground(new Background(bgWater));
+>>>>>>> master
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
@@ -158,6 +170,13 @@ public class ClientUI extends Application {
         bp.setRight(right);   
 
         HBox hBoxButtons = new HBox(25);
+        
+        /*Delete This?*/
+        Button btnNewBoard = new Button("New Board");
+        btnNewBoard.setOnAction(e -> {
+            GameManager.gm1.buildGameboard();
+            this.start(primaryStage);
+        });
 
         Button btnRoll = new Button("Roll");
         btnRoll.setOnAction(e
@@ -214,7 +233,7 @@ public class ClientUI extends Application {
        Button btnTrade = new Button("Trade");
         Button btnEndTurn = new Button("End Turn");
 
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnNewBoard);
         hBoxButtons.setAlignment(Pos.CENTER);
         bp.setBottom(hBoxButtons);
 

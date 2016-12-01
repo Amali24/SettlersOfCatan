@@ -50,6 +50,8 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Minor comment addition
 
+            November 25, 2016           AS          *Added Polygon hexagon
+
  */
 
 
@@ -82,13 +84,14 @@ public class HexTile {
             hexagon.getPoints().add(i.getLocation().getUIX());
             hexagon.getPoints().add(i.getLocation().getUIY());
         }
-        
+
         hexagon.setFill(ALICEBLUE);
     }
     
 //                          Accessors and Mutators
 // _____________________________________________________________________________
    
+ 
     public int getResourceYield() {
         return this.resourceYield;
     }

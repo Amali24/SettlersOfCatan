@@ -1,4 +1,5 @@
 
+import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.Line;
 
 /*  
@@ -112,6 +113,8 @@ class Boundary {
         double lineEndY = endpointB.getLocation().getUIY();
 
         line = new Line(lineStartX, lineStartY, lineEndX, lineEndY);
+        line.setStrokeWidth(4);
+        line.setStroke(WHITE);
 
     }
 
