@@ -81,6 +81,9 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Added comments to all methods
                                                     * Fixed some logical errors
 
+            November 27, 2016           AS          *Added pictures displayed in
+                                                     hextiles
+
 
 
  */
@@ -88,6 +91,8 @@ Activity:	  -Date-             -Person-               -Updates-
 import java.sql.SQLException;
 import java.util.Scanner;
 import javafx.application.Application;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 public class GameManager {
 
@@ -132,10 +137,19 @@ public class GameManager {
     static Boundary errorBoundary;
     static HexTile errorTile;
 
+    Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/brickCrop.jpg"));
+    Image lumberImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/lumberCrop.jpg"));
+    Image oreImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/ore.jpg"));
+    Image wheatImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wheat.jpg"));
+    Image woolImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/woolCrop.jpg"));
+    Image desertImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/desert.jpg"));
+
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
 
     static Bank banker = new Bank();
+    
+    static GameManager gm1;
 
 //  				Methods
 //_____________________________________________________________________________
@@ -143,7 +157,8 @@ public class GameManager {
         // create the deck of development cards [not random]
         banker.generateDevelopmentCards();
         // build the game board with randomly generated yields and numbers to roll
-        buildGameboard();
+        gm1 = new GameManager();
+        gm1.buildGameboard();
         // Open debug mode, a "no" answer skips this
         debugMode();
         // Launch GUI shell
@@ -722,7 +737,14 @@ public class GameManager {
         }
     }
 
-    static int buildGameboard() {
+    static int rollDice() {
+        int die1 = HexTile.getRandInt(1, 6);
+        int die2 = HexTile.getRandInt(1, 6);
+        int sum = die1 + die2;
+        return sum;
+    }
+
+    int buildGameboard() {
         System.out.println("Setting up game board");
 
         //~~~~~~~~~~~~~ Creating Intersections~~~~~~~~~~~~~~~~\\
@@ -1049,6 +1071,7 @@ public class GameManager {
         }
         // T10 will always be the center (desert) tile
         T10.setCenter(true);
+        T10.hexagon.setFill(new ImagePattern(desertImage));
         // The robber always starts in the center
         T10.setRobber(true);
 
@@ -1079,30 +1102,36 @@ public class GameManager {
                         case BRICK:
                             if (brickTiles < maxBrick) {
                                 brickTiles++;
+                                tile.hexagon.setFill(new ImagePattern(brickImage));
+
                                 yieldIsValid = true;
                             }
                             break;
                         case LUMBER:
                             if (lumberTiles < maxLumber) {
                                 lumberTiles++;
+                                tile.hexagon.setFill(new ImagePattern(lumberImage));
                                 yieldIsValid = true;
                             }
                             break;
                         case ORE:
                             if (oreTiles < maxOre) {
                                 oreTiles++;
+                                tile.hexagon.setFill(new ImagePattern(oreImage));
                                 yieldIsValid = true;
                             }
                             break;
                         case WHEAT:
                             if (wheatTiles < maxWheat) {
                                 wheatTiles++;
+                                tile.hexagon.setFill(new ImagePattern(wheatImage));
                                 yieldIsValid = true;
                             }
                             break;
                         case WOOL:
                             if (woolTiles < maxWool) {
                                 woolTiles++;
+                                tile.hexagon.setFill(new ImagePattern(woolImage));
                                 yieldIsValid = true;
                             }
                             break;

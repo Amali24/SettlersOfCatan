@@ -74,7 +74,7 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Minor commenting
 			
-			            November 23, 2016           AS          *Swiched order of wool and wood
+	    November 23, 2016           AS          *Switched order of wool and wood
                                                      in printResources method
 			
 	    November 24, 2016		RA	    * Corrected the maximum number of buildings

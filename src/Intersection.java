@@ -36,7 +36,7 @@ Classes:    Intersection
  any adjacent intersections, and they have a road that connects to its position 
  (this road requirement is dropped durring the first 2 round of the game).
  
- 
+  
 Activity:	  -Date-             -Person-               -Updates-
             October 20, 2016		AS          *Created Intersection Class
                                                     *Created Boundary Class
@@ -44,7 +44,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Submitted as AS's project 1
 				
             November 7, 2016		AS          *Standardized Documentation 
-                                                     and Formatting 
+                                                    and Formatting 
 
             November 14, 2016		AS          *added searchIntersections and
                                                      searchBoundary methods
@@ -63,13 +63,15 @@ Activity:	  -Date-             -Person-               -Updates-
             November 23, 2016           AT          * Added minor commenting
                                                     * Changed location, adjacentIntersections
                                                       and adjacentBoundaries to final
-
+						      
+ 	    November 24, 2016		RA	    * Added validation statements from line 245  
+	    					      to 265, to  make sure settlements and cities 
+						      have not exceeded maximum amount
 
  */
 
 import java.util.ArrayList;
 import javafx.scene.shape.Circle;
-
 
 /**
  * The <code> Intersection </code> class represents the corners of the hexagonal
@@ -77,7 +79,6 @@ import javafx.scene.shape.Circle;
  * physical game board location.
  *
  */
-
 public class Intersection {
 
 //                              Class Properties
@@ -95,15 +96,15 @@ public class Intersection {
     private final Intersection[] adjacentIntersections = new Intersection[3];
     private int adjacentIntersectionCount;
     private final ArrayList<Boundary> adjacentBoundaries = new ArrayList<>();
-    
+
     private final Circle circle;
 
 //                               Constructors
 // _____________________________________________________________________________
     /**
      * <code> Intersection </code> Constructor
-     * 
-     * @param c <code> Coordinate </code> location 
+     *
+     * @param c <code> Coordinate </code> location
      */
     Intersection(Coordinate c) {
         location = c;
@@ -113,7 +114,6 @@ public class Intersection {
 
 //                          Accessors and Mutators
 // _____________________________________________________________________________
-   
     //For setting to the conquering player's ID when intersection is settled
     void setPlayer(int p) {
         player = p;
@@ -139,17 +139,16 @@ public class Intersection {
     int getSettlementType() {
         return settlementType;
     }
-    
-    Coordinate getLocation(){
+
+    Coordinate getLocation() {
         return location;
     }
 
- 
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's adjacent <code> Intersections </code>
-     * when there are two adjacent <code> Intersections </code>.
-     * 
+     * <code> Intersection </code> object's adjacent <code> Intersections
+     * </code> when there are two adjacent <code> Intersections </code>.
+     *
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
      */
@@ -164,9 +163,9 @@ public class Intersection {
 
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's adjacent <code> Intersections </code>
-     * when there are three adjacent <code> Intersections </code>.
-     * 
+     * <code> Intersection </code> object's adjacent <code> Intersections
+     * </code> when there are three adjacent <code> Intersections </code>.
+     *
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
      * @param c Third adjacent <code> Intersection </code>
@@ -190,15 +189,15 @@ public class Intersection {
     void addAdjacentBoundary(Boundary a) {
         adjacentBoundaries.add(a);
     }
-    
-    Circle getCircle(){
+
+    Circle getCircle() {
         return circle;
     }
 
 //                                 Methods
 // _____________________________________________________________________________
-
-    /** The <code> occupied </code> method returns a boolean indicating if the
+    /**
+     * The <code> occupied </code> method returns a boolean indicating if the
      * <code> Intersection </code> is settled.
      *
      * @return boolean
@@ -212,8 +211,7 @@ public class Intersection {
     //1. Be unoccupied
     //2. Not be adjacent to a settlement
     //3. Be on a road built by the player (Waived durring first 2 rounds, the "setupPhase")
-    
-     /**
+    /**
      * The <code> isOccupiable </code> method determines whether a specific
      * player may occupy (build a settlement on) an <code> Intersection </code>.
      *
@@ -221,6 +219,8 @@ public class Intersection {
      * @return boolean
      */
     boolean isOccupiable(int playerID, boolean setupPhase) {
+
+        Player playerInfo = GameManager.players[playerID];
 
         boolean hasRoadAccess = false;
 
@@ -232,6 +232,23 @@ public class Intersection {
                     + " is unable to settle this intersection "
                     + "because it is already settled by player "
                     + (player + 1) + ".");
+
+            return false;
+
+        } // If player wants to build a settlement, but alreary has 5, returns false
+        else if (settlementType == 1 && playerInfo.getSettlementCount() >= 5) {
+
+            System.out.println("Player " + (playerID + 1)
+                    + " is unable to settle this intersection because it "
+                    + " has exceeded the amount of settlements available.");
+
+            return false;
+        } // If player wants to build a city, but alreary has 4, returns false
+        else if (settlementType == 2 && playerInfo.getCityCount() >= 4) {
+
+            System.out.println("Player " + (playerID + 1)
+                    + " is unable to settle this intersection because it "
+                    + " has exceeded the amount of cities available.");
 
             return false;
 
@@ -280,9 +297,9 @@ public class Intersection {
     /**
      * The <code> searchIntersections </code> method searches for an 
      * <code> Intersection </code> based on its <code> Coordinate </code>
-     * location -
-     * Returns that intersection if successful, otherwise returns error.
-     * 
+     * location - Returns that intersection if successful, otherwise returns
+     * error.
+     *
      * @param coordinate
      * @return Intersection
      */

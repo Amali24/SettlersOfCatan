@@ -1,3 +1,4 @@
+
 /*  
                     	Gameboard Tiles  - Settlers of Catan
 
@@ -49,7 +50,14 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 23, 2016           AT          * Minor comment addition
 
+            November 25, 2016           AS          *Added Polygon hexagon
+
  */
+
+
+import javafx.scene.shape.Polygon;
+import static javafx.scene.paint.Color.*;
+
 public class HexTile {
     
 //                              Class Properties
@@ -60,6 +68,8 @@ public class HexTile {
     private Intersection[] intersections; // Corner nodes for each corner of the HexTile
     private boolean robber; // is robber currently on tile?
     private boolean center; // center has no yield
+    
+    Polygon hexagon = new Polygon();
 
 
 //                               Constructors
@@ -69,11 +79,19 @@ public class HexTile {
         robber = false;
         center = false;
         this.intersections = intersections;
+        
+        for(Intersection i: intersections){
+            hexagon.getPoints().add(i.getLocation().getUIX());
+            hexagon.getPoints().add(i.getLocation().getUIY());
+        }
+
+        hexagon.setFill(ALICEBLUE);
     }
     
 //                          Accessors and Mutators
 // _____________________________________________________________________________
    
+ 
     public int getResourceYield() {
         return this.resourceYield;
     }
