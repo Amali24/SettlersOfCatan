@@ -54,19 +54,40 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       in build functions
                                                     * Added known issue of not sizing clickable
                                                       nodes after they are clicked to tracker
+<<<<<<< HEAD
+
+            November 30, 2016           OB          * Added Resources Panel 
+                                                    * Added CSS styling for buttons 
+                                                   
+				
+||||||| merged common ancestors
+                                                    
+				
+=======
                                                     
 	    November 26, 2016		RA	    * Created createStatsPanel method, lines 164
 	    					      to 212 and placed it in a StackPane 
 						      Added panels to scene 				
+>>>>>>> master
 
 
  */
 import java.util.ArrayList;
+<<<<<<< HEAD
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+||||||| merged common ancestors
+import javafx.application.Application;
+import javafx.scene.Scene;
+=======
 import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+>>>>>>> master
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BackgroundPosition.*;
 import static javafx.scene.layout.BackgroundSize.*;
@@ -162,6 +183,115 @@ public class ClientUI extends Application {
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+<<<<<<< HEAD
+
+        // ___________________________  Buttons ___________________________
+        // Button styling using CSS. 
+        String btnStyle
+                = "-fx-text-fill: white;\n"
+                + "-fx-font-family: \"Arial Narrow\";\n"
+                + "-fx-font-weight: bold;\n"
+                + "-fx-font-size: 11pt;\n"
+                + "-fx-background-color: linear-gradient(#61a2b1, #2A5058);\n"
+                + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
+                + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
+
+        HBox hBoxButtons = new HBox(25);
+
+        Button btnRoll = new Button("Roll");
+        // Applying predefined Style for each button
+        btnRoll.setStyle(btnStyle);
+        btnRoll.setOnAction(e
+                -> {
+            int diceRoll = GameManager.rollDice();
+            for (HexTile tile : GameManager.tiles) {
+                if (tile.getNumRoll() == diceRoll) {
+                    tile.yieldResources();
+                }
+            }
+        });
+
+        /*Button btnBuildRoad = new Button("Build a Road");
+        btnBuildRoad.setOnAction(e
+                -> {
+            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+        });*/
+        Button btnBuild = new Button("Build Improvements");
+        btnBuild.setStyle(btnStyle);
+        btnBuild.setOnAction(
+                e -> {
+                    Stage buildMenu = new Stage();
+
+                    HBox btnBox = new HBox(25);
+                    Button btnBuildRoad = new Button("Build a Road");
+                    btnBuildRoad.setOnAction(e1 -> {
+                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+                    });
+
+                    Button btnBuildSettlement = new Button("Build a Settlement");
+
+                    Button btnBuildCity = new Button("Build a City");
+
+                    Button btnCancel = new Button("Cancel");
+
+                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
+
+                    Text txtBuild = new Text("Select a type of Improvement to Build:");
+                    txtBuild.setFont(new Font(14));
+                    txtBuild.setTextAlignment(TextAlignment.CENTER);
+
+                    BorderPane boPa = new BorderPane();
+                    boPa.setCenter(btnBox);
+                    boPa.setTop(txtBuild);
+
+                    buildMenu.initModality(Modality.APPLICATION_MODAL);
+
+                    buildMenu.setScene(new Scene(boPa));
+                    buildMenu.setTitle("Build Menu");
+                    buildMenu.show();
+                });
+        Button btnDevCards = new Button("Development Cards");
+        btnDevCards.setStyle(btnStyle);
+
+        Button btnTrade = new Button("Trade");
+        btnTrade.setStyle(btnStyle);
+
+        Button btnEndTurn = new Button("End Turn");
+        btnEndTurn.setStyle(btnStyle);
+
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
+        hBoxButtons.setAlignment(Pos.CENTER);
+
+        // ________________________  Resource Panel ____________________________
+        // VBox that holds Button and Available Resources Panels, 
+        // and located at the bottom of BorderPanel
+        VBox vBoxButtom = new VBox(5);
+
+        // This HBox holds StackPane that displays available resources 
+        // for the Active Player
+        HBox resourcesHBox = new HBox(300);
+
+        // Panel that deisplays available resources to the active player
+        StackPane resourcePanel = new StackPane();
+        resourcePanel.setAlignment(new Label("Available Resources"), Pos.CENTER);
+
+        // Calling method that fills our Resource Pane with up-to-date information
+        createResoursePanel(resourcePanel);
+
+        resourcesHBox.getChildren().add(resourcePanel);
+        resourcesHBox.setAlignment(Pos.CENTER);
+
+        // Adding Resources and Button panels to the VBox
+        vBoxButtom.getChildren().addAll(resourcesHBox, hBoxButtons);
+        // _____________________________________________________________________
+
+        // Adding vBoxButtom to the bottom of Boarder Pane
+        bp.setBottom(vBoxButtom);
+
+||||||| merged common ancestors
+=======
 	// Put players 1 and 3 information panels on the left of frame
         bp.setLeft(left);    
 	// Put players 2 and 4 information panels on the right of frame
@@ -235,6 +365,7 @@ public class ClientUI extends Application {
         hBoxButtons.setAlignment(Pos.CENTER);
         bp.setBottom(hBoxButtons);
 
+>>>>>>> master
         // Set up scene size
         Scene scene = new Scene(bp, 1280, 720);
 		    
@@ -326,6 +457,44 @@ public class ClientUI extends Application {
                 }
             }
         }
+    }
+
+    // Creates Pane that contains information about the resources 
+    // of the current player
+    public void createResoursePanel(Pane pane) {
+        // Creates grid to hold player's informations
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);;
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
+
+        gridPane.add(new Label("Brick"), 0, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.BRICK])), 0, 1);
+
+        gridPane.add(new Label("Lumber"), 1, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.LUMBER])), 1, 1);
+
+        gridPane.add(new Label("Ore"), 2, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.ORE])), 2, 1);
+
+        gridPane.add(new Label("Wheat"), 3, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WHEAT])), 3, 1);
+
+        gridPane.add(new Label("Wool"), 4, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WOOL])), 4, 1);
+
+        // Adds a border to the pane(panel)
+        final String cssDefault
+                = "-fx-border-color: #C8C8C8;\n"
+                + "-fx-border-insets: 2;\n"
+                + "-fx-font-size: 12pt;\n"
+                + "-fx-border-width: 5;\n"
+                + "-fx-box-shadow: 5px;\n"
+                + "-fx-background-color: linear-gradient(white,#DDDDDD);\n"
+                + "-fx-background-radius: 5;\n";
+        pane.setStyle(cssDefault);
+
+        pane.getChildren().add(gridPane);
     }
 
     ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
