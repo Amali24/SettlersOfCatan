@@ -125,13 +125,11 @@ public class ClientUI extends Application {
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(330);  
 	    
-||||||| merged common ancestors
-=======
         Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
         BackgroundImage bgWater = new BackgroundImage(waterImage,NO_REPEAT,NO_REPEAT,CENTER,BackgroundSize.DEFAULT);
         
         bp.setBackground(new Background(bgWater));
->>>>>>> master
+	    
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(700, 600);
