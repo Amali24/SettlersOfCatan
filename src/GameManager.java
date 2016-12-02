@@ -35,32 +35,32 @@ of the game.
 
 
 Activity:	  -Date-             -Person-               -Updates-
-            October 21, 2016		AS          *Hardcoded Intersections,
-                                                     adjacentIntersections, and
-                                                     Boundaries
-                                                    *Logic for adjacent boundaries
-                                                    *Logic for assigning harbors
+            October 21, 2016		AS          * Hardcoded Intersections,
+                                                      adjacentIntersections, and
+                                                      Boundaries
+                                                    * Logic for adjacent boundaries
+                                                    * Logic for assigning harbors
 
-            October 25, 2016		AT          *Hardcoded HexTiles
-                                                    *Logic for Desert
-                                                    *Logic for Robber
-                                                    *Logic for dice rolls
-                                                    *Logic for database writing
+            October 25, 2016		AT          * Hardcoded HexTiles
+                                                    * Logic for Desert
+                                                    * Logic for Robber
+                                                    * Logic for dice rolls
+                                                    * Logic for database writing
 	
-            November 7, 2016   		AS          *Standardized Documentation and 
-                                                     Formatting 
+            November 7, 2016   		AS          * Standardized Documentation and 
+                                                      Formatting 
 												
-            November 9, 2016		AS          *Added interaction with Bank class
-                                                    *Development cards are now created
-                                                     at startup
+            November 9, 2016		AS          * Added interaction with Bank class
+                                                    * Development cards are now created
+                                                      at startup
 				 								
-            November 14, 2016		AS          *Added intersections, boundaries,
-                                                     external boundaries, and tiles arrays
-                                                     as class properties
-                                                    *Added error instances of the Intersection,
-                                                     Boundaries, and Hextile classes
-                                                    *Wrote buildSettlement method
-                                                    *Wrote buildRoad method
+            November 14, 2016		AS          * Added intersections, boundaries,
+                                                      external boundaries, and tiles arrays
+                                                      as class properties
+                                                    * Added error instances of the Intersection,
+                                                      Boundaries, and Hextile classes
+                                                    * Wrote buildSettlement method
+                                                    * Wrote buildRoad method
 
             November 18, 2016           AT          * Fixed error intersection coordinates to
                                                       (-1, -1)
@@ -72,10 +72,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Wrote robberSteal method
                                                     * Tweaked moveRobber method
 
-            November 20, 2016           AS          *Moved code for debugging to
-                                                     debugMode method
-                                                    *Changed banker to be a static,
-                                                     class level variable
+            November 20, 2016           AS          * Moved code for debugging to
+                                                      debugMode method
+                                                    * Changed banker to be a static,
+                                                      class level variable
 
             November 23, 2016           AT          * Moved GUI launch to after debug menu
                                                     * Added comments to all methods

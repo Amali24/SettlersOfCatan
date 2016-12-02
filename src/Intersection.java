@@ -61,8 +61,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       constructor change
 
             November 23, 2016           AT          * Added minor commenting
-                                                    * Changed location, adjacentIntersections
-                                                      and adjacentBoundaries to final
+                                                    * Changed location, 
+                                                      adjacentIntersections
+                                                      and adjacentBoundaries 
+                                                      to final
 						      
  	    November 24, 2016		RA	    * Added validation statements from line 245  
 	    					      to 265, to  make sure settlements and cities 
@@ -102,7 +104,9 @@ public class Intersection {
 //                               Constructors
 // _____________________________________________________________________________
     /**
-     * <code> Intersection </code> Constructor
+     * Constructor creates a new <code> Intersection </code> located at the given 
+     * <code> Coordinate </code> and generates a <code> JavaFX Circle </code> 
+     * to be used by the GUI.
      *
      * @param c <code> Coordinate </code> location
      */
