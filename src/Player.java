@@ -296,7 +296,7 @@ public class Player {
 
         } else {
             // Prevent negative amounts
-            System.out.println("You cannot deduct more resources than you have");
+n            System.out.println("You cannot deduct more resources than you have");
         }
     }
 
@@ -306,7 +306,7 @@ public class Player {
 
     public void printResources() {
         // Prints player's resource total for each resource
-        System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
+\        System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
                 + "_____________________________\n"
                 + resourceMaterials[0] + " Brick\n"
                 + resourceMaterials[1] + " Lumber\n"
@@ -334,7 +334,7 @@ public class Player {
     public void printSettlements() {
 	 // Prints player's current number of settlements  
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
-                + "of settlements: " + settlementCount + "\nLocated at: ");
+                + "of settlements: " + settlementCount + "\nLocated at: \n");
 
         // Prints the location of player's settlements
         for (Intersection i : manager.intersections) {
@@ -347,7 +347,7 @@ public class Player {
     public void printCities() {
 	// Prints player's current number of cities 
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
-                + "of cities:\n" + cityCount + "\nLocated at: ");
+                + "of cities:\n" + cityCount + "\nLocated at: \n");
 
         // Prints the location of player's cities
         for (Intersection i : manager.intersections) {
