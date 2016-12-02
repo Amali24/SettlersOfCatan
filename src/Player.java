@@ -115,6 +115,8 @@ public class Player {
     private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
 
+    private GameManager manager;
+    private Player player;
     private final Color color;
 
 // 				Constructors
