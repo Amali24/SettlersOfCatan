@@ -33,10 +33,10 @@ player information, dialog box prompts, buttons for play and various menus.
 
  
 Activity:	  -Date-             -Person-               -Updates-
-            November 20, 2016		AS          *Created ClientUI class
-                                                    *Created primaryStage titled
-                                                     "Settlers of Catan"
-                                                    *Created StackPane gameBoard
+            November 20, 2016		AS          * Created ClientUI class
+                                                    * Created primaryStage titled
+                                                      "Settlers of Catan"
+                                                    * Created StackPane gameBoard
                                         
                                         AT          * Added lines and circles from
                                                       Boundary and Intersection
@@ -61,26 +61,30 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     
 	    November 26, 2016		RA	    * Created createStatsPanel method, lines 164
 	    					      to 212 and placed it in a StackPane 
-						      Added panels to scene 				
+						      Added panels to scene 	
+
+            November 27, 2016           AT          * Added background
+                                                    * Added new gameboard button 
+                                                      to allow users to randomly
+                                                      generate new gameboard if 
+                                                      desired
+                                                    * Added src Images file
+                                        
+                                        AS&AT       * Edited images to better fit
+                                                      HexTiles
  */
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
-import javafx.application.*;
+
 import javafx.geometry.*;
-import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.application.*;
-import javafx.geometry.*;
 import javafx.scene.*;
-import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import static javafx.scene.layout.BackgroundPosition.*;
-import static javafx.scene.layout.BackgroundSize.*;
 import static javafx.scene.layout.BackgroundRepeat.*;
 import static javafx.scene.layout.BorderStroke.*;
 import static javafx.scene.layout.BorderStrokeStyle.*;
@@ -210,39 +214,7 @@ public class ClientUI extends Application {
         });*/
         Button btnBuild = new Button("Build Improvements");
         btnBuild.setStyle(btnStyle);
-        btnBuild.setOnAction(
-                e -> {
-                    Stage buildMenu = new Stage();
-
-                    HBox btnBox = new HBox(25);
-                    Button btnBuildRoad = new Button("Build a Road");
-                    btnBuildRoad.setOnAction(e1 -> {
-                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-                    });
-
-                    Button btnBuildSettlement = new Button("Build a Settlement");
-
-                    Button btnBuildCity = new Button("Build a City");
-
-                    Button btnCancel = new Button("Cancel");
-
-                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
-
-                    Text txtBuild = new Text("Select a type of Improvement to Build:");
-                    txtBuild.setFont(new Font(14));
-                    txtBuild.setTextAlignment(TextAlignment.CENTER);
-
-                    BorderPane boPa = new BorderPane();
-                    boPa.setCenter(btnBox);
-                    boPa.setTop(txtBuild);
-
-                    buildMenu.initModality(Modality.APPLICATION_MODAL);
-
-                    buildMenu.setScene(new Scene(boPa));
-                    buildMenu.setTitle("Build Menu");
-                    buildMenu.show();
-                });
+        btnBuild.setOnAction(e -> openBuildMenu());
         Button btnDevCards = new Button("Development Cards");
         btnDevCards.setStyle(btnStyle);
 
@@ -252,7 +224,18 @@ public class ClientUI extends Application {
         Button btnEndTurn = new Button("End Turn");
         btnEndTurn.setStyle(btnStyle);
 
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn);
+        /*
+        Delete This?
+        For Debugging only
+        */
+        Button btnNewBoard = new Button("New Board");
+        btnNewBoard.setOnAction(e -> {
+            GameManager.gm1.buildGameboard();
+            this.start(primaryStage);
+        });
+        btnNewBoard.setStyle(btnStyle);
+
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnNewBoard);
         hBoxButtons.setAlignment(Pos.CENTER);
 
         // ________________________  Resource Panel ____________________________
@@ -285,21 +268,6 @@ public class ClientUI extends Application {
         bp.setLeft(left);
         // Put players 2 and 4 information panels on the right of frame
         bp.setRight(right);
-
-        /*Delete This?*/
-        Button btnNewBoard = new Button("New Board");
-        btnNewBoard.setOnAction(e -> {
-            GameManager.gm1.buildGameboard();
-            this.start(primaryStage);
-        });
-
-
-        Button btnBuildRoad = new Button("Build a Road");
-        btnBuildRoad.setOnAction(e
-                -> {
-            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-        });
 
         bp.setBottom(hBoxButtons);
 
@@ -494,6 +462,39 @@ public class ClientUI extends Application {
                 }
             }
         }
+    }
+
+    private void openBuildMenu() {
+        Stage buildMenu = new Stage();
+
+                    HBox btnBox = new HBox(25);
+                    Button btnBuildRoad = new Button("Build a Road");
+                    btnBuildRoad.setOnAction(e1 -> {
+                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+                    });
+
+                    Button btnBuildSettlement = new Button("Build a Settlement");
+
+                    Button btnBuildCity = new Button("Build a City");
+
+                    Button btnCancel = new Button("Cancel");
+
+                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
+
+                    Text txtBuild = new Text("Select a type of Improvement to Build:");
+                    txtBuild.setFont(new Font(14));
+                    txtBuild.setTextAlignment(TextAlignment.CENTER);
+
+                    BorderPane boPa = new BorderPane();
+                    boPa.setCenter(btnBox);
+                    boPa.setTop(txtBuild);
+
+                    buildMenu.initModality(Modality.APPLICATION_MODAL);
+
+                    buildMenu.setScene(new Scene(boPa));
+                    buildMenu.setTitle("Build Menu");
+                    buildMenu.show();
     }
 
 }
