@@ -123,10 +123,10 @@ public class ClientUI extends Application {
 
         try {
             // Creates player's information panels (Pane, playerId, background)
-            createStatsPanel(player1Panel, 0, "bluePlayer3.png");
-            createStatsPanel(player2Panel, 1, "redPlayer3.png");
-            createStatsPanel(player3Panel, 2, "greenPlayer2.png");
-            createStatsPanel(player4Panel, 3, "yellowPlayer.png");
+            createStatsPanel(player1Panel, 0, "Images/bluePlayer3.png");
+            createStatsPanel(player2Panel, 1, "Images/redPlayer3.png");
+            createStatsPanel(player3Panel, 2, "Images/greenPlayer2.png");
+            createStatsPanel(player4Panel, 3, "Images/yellowPlayer.png");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -146,7 +146,7 @@ public class ClientUI extends Application {
         Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
         BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
 
-        bp.setBackground(new Background(bgWater));
+        gameBoard.setBackground(new Background(bgWater));
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -282,8 +282,7 @@ public class ClientUI extends Application {
     // Creates panels with player's information during game
     public void createStatsPanel(Pane pane, int playerId, String backgroundAddress) throws FileNotFoundException {
 
-        FileInputStream input = new FileInputStream(backgroundAddress);
-        Image image = new Image(input);
+        Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundAddress));
         ImageView imageView = new ImageView(image);
 
         // Creates text for player number
