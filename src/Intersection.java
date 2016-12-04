@@ -34,7 +34,7 @@ Classes:    Intersection
  coordinate position to its constructor. Players have the option of settling an
  intersection provided that no one else has settled it, no one has settled
  any adjacent intersections, and they have a road that connects to its position 
- (this road requirement is dropped durring the first 2 round of the game).
+ (this road requirement is dropped during the first 2 round of the game).
  
   
 Activity:	  -Date-             -Person-               -Updates-
@@ -66,10 +66,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       and adjacentBoundaries 
                                                       to final
 						      
- 	    November 24, 2016		RA	    * Added validation statements from line 245  
-	    					      to 265, to  make sure settlements and cities 
-						      have not exceeded maximum amount
+ 	    November 24, 2016		RA	    * Added validation statements   
+                                                      to make sure settlements and 
+                                                      cities have not exceeded 
+                                                      maximum amount
 
+            December 2, 2016            AS  `       * Updated Javadoc documentation
  */
 
 import java.util.ArrayList;
@@ -150,8 +152,9 @@ public class Intersection {
 
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's adjacent <code> Intersections
-     * </code> when there are two adjacent <code> Intersections </code>.
+     * <code> Intersection </code> object's <code> adjacentIntersections
+     * </code> array when there are two adjacent <code> Intersections </code>.
+     * Seconds sentence test.
      *
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
@@ -167,8 +170,8 @@ public class Intersection {
 
     /**
      * This overloaded <code> setAdjacentIntersections </code> method sets an 
-     * <code> Intersection </code> object's adjacent <code> Intersections
-     * </code> when there are three adjacent <code> Intersections </code>.
+     * <code> Intersection </code> object's <code> adjacentIntersections
+     * </code> array when there are three adjacent <code> Intersections </code>.
      *
      * @param a First adjacent <code> Intersection </code>
      * @param b Second adjacent <code> Intersection </code>
@@ -201,8 +204,7 @@ public class Intersection {
 //                                 Methods
 // _____________________________________________________________________________
     /**
-     * The <code> occupied </code> method returns a boolean indicating if the
-     * <code> Intersection </code> is settled.
+     * Returns a boolean indicating whether the <code> Intersection </code> is settled.
      *
      * @return boolean
      */
@@ -210,17 +212,21 @@ public class Intersection {
         return player >= 0;
     }
 
-    //Returns a boolean indicating if a given player may settle this intersection
-    //To settle an intersetion, the intersection must:
-    //1. Be unoccupied
-    //2. Not be adjacent to a settlement
-    //3. Be on a road built by the player (Waived durring first 2 rounds, the "setupPhase")
     /**
-     * The <code> isOccupiable </code> method determines whether a specific
-     * player may occupy (build a settlement on) an <code> Intersection </code>.
+     * Returns a boolean indicating whether the given player may occupy 
+     * (build a settlement on) the <code> Intersection </code>.
+     * 
+     * The method checks that the following conditions are met before returning
+     * true. If any of the following conditions are not met, method returns false.
+     * 1. Intersection is unoccupied
+     * 2. Player has fewer than 5 general settlements
+     * 3. Player has fewer than 4 cities
+     * 4. Not be adjacent to a settled Intersection
+     * 5. intersection is on a road built by the player 
+     *    (Waived during first 2 rounds, the "setupPhase")
      *
      * @param playerID unique <code> int </code> associated with player
-     * @return boolean
+     * @return boolean - True indicates Intersection occupiable 
      */
     boolean isOccupiable(int playerID, boolean setupPhase) {
 
@@ -239,7 +245,10 @@ public class Intersection {
 
             return false;
 
-        } // If player wants to build a settlement, but alreary has 5, returns false
+        } 
+        
+        //TODO: settlement type requested must be passed as a parameter to method
+        // If player wants to build a settlement, but alreary has 5, returns false
         else if (settlementType == 1 && playerInfo.getSettlementCount() >= 5) {
 
             System.out.println("Player " + (playerID + 1)

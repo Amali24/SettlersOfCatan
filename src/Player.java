@@ -117,6 +117,7 @@ public class Player {
 
     private GameManager manager;
     private Player player;
+    
     private final Color color;
 
 // 				Constructors
@@ -369,6 +370,4 @@ public class Player {
             }
         }
     }
-    
-    
 }
