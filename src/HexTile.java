@@ -58,6 +58,10 @@ Activity:	  -Date-             -Person-               -Updates-
 import javafx.scene.shape.Polygon;
 import static javafx.scene.paint.Color.*;
 
+/**
+ *
+ * @author d101-22
+ */
 public class HexTile {
     
 //                              Class Properties
@@ -91,27 +95,46 @@ public class HexTile {
 //                          Accessors and Mutators
 // _____________________________________________________________________________
    
- 
+    /**
+     *
+     * @return
+     */
     public int getResourceYield() {
         return this.resourceYield;
     }
 
     // randomly assigns index value of resources array as resourceYield
-    public void setResourceYield() {
+
+    /**
+     *
+     */
+        public void setResourceYield() {
         int rand = getRandInt(0, 4);
         this.resourceYield = rand;
     }
 
+    /**
+     *
+     * @param i
+     */
     public void setResourceYieldM(int i) {
         resourceYield = i;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumRoll() {
         return numRoll;
     }
 
     // numRoll must be between 2 and 12 (double dice roll), but not 7 (robber)
-    public void setNumRoll() {
+
+    /**
+     *
+     */
+        public void setNumRoll() {
         int randInt = getRandInt(2, 12);
 
         while (randInt == 7) {
@@ -120,30 +143,55 @@ public class HexTile {
         numRoll = randInt;
     }
 
+    /**
+     *
+     * @param i
+     */
     public void setNumRollM(int i) {
         numRoll = i;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasRobber() {
         return robber;
     }
 
     // called when robber is moved on (true) or off (false)
-    public void setRobber(boolean robber) {
+
+    /**
+     *
+     * @param robber
+     */
+        public void setRobber(boolean robber) {
         this.robber = robber;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isCenter() {
         return center;
     }
 
+    /**
+     *
+     * @param center
+     */
     public void setCenter(boolean center) {
         this.center = center;
     }
 
 //                                 Methods
 // _____________________________________________________________________________
-    public void yieldResources() {
+
+    /**
+     *
+     */
+        public void yieldResources() {
 
         // Tiles with robber and center tile do not yield resources
         if (!this.hasRobber() && !this.isCenter()) {
@@ -165,6 +213,12 @@ public class HexTile {
         }
     }
 
+    /**
+     *
+     * @param min
+     * @param max
+     * @return
+     */
     public static int getRandInt(int min, int max) {
         int random;
 
@@ -177,10 +231,18 @@ public class HexTile {
         return random;
     }
 
+    /**
+     *
+     * @return
+     */
     public Intersection[] getIntersections() {
         return intersections;
     }
 
+    /**
+     *
+     * @param intersections
+     */
     public void setIntersections(Intersection[] intersections) {
         this.intersections = intersections;
     }

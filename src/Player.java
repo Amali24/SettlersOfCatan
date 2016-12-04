@@ -115,6 +115,8 @@ public class Player {
     private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
 
+    private GameManager manager;
+    private Player player;
     private final Color color;
 
 // 				Constructors
@@ -329,20 +331,43 @@ public class Player {
 	
     public void printRoads() { 
 	 // Prints player's current number of roads  
-	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of roads:\n"
-		+ roadCount + "\n");
+        System.out.println("\nPlayer " + (playerID + 1) + " 's current number"
+                + " of roads: " + roadCount + "\n Located at: \n");
+
+        // Prints the location of player's roads
+        for (Boundary b : manager.boundaries) {
+            if (b.occupied() && player.getPlayerID() == b.getPlayer()) {
+                System.out.println(
+                        + manager.sqrtToAlpha(b.getEndpointA().getLocation().getX()) + b.getEndpointA().getLocation().getY()
+                        + manager.sqrtToAlpha(b.getEndpointB().getLocation().getX()) + b.getEndpointB().getLocation().getY());
+            }
+        }
     }
 			    
     public void printSettlements() {
 	 // Prints player's current number of settlements  
-	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of settlements:\n"
-		+ settlementCount + "\n");
+        System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
+                + "of settlements: " + settlementCount + "\nLocated at: ");
+
+        // Prints the location of player's settlements
+        for (Intersection i : manager.intersections) {
+            if (i.occupied() && i.getSettlementType() == 1 && player.getPlayerID() == i.getPlayer()) {
+                System.out.println("point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
+            }
+        }
     }
 			    
     public void printCities() {
-	 // Prints player's current number of cities 
-	 System.out.println("\nPlayer " + (playerID + 1) + " 's current number of cities:\n"
-		+ cityCount + "\n");
+	// Prints player's current number of cities 
+        System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
+                + "of cities:\n" + cityCount + "\nLocated at: ");
+
+        // Prints the location of player's cities
+        for (Intersection i : manager.intersections) {
+            if (i.occupied() && i.getSettlementType() == 2 && player.getPlayerID() == i.getPlayer()) {
+                System.out.println(" point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
+            }
+        }
     }
     
     
