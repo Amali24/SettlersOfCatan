@@ -49,7 +49,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       Y coordinates including UI 
                                                       offsets and scale factors
 
-            November 23, 2016           AT          * Added comments for getUIX and getUIY
+            November 23, 2016           AT          * Added comments for getUIX 
+                                                      and getUIY
+
+            December 2, 2016            AS  `       * Updated Javadoc documentation
 
  */
 
@@ -57,7 +60,7 @@ Activity:	  -Date-             -Person-               -Updates-
 * The <code> Coordinate </code> class accepts x and y coordinate values and is 
 * used to represent locations on the game board.
 */
-public class Coordinate {
+class Coordinate {
 
 //                              Class Properties
 // _____________________________________________________________________________
