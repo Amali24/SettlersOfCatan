@@ -38,27 +38,27 @@ has the longest road and the largest army.
 
 
 Activity:	  -Date-             -Person-               -Updates-
-            November 7, 2016   		AS          *Created Bank Class
-                                                    *DevelopmentCard Methods
+            November 7, 2016   		AS          * Created Bank Class
+                                                    * DevelopmentCard Methods
 
-            November 14, 2016           AS          *Made buyDevelopmentCard method
-                                                    *Made findDevlopmentCard method
-                                                    *Made exchangeRates method
-                                                    *Made bankTrade method
-                                                    *Made playerTrade method
-                                                    *Made tradePrompt method
+            November 14, 2016           AS          * Made buyDevelopmentCard method
+                                                    * Made findDevlopmentCard method
+                                                    * Made exchangeRates method
+                                                    * Made bankTrade method
+                                                    * Made playerTrade method
+                                                    * Made tradePrompt method
 
                                                     
 
-                                        AT          *Debugged test code and the 
-                                                     find/buy methods
+                                        AT          * Debugged test code and the 
+                                                      find/buy methods
             
-            November 17, 2016           AS          *Created new class Trade
-                                                     to facilitate trading
-                                                    *Moved tradePrompt() to trade 
-                                                     class
-                                                    *Altered playerTrade() to use
-                                                     Trade class
+            November 17, 2016           AS          * Created new class Trade
+                                                      to facilitate trading
+                                                    * Moved tradePrompt() to trade 
+                                                      class
+                                                    * Altered playerTrade() to use
+                                                      Trade class
 
             November 18, 2016           AT          * Moved buildRoad and 
                                                       buildSettlement here
@@ -69,13 +69,13 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       multiple simultaneous games
                                                       on server eventually
 
-                                        AS          *Altered bankTrade() to
-                                                     use Trade class
-                                                    *Added calculateLongestRoad()
-                                                     and calculateLargestArmy()
-                                                     methods
-                                                    *calculateLoungestRoad() is
-                                                     called inside buildRoad()
+                                        AS          * Altered bankTrade() to
+                                                      use Trade class
+                                                    * Added calculateLongestRoad()
+                                                      and calculateLargestArmy()
+                                                      methods
+                                                    * calculateLoungestRoad() is
+                                                      called inside buildRoad()
                                         
             November 20, 2016           AT          * Added GUIBuildRoad method
                                                       to allow building of roads

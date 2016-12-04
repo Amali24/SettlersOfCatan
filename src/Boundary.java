@@ -43,18 +43,18 @@ Classes:    Boundary
 
  
 Activity:	  -Date-             -Person-               -Updates-
-            October 20, 2016		AS          *Created Boundary class 
-                                                     within the Intersection.java 
-                                                     file
+            October 20, 2016		AS          * Created Boundary class 
+                                                      within the Intersection.java 
+                                                      file
 				
-            November 7, 2016		AS          *Standardized Documentation 
-                                                     and Formatting 
+            November 7, 2016		AS          * Standardized Documentation 
+                                                      and Formatting 
 
-            November 14, 2016		AS          *added searchBoundary method
+            November 14, 2016		AS          * added searchBoundary method
                                        
-            November 18, 2016           AS          *Moved Boundary class to this
-                                                     file
-                                                    *Added Javadoc documentation
+            November 18, 2016           AS          * Moved Boundary class to this
+                                                      file
+                                                    * Added Javadoc documentation
             
             November 19, 2016           AT          * Added line property for UI
                                                       including constructor changes

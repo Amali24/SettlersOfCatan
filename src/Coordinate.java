@@ -33,21 +33,21 @@ Classes:    Coordinate
 
  
 Activity:	  -Date-             -Person-               -Updates-
-            October 20, 2016		AS          *Created Coordinate class 
-                                                     within the Intersection.java 
-                                                     file
+            October 20, 2016		AS          * Created Coordinate class 
+                                                      within the Intersection.java 
+                                                      file
 				
-            November 7, 2016		AS          *Standardized Documentation 
-                                                     and Formatting 
+            November 7, 2016		AS          * Standardized Documentation 
+                                                      and Formatting 
                                        
-            November 18, 2016           AS          *Moved Coordinate class to 
-                                                     this file
-                                                    *Added JavaDoc documentation
+            November 18, 2016           AS          * Moved Coordinate class to 
+                                                      this file
+                                                    * Added JavaDoc documentation
 
-            November 20, 2016           AT          * Added getUIX and getUIY methods
-                                                      which return X and Y coordinates
-                                                      including UI offsets and scale
-                                                      factors
+            November 20, 2016           AT          * Added getUIX and getUIY 
+                                                      methods which return X and 
+                                                      Y coordinates including UI 
+                                                      offsets and scale factors
 
             November 23, 2016           AT          * Added comments for getUIX and getUIY
 
@@ -57,8 +57,7 @@ Activity:	  -Date-             -Person-               -Updates-
 * The <code> Coordinate </code> class accepts x and y coordinate values and is 
 * used to represent locations on the game board.
 */
-
-class Coordinate {
+public class Coordinate {
 
 //                              Class Properties
 // _____________________________________________________________________________
