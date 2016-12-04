@@ -81,8 +81,15 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Added comments to all methods
                                                     * Fixed some logical errors
 
-            November 27, 2016           AS          *Added pictures displayed in
-                                                     hextiles
+            November 27, 2016           AS          * Added pictures displayed in
+                                                      hextiles
+
+            December 4, 2016            AT          * Converted several fields to
+                                                      be non-static with the idea
+                                                      of a server being able to run
+                                                      multiple games
+                                                    * Added end turn method
+                                                    * Added saveGame method skeleton
 
 
 
@@ -148,8 +155,10 @@ public class GameManager {
     static boolean isSetUpPhase = true;
 
     static Bank banker = new Bank();
-    
-    static GameManager gm1;
+
+    static int turnsPlayed;
+
+    static GameManager gm1 = new GameManager();
 
 //  				Methods
 //_____________________________________________________________________________
@@ -157,10 +166,9 @@ public class GameManager {
         // create the deck of development cards [not random]
         banker.generateDevelopmentCards();
         // build the game board with randomly generated yields and numbers to roll
-        gm1 = new GameManager();
         gm1.buildGameboard();
         // Open debug mode, a "no" answer skips this
-        debugMode();
+        gm1.debugMode();
         // Launch GUI shell
         Application.launch(ClientUI.class);
 
@@ -170,7 +178,7 @@ public class GameManager {
         sc.close();
     }
 
-    static void debugMode() {
+    void debugMode() {
         String quit = "n";
 
         Scanner sc = new Scanner(System.in);
@@ -240,7 +248,7 @@ public class GameManager {
                                     int amountToAdd = Integer.parseInt(sc.nextLine());
 
                                     // Add resources and print new totals
-                                    players[playerID].addResource(resourceToAdd, amountToAdd);
+                                    this.players[playerID].addResource(resourceToAdd, amountToAdd);
                                     players[playerID].printResources();
 
                                     break;
@@ -712,7 +720,7 @@ public class GameManager {
         // This will enable autosaving and not require the user to save the game manually
     }
 
-    static void robberSteal() {
+    void robberSteal() {
         // When you roll a 7 the robber steals from any player with over 7 total resources
         Scanner sc = new Scanner(System.in);
         // For each player, check their total
@@ -742,6 +750,32 @@ public class GameManager {
         int die2 = HexTile.getRandInt(1, 6);
         int sum = die1 + die2;
         return sum;
+    }
+
+    static void endTurn(boolean setupPhase) {
+        if (setupPhase) {
+            // 1 2 3 4 4 3 2 1
+            if (turnsPlayed < 4) {
+                activePlayerID++;
+            } else if (turnsPlayed == 4) {
+                // Do nothing
+            } else {
+                activePlayerID--;
+            }
+        } else {
+            if (++activePlayerID > 3) {
+                activePlayerID = 0;
+            }
+        }
+        turnsPlayed++;
+        if (++turnsPlayed == 8) {
+            isSetUpPhase = false;
+        }
+        saveGame();
+    }
+
+    static private void saveGame() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     int buildGameboard() {
@@ -1218,4 +1252,5 @@ public class GameManager {
 
         return 0;
     }
+
 }
