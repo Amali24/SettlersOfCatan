@@ -752,14 +752,17 @@ public class GameManager {
         if (setupPhase) {
             // setupPhase is serpentine
             // i.e. the order is 1 2 3 4 4 3 2 1
-            if (turnsPlayed < 4) {
+            if (turnsPlayed < 3) {
                 // Until player 4's turn, increment player
                 activePlayerID++;
-            } else if (turnsPlayed == 4) {
+            } else if (turnsPlayed == 3) {
                 // On player4's first turn, give them another turn
             } else {
                 // Then begin going backwards
                 activePlayerID--;
+                if (activePlayerID < 0){
+                    activePlayerID = 0;
+                }
             }
             turnsPlayed++;
             if (turnsPlayed == 8) {
@@ -774,7 +777,7 @@ public class GameManager {
                 activePlayerID = 0;
             }
         }
-        saveGame();
+        //saveGame();
     }
 
     static private void saveGame() {

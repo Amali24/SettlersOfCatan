@@ -288,6 +288,10 @@ public class ClientUI extends Application {
         primaryStage.setScene(scene);
 
         primaryStage.show();
+        
+        if(GameManager.isSetUpPhase){
+            setUpPhase();
+        }
     }
 
     // Creates panels with player's information during game
@@ -370,6 +374,10 @@ public class ClientUI extends Application {
                     line.setOnMouseClicked(e -> {
                         Bank.GUIBuildRoad(activePlayerID, road);
                         restoreUIElements(circles, lines);
+                        if (GameManager.isSetUpPhase) {
+                            GameManager.endTurn(GameManager.isSetUpPhase);
+                            setUpPhase();
+                        }
                     });
                 }
             }
@@ -406,6 +414,11 @@ public class ClientUI extends Application {
                     circle.setOnMouseClicked(e -> {
                         Bank.GUIBuildSettlement(activePlayerID, intersection, GameManager.isSetUpPhase);
                         restoreUIElements(circles, lines);
+                        // If setup phase, allow user to also build road
+                        if (GameManager.isSetUpPhase) {
+                            ArrayList<Boundary> buildableRoads = findBuildableRoads(activePlayerID);
+                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
+                        }
                     });
                 }
             }
@@ -512,25 +525,8 @@ public class ClientUI extends Application {
         boolean setupPhase = GameManager.isSetUpPhase;
         Intersection[] intersections = GameManager.intersections;
 
-        while (setupPhase) {
-            findBuildableSettlements(playerID, setupPhase);
-
-        /*
-        
-        1: highlight all available settlements{
-            settlement.onclick{
-                build it
-                show roads{
-                    road.onclick{
-                        build road
-                        end turn (changes player)
-                        GOTO 1
-                    }
-                }
-            }
-        }
-             */
-        }
+        ArrayList<Intersection> buildableIntersections = findBuildableSettlements(playerID, setupPhase);
+        buildASettlement(buildableIntersections, intersections, playerID);
     }
 
     // Creates Pane that contains information about the resources 

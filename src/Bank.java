@@ -107,12 +107,11 @@ Activity:	  -Date-             -Person-               -Updates-
 import java.util.Scanner;
 
 /**
- * The <code>Bank</code> class facilitates transactions of resources including 
- * the trading of resources between players, the purchace of development
- * cards, and the building of roads and settlements.
+ * The <code>Bank</code> class facilitates transactions of resources including
+ * the trading of resources between players, the purchace of development cards,
+ * and the building of roads and settlements.
  *
  */
-
 public class Bank {
 
 //  				Class Properties
@@ -134,10 +133,10 @@ public class Bank {
 //                                  Methods
 //_____________________________________________________________________________
     /**
-     * Method handles the building of settlements for the text based game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+     * Method handles the building of settlements for the text based game by
+     * deducting the appropriate resources from the given player, marking the
+     * intersection as occupied, and updating the player's information.
+     *
      * @param playerID
      * @param setupPhase
      * @return Returns 0 if no error is met.
@@ -209,10 +208,10 @@ public class Bank {
     }
 
     /**
-     * Method handles the building of settlements for the graphics format game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+     * Method handles the building of settlements for the graphics format game
+     * by deducting the appropriate resources from the given player, marking the
+     * intersection as occupied, and updating the player's information.
+     *
      * @param activePlayerID
      * @param settlementToBuy
      * @param setupPhase
@@ -226,26 +225,26 @@ public class Bank {
         settlementToBuy.getCircle().setStroke(activePlayer.getColor());
         //update player's settlements
         activePlayer.addSettlement(settlementToBuy);
-        
+
         // Deduct resources if not setup phase
-        if(!setupPhase){
-        GameManager.players[activePlayerID].deductResource(BRICK, 1);
-        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
-        GameManager.players[activePlayerID].deductResource(WOOL, 1);
-        GameManager.players[activePlayerID].deductResource(WHEAT, 1);
+        if (!setupPhase) {
+            GameManager.players[activePlayerID].deductResource(BRICK, 1);
+            GameManager.players[activePlayerID].deductResource(LUMBER, 1);
+            GameManager.players[activePlayerID].deductResource(WOOL, 1);
+            GameManager.players[activePlayerID].deductResource(WHEAT, 1);
         }
 
         // Resource checking, etc. is not necessary in the GUI as only buildable
         // settlements will be clickable
     }
 
-     /**
-     * Method handles the building of cities for the text based game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+    /**
+     * Method handles the building of cities for the text based game by
+     * deducting the appropriate resources from the given player, marking the
+     * intersection as occupied, and updating the player's information.
+     *
      * @param playerID
-
+     *
      */
     public static int buildCity(int playerID) {
 
@@ -282,7 +281,7 @@ public class Bank {
             // deduct resources
             activePlayer.deductResource(ORE, 3);
             activePlayer.deductResource(WHEAT, 2);
-            
+
             //update player's cities
             activePlayer.addCity(settlementLocation);
             return 0;
@@ -301,11 +300,11 @@ public class Bank {
 
     }
 
-     /**
-     * Method handles the building of cities for the graphics format of the game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+    /**
+     * Method handles the building of cities for the graphics format of the game
+     * by deducting the appropriate resources from the given player, marking the
+     * intersection as occupied, and updating the player's information.
+     *
      * @param activePlayerID
      * @param settlementToBuy
      */
@@ -322,18 +321,18 @@ public class Bank {
 
         //update player's cities
         activePlayer.addCity(settlementToBuy);
-        
+
         // As with settlement, extensive checking is not required in this method
         // As the UI will handle that
     }
 
     /**
-     * Method handles the building of roads for the text based game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+     * Method handles the building of roads for the text based game by deducting
+     * the appropriate resources from the given player, marking the intersection
+     * as occupied, and updating the player's information.
+     *
      * @param playerID
-     * 
+     *
      */
     public static int buildRoad(int playerID) {
 
@@ -415,11 +414,11 @@ public class Bank {
         }
     }
 
-         /**
-     * Method handles the building of roads for the graphics format of the game by 
-     * deducting the appropriate resources from the given player, 
-     * marking the intersection as occupied, and updating the player's information.
-     * 
+    /**
+     * Method handles the building of roads for the graphics format of the game
+     * by deducting the appropriate resources from the given player, marking the
+     * intersection as occupied, and updating the player's information.
+     *
      * @param activePlayerID
      * @param roadToBuy
      */
@@ -433,20 +432,23 @@ public class Bank {
         // Set the road to owned by the player
         roadToBuy.setPlayer(activePlayerID);
         // Deduct resource
-        activePlayer.deductResource(LUMBER, 1);
-        activePlayer.deductResource(BRICK, 1);
+        if (!GameManager.isSetUpPhase) {
+            activePlayer.deductResource(LUMBER, 1);
+            activePlayer.deductResource(BRICK, 1);
+        }
 
         //update player's roads
         activePlayer.addRoad(roadToBuy);
-        
+
         calculateLongestRoad();
         // As with settlement, extensive checking is not required in this method
         // As the UI will handle that
     }
 
     /**
-     * Method compares the road count of each player in the game to determine who has
-     * the most and sets the longestRoad field for each player accordingly.
+     * Method compares the road count of each player in the game to determine
+     * who has the most and sets the longestRoad field for each player
+     * accordingly.
      */
     public static void calculateLongestRoad() {
         // NOTE: our method simplifies longest road from the board game version
@@ -472,9 +474,9 @@ public class Bank {
         System.out.println("Player " + (roadBuilderSupreme + 1) + " has the longest road.");
     }
 
-        /**
-     * Method compares the army size of each player in the game to determine who has
-     * the most and sets the largestArmy field for each player accordingly.
+    /**
+     * Method compares the army size of each player in the game to determine who
+     * has the most and sets the largestArmy field for each player accordingly.
      */
     public static void calculateLargestArmy() {
 
@@ -498,7 +500,7 @@ public class Bank {
 
     // Creates "deck" of DevelopmentCards
     /**
-     * Method creates a "deck" of 25 development cards. 
+     * Method creates a "deck" of 25 development cards.
      */
     public void generateDevelopmentCards() {
         // Sets up deck the same way every game
@@ -532,9 +534,10 @@ public class Bank {
     }
 
     /**
-     * Method deducts the appropriate resources from the active player and rewards
-     * in return a randomly selected development card.
-     * @param playerID 
+     * Method deducts the appropriate resources from the active player and
+     * rewards in return a randomly selected development card.
+     *
+     * @param playerID
      */
     public void buyDevelopmentCard(int playerID) {
         // Player object for ease of use
@@ -594,10 +597,11 @@ public class Bank {
 
     // Searches "deck" for cards owned by player
     /**
-     * Method searches through all development cards for cards belonging to
-     * the active player.
+     * Method searches through all development cards for cards belonging to the
+     * active player.
+     *
      * @param playerID
-     * @return 
+     * @return
      */
     public boolean findDevelopmentCards(int playerID) {
         // Flag alerts player when a card is found that they own
@@ -641,7 +645,7 @@ public class Bank {
     /**
      * Method determines the exchange rates unique to each player based on the
      * player's settlement of harbors.
-     * 
+     *
      * @param playerID
      * @return Array of exchange rates for each resource
      */
@@ -684,10 +688,10 @@ public class Bank {
     }
 
     /**
-     * Method facilitates trade between a player and the bank utilizing fixed 
+     * Method facilitates trade between a player and the bank utilizing fixed
      * exchange rates.
-     * 
-     * @param playerID 
+     *
+     * @param playerID
      */
     public static void bankTrade(int playerID) {
 
@@ -739,7 +743,8 @@ public class Bank {
 
     /**
      * Method facilitates trade between players.
-     * @param playerID 
+     *
+     * @param playerID
      */
     public static void playerTrade(int playerID) {
 
