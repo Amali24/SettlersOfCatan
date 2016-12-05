@@ -72,6 +72,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                         
                                         AS&AT       * Edited images to better fit
                                                       HexTiles
+            
+            Deceber 04, 2016            AS          * Added setup phase parameter
+                                                      to call of GUIBuildSettlement
+                                                      method 
  */
 import java.io.*;
 import java.util.*;
@@ -212,6 +216,12 @@ public class ClientUI extends Application {
             }
         });
 
+        /*Button btnBuildRoad = new Button("Build a Road");
+        btnBuildRoad.setOnAction(e
+                -> {
+            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+        });*/
         Button btnBuild = new Button("Build Improvements");
         btnBuild.setStyle(btnStyle);
         btnBuild.setOnAction(e -> openBuildMenu());
@@ -394,7 +404,7 @@ public class ClientUI extends Application {
                     // Make stroke thicker and set clickable if its buildable
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> {
-                        Bank.GUIBuildSettlement(activePlayerID, intersection);
+                        Bank.GUIBuildSettlement(activePlayerID, intersection, GameManager.isSetUpPhase);
                         restoreUIElements(circles, lines);
                     });
                 }
@@ -478,20 +488,49 @@ public class ClientUI extends Application {
 
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
         for (Circle i : intersections) {
+            // For every circle, restore to strokeWidth 1
             if (i.getStroke() == BLACK) {
+                // only if it is still BLACK ie unowned
                 i.setStrokeWidth(1);
             }
+            // Set to do nothing on click
             i.setOnMouseClicked(e -> doNothing());
 
         }
         for (Line l : boundaries) {
-            l.setStrokeWidth(4);
+            // Set all lines non-clickable
             l.setOnMouseClicked(e -> doNothing());
         }
     }
 
     private void doNothing() {
+        // does nothing
+    }
 
+    private void setUpPhase() {
+        int playerID = GameManager.activePlayerID;
+        boolean setupPhase = GameManager.isSetUpPhase;
+        Intersection[] intersections = GameManager.intersections;
+
+        while (setupPhase) {
+            findBuildableSettlements(playerID, setupPhase);
+
+        /*
+        
+        1: highlight all available settlements{
+            settlement.onclick{
+                build it
+                show roads{
+                    road.onclick{
+                        build road
+                        end turn (changes player)
+                        GOTO 1
+                    }
+                }
+            }
+        }
+             */
+        }
     }
 
     // Creates Pane that contains information about the resources 

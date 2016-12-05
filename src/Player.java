@@ -84,6 +84,13 @@ Activity:	  -Date-             -Person-               -Updates-
 	    					    * Created printRoads, printSettlement and 
 						      printCities methods
 
+            December 04, 2016           AS          * Added 3 arrays to keep track
+                                                      of settlements, cities, and
+                                                      roads. 
+                                                    * Used new arrays for their 
+                                                      corresponding add methods
+                                                      which now take parameters
+
  */
 public class Player {
 
@@ -91,10 +98,14 @@ public class Player {
 //_____________________________________________________________________________
     private int playerID = -1;
 
-    // number of buildings a player has
-    private int roadCount = 0; 			//max of 15
+    private Intersection settlementList[] = new Intersection[5]; 
+    private Intersection cityList[] = new Intersection[4]; 
+    private Boundary roadList[] = new Boundary[15]; 
+
+ 
     private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 4
+    private int roadCount = 0; 			//max of 15
 
     private int developmentCardCount; //number of unplayed development cards held by this player
 
@@ -118,7 +129,7 @@ public class Player {
     private GameManager manager;
     private Player player;
     
-    private Color color;
+    private final Color color;
 
 // 				Constructors
 //_____________________________________________________________________________
@@ -154,39 +165,44 @@ public class Player {
         return roadCount;
     }
 
-    public void addRoad() {
+    public void addRoad(Boundary newRoad) {
         if(roadCount >= 15){
 		System.out.println("You have exceeded the number of roads available");
-		return;
 	}
-	else
+        else{
+            roadList[roadCount]= newRoad;
 	    roadCount++;
+    }
     }
 
     public int getSettlementCount() {
         return settlementCount;
     }
 
-    public void addSettlement() {
+    public void addSettlement(Intersection newSettlement) {
 	if(settlementCount >= 5){
 		System.out.println("You have exceeded the number of settlements available");
-	        return;
+	      
 	}
-	else
+        else{
+            settlementList[settlementCount]= newSettlement;
             settlementCount++;
+    }
     }
 
     public int getCityCount() {	
             return cityCount;
     }
 
-    public void addCity() {
+    public void addCity(Intersection newCity) {
 	if(cityCount >= 4){
 		System.out.println("You have exceeded the number of cities available");
-	        return;
+
 	}
-	else       
+        else{       
+            cityList[cityCount]= newCity;
             cityCount++;
+    }
     }
 
     public int getDevelopmentCardCount() {

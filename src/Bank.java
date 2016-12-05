@@ -95,10 +95,23 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Fixed slight logical errors in
                                                       longestRoad and largestArmy methods
 
-
+            December 04, 2016           AS          * Added Javadoc documentation
+                                                    * Included new add methods
+                                                      from the player class to
+                                                      every build method here
+                                                    * Included setup phase
+                                                      condition to the 
+                                                      GUIBuildSettlement method
  */
 
 import java.util.Scanner;
+
+/**
+ * The <code>Bank</code> class facilitates transactions of resources including 
+ * the trading of resources between players, the purchace of development
+ * cards, and the building of roads and settlements.
+ *
+ */
 
 public class Bank {
 
@@ -120,7 +133,15 @@ public class Bank {
 
 //                                  Methods
 //_____________________________________________________________________________
-    // Allows building of settlements through console
+    /**
+     * Method handles the building of settlements for the text based game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param playerID
+     * @param setupPhase
+     * @return Returns 0 if no error is met.
+     */
     public static int buildSettlement(int playerID, boolean setupPhase) {
         // Create player object based upon integer playerID passed for use throughout method
         Player activePlayer = GameManager.players[playerID];
@@ -153,10 +174,14 @@ public class Bank {
                 settlementLocation.setPlayer(playerID);
                 settlementLocation.setSettlementType(1);
 
+                //deduct approprate resources from player
                 activePlayer.deductResource(BRICK, 1);
                 activePlayer.deductResource(LUMBER, 1);
                 activePlayer.deductResource(WOOL, 1);
                 activePlayer.deductResource(WHEAT, 1);
+
+                //update player's settlements
+                activePlayer.addSettlement(settlementLocation);
 
                 return 0;
             } else // otherwise print error message
@@ -183,25 +208,45 @@ public class Bank {
         }
     }
 
-    public static void GUIBuildSettlement(int activePlayerID, Intersection settlementToBuy) {
+    /**
+     * Method handles the building of settlements for the graphics format game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param activePlayerID
+     * @param settlementToBuy
+     * @param setupPhase
+     */
+    public static void GUIBuildSettlement(int activePlayerID, Intersection settlementToBuy, boolean setupPhase) {
         // Create Player object for ease of use
         Player activePlayer = GameManager.players[activePlayerID];
         // Set settlement to owned by player
         settlementToBuy.setPlayer(activePlayerID);
         // Set circle stroke to player color
         settlementToBuy.getCircle().setStroke(activePlayer.getColor());
-        settlementToBuy.getCircle().setStrokeWidth(4);
+        //update player's settlements
+        activePlayer.addSettlement(settlementToBuy);
         
-        // Deduct resources
-        activePlayer.deductResource(BRICK, 1);
-        activePlayer.deductResource(LUMBER, 1);
-        activePlayer.deductResource(WOOL, 1);
-        activePlayer.deductResource(WHEAT, 1);
+        // Deduct resources if not setup phase
+        if(!setupPhase){
+        GameManager.players[activePlayerID].deductResource(BRICK, 1);
+        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
+        GameManager.players[activePlayerID].deductResource(WOOL, 1);
+        GameManager.players[activePlayerID].deductResource(WHEAT, 1);
+        }
 
         // Resource checking, etc. is not necessary in the GUI as only buildable
         // settlements will be clickable
     }
 
+     /**
+     * Method handles the building of cities for the text based game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param playerID
+
+     */
     public static int buildCity(int playerID) {
 
         Player activePlayer = GameManager.players[playerID];
@@ -237,6 +282,9 @@ public class Bank {
             // deduct resources
             activePlayer.deductResource(ORE, 3);
             activePlayer.deductResource(WHEAT, 2);
+            
+            //update player's cities
+            activePlayer.addCity(settlementLocation);
             return 0;
 
             // If inadequate resources, inform which    
@@ -253,6 +301,14 @@ public class Bank {
 
     }
 
+     /**
+     * Method handles the building of cities for the graphics format of the game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param activePlayerID
+     * @param settlementToBuy
+     */
     public static void GUIBuildCity(int activePlayerID, Intersection settlementToBuy) {
         // Player object for ease of use
         Player activePlayer = GameManager.players[activePlayerID];
@@ -261,13 +317,24 @@ public class Bank {
         // Fill in circle - stroke will already be set as a settlement is required to build city
         settlementToBuy.getCircle().setFill(activePlayer.getColor());
         // Deduct resources
-        GameManager.players[activePlayerID].deductResource(ORE, 3);
-        GameManager.players[activePlayerID].deductResource(WHEAT, 2);
+        activePlayer.deductResource(ORE, 3);
+        activePlayer.deductResource(WHEAT, 2);
 
+        //update player's cities
+        activePlayer.addCity(settlementToBuy);
+        
         // As with settlement, extensive checking is not required in this method
         // As the UI will handle that
     }
 
+    /**
+     * Method handles the building of roads for the text based game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param playerID
+     * 
+     */
     public static int buildRoad(int playerID) {
 
         // A road requires two endpoints
@@ -326,7 +393,7 @@ public class Bank {
                 roadLocation.setPlayer(playerID);
 
                 //increment the player's road number
-                GameManager.players[playerID].addRoad();
+                activePlayer.addRoad(roadLocation);
                 //recalculate longest road
                 calculateLongestRoad();
 
@@ -348,6 +415,14 @@ public class Bank {
         }
     }
 
+         /**
+     * Method handles the building of roads for the graphics format of the game by 
+     * deducting the appropriate resources from the given player, 
+     * marking the intersection as occupied, and updating the player's information.
+     * 
+     * @param activePlayerID
+     * @param roadToBuy
+     */
     public static void GUIBuildRoad(int activePlayerID, Boundary roadToBuy) {
         // Player object for ease of use
         Player activePlayer = GameManager.players[activePlayerID];
@@ -361,10 +436,18 @@ public class Bank {
         activePlayer.deductResource(LUMBER, 1);
         activePlayer.deductResource(BRICK, 1);
 
+        //update player's roads
+        activePlayer.addRoad(roadToBuy);
+        
+        calculateLongestRoad();
         // As with settlement, extensive checking is not required in this method
         // As the UI will handle that
     }
 
+    /**
+     * Method compares the road count of each player in the game to determine who has
+     * the most and sets the longestRoad field for each player accordingly.
+     */
     public static void calculateLongestRoad() {
         // NOTE: our method simplifies longest road from the board game version
         // our method would be more aptly titled "owner of most roads"
@@ -389,6 +472,10 @@ public class Bank {
         System.out.println("Player " + (roadBuilderSupreme + 1) + " has the longest road.");
     }
 
+        /**
+     * Method compares the army size of each player in the game to determine who has
+     * the most and sets the largestArmy field for each player accordingly.
+     */
     public static void calculateLargestArmy() {
 
         int largestArmySize = 0;
@@ -410,6 +497,9 @@ public class Bank {
     }
 
     // Creates "deck" of DevelopmentCards
+    /**
+     * Method creates a "deck" of 25 development cards. 
+     */
     public void generateDevelopmentCards() {
         // Sets up deck the same way every game
         // No need to shuffle as cards are assigned at random
@@ -441,6 +531,11 @@ public class Bank {
 
     }
 
+    /**
+     * Method deducts the appropriate resources from the active player and rewards
+     * in return a randomly selected development card.
+     * @param playerID 
+     */
     public void buyDevelopmentCard(int playerID) {
         // Player object for ease of use
         Player currentPlayer = GameManager.players[playerID];
@@ -498,6 +593,12 @@ public class Bank {
     }
 
     // Searches "deck" for cards owned by player
+    /**
+     * Method searches through all development cards for cards belonging to
+     * the active player.
+     * @param playerID
+     * @return 
+     */
     public boolean findDevelopmentCards(int playerID) {
         // Flag alerts player when a card is found that they own
         boolean haveCard = false;
@@ -537,6 +638,13 @@ public class Bank {
         return haveCard;
     }
 
+    /**
+     * Method determines the exchange rates unique to each player based on the
+     * player's settlement of harbors.
+     * 
+     * @param playerID
+     * @return Array of exchange rates for each resource
+     */
     public static int[] exchangeRates(int playerID) {
 
         //each index of this array corresponds with the resources in the resource array
@@ -575,6 +683,12 @@ public class Bank {
         return exchangeRates;
     }
 
+    /**
+     * Method facilitates trade between a player and the bank utilizing fixed 
+     * exchange rates.
+     * 
+     * @param playerID 
+     */
     public static void bankTrade(int playerID) {
 
         String continueTrading = "y";
@@ -623,6 +737,10 @@ public class Bank {
 
     }
 
+    /**
+     * Method facilitates trade between players.
+     * @param playerID 
+     */
     public static void playerTrade(int playerID) {
 
         String continueTrading = "y";
