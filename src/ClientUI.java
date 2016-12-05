@@ -478,8 +478,11 @@ public class ClientUI extends Application {
 
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
         for (Circle i : intersections) {
-            i.setStrokeWidth(1);
+            if (i.getStroke() == BLACK) {
+                i.setStrokeWidth(1);
+            }
             i.setOnMouseClicked(e -> doNothing());
+
         }
         for (Line l : boundaries) {
             l.setStrokeWidth(4);
@@ -488,6 +491,7 @@ public class ClientUI extends Application {
     }
 
     private void doNothing() {
+
     }
 
     // Creates Pane that contains information about the resources 

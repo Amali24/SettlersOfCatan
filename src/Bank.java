@@ -190,6 +190,8 @@ public class Bank {
         settlementToBuy.setPlayer(activePlayerID);
         // Set circle stroke to player color
         settlementToBuy.getCircle().setStroke(activePlayer.getColor());
+        settlementToBuy.getCircle().setStrokeWidth(4);
+        
         // Deduct resources
         activePlayer.deductResource(BRICK, 1);
         activePlayer.deductResource(LUMBER, 1);
