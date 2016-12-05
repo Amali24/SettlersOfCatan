@@ -72,6 +72,10 @@ Activity:	  -Date-             -Person-               -Updates-
                                         
                                         AS&AT       * Edited images to better fit
                                                       HexTiles
+            
+            Deceber 04, 2016            AS          * Added setup phase parameter
+                                                      to call of GUIBuildSettlement
+                                                      method 
  */
 import java.io.*;
 import java.util.*;
@@ -427,7 +431,7 @@ public class ClientUI extends Application {
                 if (intersection.getCircle() == circle) {
                     // Make stroke thicker and set clickable if its buildable
                     circle.setStrokeWidth(4);
-                    circle.setOnMouseClicked(e -> Bank.GUIBuildSettlement(activePlayerID, intersection));
+                    circle.setOnMouseClicked(e -> Bank.GUIBuildSettlement(activePlayerID, intersection, GameManager.isSetUpPhase));
                 }
             }
         }
