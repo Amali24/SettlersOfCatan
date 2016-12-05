@@ -109,6 +109,9 @@ public class ClientUI extends Application {
     Insets insets = new Insets(12);
     DropShadow ds = new DropShadow();
 
+    ArrayList<Circle> circles = new ArrayList<>();
+    ArrayList<Line> lines = new ArrayList<>();
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
@@ -164,6 +167,7 @@ public class ClientUI extends Application {
 
         // Iterate over all boundaries and add their respective lines to the GUI
         for (Boundary boundary : GameManager.boundaries) {
+            lines.add(boundary.getLine());
             gameBoard.getChildren().add(boundary.getLine());
         }
 
@@ -174,6 +178,8 @@ public class ClientUI extends Application {
             // Set all circles to hollow black
             circle.setStroke(BLACK);
             circle.setFill(WHITE);
+
+            circles.add(circle);
 
             gameBoard.getChildren().add(circle);
         }
@@ -206,12 +212,6 @@ public class ClientUI extends Application {
             }
         });
 
-        /*Button btnBuildRoad = new Button("Build a Road");
-        btnBuildRoad.setOnAction(e
-                -> {
-            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-        });*/
         Button btnBuild = new Button("Build Improvements");
         btnBuild.setStyle(btnStyle);
         btnBuild.setOnAction(e -> openBuildMenu());
@@ -222,12 +222,13 @@ public class ClientUI extends Application {
         btnTrade.setStyle(btnStyle);
 
         Button btnEndTurn = new Button("End Turn");
+        btnEndTurn.setOnAction(e -> GameManager.endTurn(GameManager.isSetUpPhase));
         btnEndTurn.setStyle(btnStyle);
 
         /*
         Delete This?
         For Debugging only
-        */
+         */
         Button btnNewBoard = new Button("New Board");
         btnNewBoard.setOnAction(e -> {
             GameManager.gm1.buildGameboard();
@@ -356,10 +357,137 @@ public class ClientUI extends Application {
                 if (road.getLine() == line) {
                     // Make it wider and setOnClick to GUIBuildRoad method
                     line.setStrokeWidth(4);
-                    line.setOnMouseClicked(e -> Bank.GUIBuildRoad(activePlayerID, road));
+                    line.setOnMouseClicked(e -> {
+                        Bank.GUIBuildRoad(activePlayerID, road);
+                        restoreUIElements(circles, lines);
+                    });
                 }
             }
         }
+    }
+
+    ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
+
+        // Create an ArrayList to hold Intersections the active player can build on
+        ArrayList<Intersection> buildableIntersections = new ArrayList<>();
+
+        for (Intersection i : GameManager.intersections) {
+            if (i.isOccupiable(currentPlayerID, setUpPhase)) {
+                // If the intersection is occupiable, add it
+                buildableIntersections.add(i);
+            }
+        }
+
+        // Return list
+        return buildableIntersections;
+    }
+
+    void buildASettlement(ArrayList<Intersection> buildableSettlements, Intersection[] intersections, int activePlayerID) {
+
+        for (Intersection i : intersections) {
+            // For each intersection in the game, create a Circle from its circle
+            Circle circle = i.getCircle();
+
+            for (Intersection intersection : buildableSettlements) {
+                // Compare each circle to buildableSettlements
+                if (intersection.getCircle() == circle) {
+                    // Make stroke thicker and set clickable if its buildable
+                    circle.setStrokeWidth(4);
+                    circle.setOnMouseClicked(e -> {
+                        Bank.GUIBuildSettlement(activePlayerID, intersection);
+                        restoreUIElements(circles, lines);
+                    });
+                }
+            }
+        }
+    }
+
+    ArrayList<Intersection> findBuildableCities(int currentPlayerID) {
+
+        ArrayList<Intersection> buildableCities = new ArrayList<>();
+
+        for (Intersection i : GameManager.intersections) {
+            if (i.getPlayer() == currentPlayerID) {
+                // You can only build a city where you already have a settlement
+                buildableCities.add(i);
+            }
+        }
+        // Return ArrayList of all buildable locations for cities
+        return buildableCities;
+    }
+
+    void buildACity(ArrayList<Intersection> buildableCities, Intersection[] intersections, int activePlayerID) {
+
+        for (Intersection i : intersections) {
+            // For every intersection create a circle from its circle
+            Circle circle = i.getCircle();
+            // Compare to the buildable cities
+            for (Intersection intersection : buildableCities) {
+                if (intersection.getCircle() == circle) {
+                    // Make it bigger and clickable
+                    circle.setStrokeWidth(4);
+                    circle.setOnMouseClicked(e -> {
+                        Bank.GUIBuildCity(activePlayerID, intersection);
+                        restoreUIElements(circles, lines);
+                    });
+                }
+            }
+        }
+    }
+
+    private void openBuildMenu() {
+        Stage buildMenu = new Stage();
+
+        HBox btnBox = new HBox(25);
+        Button btnBuildRoad = new Button("Build a Road");
+        btnBuildRoad.setOnAction(e1 -> {
+            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+            buildMenu.close();
+        });
+
+        Button btnBuildSettlement = new Button("Build a Settlement");
+        btnBuildSettlement.setOnAction(e1 -> {
+            ArrayList<Intersection> buildableSettlements = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
+            buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
+            buildMenu.close();
+
+        });
+
+        Button btnBuildCity = new Button("Build a City");
+
+        Button btnCancel = new Button("Cancel");
+        btnCancel.setOnAction(e -> buildMenu.close());
+
+        btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
+
+        Text txtBuild = new Text("Select a type of Improvement to Build:");
+        txtBuild.setFont(new Font(14));
+        txtBuild.setTextAlignment(TextAlignment.CENTER);
+
+        BorderPane boPa = new BorderPane();
+        boPa.setCenter(btnBox);
+        boPa.setTop(txtBuild);
+
+        buildMenu.initModality(Modality.APPLICATION_MODAL);
+
+        buildMenu.setScene(new Scene(boPa));
+        buildMenu.setTitle("Build Menu");
+        buildMenu.show();
+    }
+
+    private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
+        for (Circle i : intersections) {
+            i.setStrokeWidth(1);
+            i.setOnMouseClicked(e -> doNothing());
+        }
+        for (Line l : boundaries) {
+            l.setStrokeWidth(4);
+            l.setOnMouseClicked(e -> doNothing());
+        }
+    }
+
+    private void doNothing() {
     }
 
     // Creates Pane that contains information about the resources 
@@ -399,101 +527,4 @@ public class ClientUI extends Application {
 
         pane.getChildren().add(gridPane);
     }
-
-    ArrayList<Intersection> findBuildableSettlements(int currentPlayerID, boolean setUpPhase) {
-
-        // Create an ArrayList to hold Intersections the active player can build on
-        ArrayList<Intersection> buildableIntersections = new ArrayList<>();
-
-        for (Intersection i : GameManager.intersections) {
-            if (i.isOccupiable(currentPlayerID, setUpPhase)) {
-                // If the intersection is occupiable, add it
-                buildableIntersections.add(i);
-            }
-        }
-
-        // Return list
-        return buildableIntersections;
-    }
-
-    void buildASettlement(ArrayList<Intersection> buildableSettlements, Intersection[] intersections, int activePlayerID) {
-
-        for (Intersection i : intersections) {
-            // For each intersection in the game, create a Circle from its circle
-            Circle circle = i.getCircle();
-
-            for (Intersection intersection : buildableSettlements) {
-                // Compare each circle to buildableSettlements
-                if (intersection.getCircle() == circle) {
-                    // Make stroke thicker and set clickable if its buildable
-                    circle.setStrokeWidth(4);
-                    circle.setOnMouseClicked(e -> Bank.GUIBuildSettlement(activePlayerID, intersection));
-                }
-            }
-        }
-    }
-
-    ArrayList<Intersection> findBuildableCities(int currentPlayerID) {
-
-        ArrayList<Intersection> buildableCities = new ArrayList<>();
-
-        for (Intersection i : GameManager.intersections) {
-            if (i.getPlayer() == currentPlayerID) {
-                // You can only build a city where you already have a settlement
-                buildableCities.add(i);
-            }
-        }
-        // Return ArrayList of all buildable locations for cities
-        return buildableCities;
-    }
-
-    void buildACity(ArrayList<Intersection> buildableCities, Intersection[] intersections, int activePlayerID) {
-
-        for (Intersection i : intersections) {
-            // For every intersection create a circle from its circle
-            Circle circle = i.getCircle();
-            // Compare to the buildable cities
-            for (Intersection intersection : buildableCities) {
-                if (intersection.getCircle() == circle) {
-                    // Make it bigger and clickable
-                    circle.setStrokeWidth(4);
-                    circle.setOnMouseClicked(e -> Bank.GUIBuildCity(activePlayerID, intersection));
-                }
-            }
-        }
-    }
-
-    private void openBuildMenu() {
-        Stage buildMenu = new Stage();
-
-                    HBox btnBox = new HBox(25);
-                    Button btnBuildRoad = new Button("Build a Road");
-                    btnBuildRoad.setOnAction(e1 -> {
-                        ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-                        buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-                    });
-
-                    Button btnBuildSettlement = new Button("Build a Settlement");
-
-                    Button btnBuildCity = new Button("Build a City");
-
-                    Button btnCancel = new Button("Cancel");
-
-                    btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
-
-                    Text txtBuild = new Text("Select a type of Improvement to Build:");
-                    txtBuild.setFont(new Font(14));
-                    txtBuild.setTextAlignment(TextAlignment.CENTER);
-
-                    BorderPane boPa = new BorderPane();
-                    boPa.setCenter(btnBox);
-                    boPa.setTop(txtBuild);
-
-                    buildMenu.initModality(Modality.APPLICATION_MODAL);
-
-                    buildMenu.setScene(new Scene(boPa));
-                    buildMenu.setTitle("Build Menu");
-                    buildMenu.show();
-    }
-
 }
