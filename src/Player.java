@@ -56,6 +56,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     *Prevent overdrawing resource in 
                                                      deductResource method
 
+
             November 18, 2016           AS          *Changed resourceTotal to be 
                                                      updated in addResource() and
                                                    deductResource()
@@ -69,7 +70,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      longestRoad
 
 
-November 20, 2016           AT          * Added color field for UI elements
+	    November 20, 2016           AT          * Added color field for UI elements
                                                       along with necessary imports and
                                                       methods
 
@@ -91,6 +92,7 @@ November 20, 2016           AT          * Added color field for UI elements
 						    * Created add method to these arrays that
 						      increment each settlements count
 						    * Updated print methods to use arrays
+						    
  */
 public class Player {
 
