@@ -51,7 +51,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     
 
                                         AT          * Debugged test code and the 
-                                                      find/buy methods
+                                                     find/buy methods
             
             November 17, 2016           AS          * Created new class Trade
                                                       to facilitate trading
@@ -81,7 +81,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       to allow building of roads
                                                       without using console
                                                     * Also tweaked console method
-                                                      to prevent errors with nextDouble
+                                                        to prevent errors with nextDouble
                                                       method
                                                     * Added GUIBuildSettlement method
                                                       to allow building of roads
@@ -95,7 +95,11 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Fixed slight logical errors in
                                                       longestRoad and largestArmy methods
 
-
+            December 04, 2016           RA          * Fixed build settlement/city/road methods:
+                                                      They no longer check if a player has enough
+                                                      resources, it will be checked after button
+                                                      click on GUI part
+  
  */
 
 import java.util.Scanner;
@@ -120,17 +124,13 @@ public class Bank {
 
 //                                  Methods
 //_____________________________________________________________________________
+  
     // Allows building of settlements through console
     public static int buildSettlement(int playerID, boolean setupPhase) {
         // Create player object based upon integer playerID passed for use throughout method
         Player activePlayer = GameManager.players[playerID];
 
         Intersection settlementLocation;
-
-        // Check if player has adequate resources for building a settlement
-        // (1 Brick, 1 Lumber, 1 Wool, 1 Wheat
-        if (activePlayer.resourceMaterials[GameManager.BRICK] >= 1 || activePlayer.resourceMaterials[GameManager.LUMBER] >= 1
-                || activePlayer.resourceMaterials[GameManager.WOOL] >= 1 || activePlayer.resourceMaterials[GameManager.WHEAT] >= 1) {
 
             //Scanners and print lines will be obsolete after GUI is made
             Scanner sc = new Scanner(System.in);
@@ -163,24 +163,7 @@ public class Bank {
             {
                 System.out.println("You are unable to build on that settlement");
                 return -1;
-            }
-            // If inadequate resources, inform which resource is missing
-        } else if (activePlayer.resourceMaterials[BRICK] < 1) {
-            System.out.println("You do not have enough Brick");
-            return -1;
-        } else if (activePlayer.resourceMaterials[LUMBER] < 1) {
-            System.out.println("You do not have enough Lumber");
-            return -1;
-        } else if (activePlayer.resourceMaterials[WOOL] < 1) {
-            System.out.println("You do not have enough Wool");
-            return -1;
-        } else if (activePlayer.resourceMaterials[WHEAT] < 1) {
-            System.out.println("You do not have enough Wheat");
-            return -1;
-        } else {
-            System.out.println("Unknown error.¯\\_(ツ)_/¯");
-            return -1;
-        }
+            }         
     }
 
     public static void GUIBuildSettlement(int activePlayerID, Intersection settlementToBuy) {
@@ -206,10 +189,7 @@ public class Bank {
 
         Player activePlayer = GameManager.players[playerID];
 
-        Intersection settlementLocation;
-
-        // Check if player has the required 3 Ore and 2 Wheat
-        if (activePlayer.resourceMaterials[GameManager.ORE] >= 3 || activePlayer.resourceMaterials[GameManager.WHEAT] >= 2) {
+        Intersection settlementLocation;       
 
             //Scanners and print lines will be obsolete after Gui is made
             Scanner sc = new Scanner(System.in);
@@ -238,19 +218,6 @@ public class Bank {
             activePlayer.deductResource(ORE, 3);
             activePlayer.deductResource(WHEAT, 2);
             return 0;
-
-            // If inadequate resources, inform which    
-        } else if (activePlayer.resourceMaterials[ORE] < 3) {
-            System.out.println("You do not have enough Ore");
-            return -1;
-        } else if (activePlayer.resourceMaterials[WHEAT] < 2) {
-            System.out.println("You do not have enough Wheat");
-            return -1;
-        } else {
-            System.out.println("Unknown error.¯\\_(ツ)_/¯");
-            return -1;
-        }
-
     }
 
     public static void GUIBuildCity(int activePlayerID, Intersection settlementToBuy) {
@@ -278,10 +245,7 @@ public class Bank {
 
         // Player object for ease of use
         Player activePlayer = GameManager.players[playerID];
-
-        // Check if player has required 1 brick and 1 lumber
-        if (activePlayer.resourceMaterials[GameManager.BRICK] >= 1 || activePlayer.resourceMaterials[GameManager.LUMBER] >= 1) {
-
+     
             //Scanners and print lines will be obsolete after Gui is made
             Scanner sc = new Scanner(System.in);
 
@@ -300,7 +264,6 @@ public class Bank {
 
             //Gets coordinate location for second intersection at other end of road
             System.out.println("Enter the x and y values of the coordinate of the other side of the road:");
-
             Double xVal2 = Double.parseDouble(sc.nextLine());
             Double yVal2 = Double.parseDouble(sc.nextLine());
 
@@ -333,15 +296,9 @@ public class Bank {
                 // Deduct resources
                 activePlayer.deductResource(LUMBER, 1);
                 activePlayer.deductResource(BRICK, 1);
-            }
+            
             return 0;
-            // Inform player which resource was not found
-        } else if (activePlayer.resourceMaterials[GameManager.LUMBER] < 1) {
-            System.out.println("You do not enough Lumber");
-            return -1;
-        } else if (activePlayer.resourceMaterials[GameManager.BRICK] < 1) {
-            System.out.println("You do not enough Brick");
-            return -1;
+           
         } else {
             System.out.println("Unknown Error. ¯\\_(ツ)_/¯");
             return -1;
