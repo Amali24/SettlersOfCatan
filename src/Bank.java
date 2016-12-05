@@ -190,11 +190,13 @@ public class Bank {
         settlementToBuy.setPlayer(activePlayerID);
         // Set circle stroke to player color
         settlementToBuy.getCircle().setStroke(activePlayer.getColor());
+        settlementToBuy.getCircle().setStrokeWidth(4);
+        
         // Deduct resources
-        GameManager.players[activePlayerID].deductResource(BRICK, 1);
-        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
-        GameManager.players[activePlayerID].deductResource(WOOL, 1);
-        GameManager.players[activePlayerID].deductResource(WHEAT, 1);
+        activePlayer.deductResource(BRICK, 1);
+        activePlayer.deductResource(LUMBER, 1);
+        activePlayer.deductResource(WOOL, 1);
+        activePlayer.deductResource(WHEAT, 1);
 
         // Resource checking, etc. is not necessary in the GUI as only buildable
         // settlements will be clickable
@@ -356,8 +358,8 @@ public class Bank {
         // Set the road to owned by the player
         roadToBuy.setPlayer(activePlayerID);
         // Deduct resource
-        GameManager.players[activePlayerID].deductResource(LUMBER, 1);
-        GameManager.players[activePlayerID].deductResource(BRICK, 1);
+        activePlayer.deductResource(LUMBER, 1);
+        activePlayer.deductResource(BRICK, 1);
 
         // As with settlement, extensive checking is not required in this method
         // As the UI will handle that

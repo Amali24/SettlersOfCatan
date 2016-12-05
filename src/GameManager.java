@@ -84,11 +84,7 @@ Activity:	  -Date-             -Person-               -Updates-
             November 27, 2016           AS          * Added pictures displayed in
                                                       hextiles
 
-            December 4, 2016            AT          * Converted several fields to
-                                                      be non-static with the idea
-                                                      of a server being able to run
-                                                      multiple games
-                                                    * Added end turn method
+            December 4, 2016            AT          * Added end turn method
                                                     * Added saveGame method skeleton
 
 

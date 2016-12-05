@@ -118,7 +118,7 @@ public class Player {
     private GameManager manager;
     private Player player;
     
-    private final Color color;
+    private Color color;
 
 // 				Constructors
 //_____________________________________________________________________________
@@ -126,16 +126,16 @@ public class Player {
         playerID = id;
         switch (id) {
             // Assign a color based upon playerID for UI
-            case 1:
+            case 0:
                 color = BLUE;
                 break;
-            case 2:
+            case 1:
                 color = RED;
                 break;
-            case 3:
+            case 2:
                 color = GREEN;
                 break;
-            case 4:
+            case 3:
                 color = YELLOW;
                 break;
             default:
