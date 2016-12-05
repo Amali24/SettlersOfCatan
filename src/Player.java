@@ -68,7 +68,8 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      for largestArmy and 
                                                      longestRoad
 
-            November 20, 2016           AT          * Added color field for UI elements
+
+November 20, 2016           AT          * Added color field for UI elements
                                                       along with necessary imports and
                                                       methods
 
@@ -83,7 +84,13 @@ Activity:	  -Date-             -Person-               -Updates-
 						      addCity methods
 	    					    * Created printRoads, printSettlement and 
 						      printCities methods
-
+						      
+	    December 4, 2016		RA	    * Created arrays roadList, settlementList
+	    					      and cityList that store the location of 
+						      each of player's settlements
+						    * Created add method to these arrays that
+						      increment each settlements count
+						    * Updated print methods to use arrays
  */
 public class Player {
 
@@ -95,7 +102,12 @@ public class Player {
     private int roadCount = 0; 			//max of 15
     private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 4
-
+	
+    // Location of buildings a player has
+    private Boundary[] roadList = new Boundary[14];
+    private Intersection[] settlementList = new Intersection[4];
+    private Intersection[] cityList = new Intersection[3];
+	
     private int developmentCardCount; //number of unplayed development cards held by this player
 
     //victory points are earned by players during the game. 1st player w/ 10 pts wins the game
@@ -114,9 +126,6 @@ public class Player {
     //Achievements
     private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
-
-    private GameManager manager;
-    private Player player;
     
     private Color color;
 
@@ -146,7 +155,7 @@ public class Player {
 //                          Accessors and Mutators
 //_____________________________________________________________________________
     public int getPlayerID() {
-        return playerID;
+         return playerID;
     }
 
     public int getRoadCount() {
@@ -156,7 +165,7 @@ public class Player {
 
     public void addRoad() {
         if(roadCount >= 15){
-		System.out.println("You have exceeded the number of roads available");
+ 		System.out.println("You have exceeded the number of roads available");
 		return;
 	}
 	else
@@ -189,6 +198,69 @@ public class Player {
             cityCount++;
     }
 
+    public Boundary[] getRoadList(){
+        return roadList;
+    }
+    
+    // adds road location to array of roads locations, increments roadCount
+    public void addRoadList(Boundary road){
+        if(roadCount >= 15){
+		System.out.println("You have exceeded the number of roads available");
+		return;
+	}
+        else{
+            for(int i = 0; i <= 14; i++){
+                if(roadList[i] == null){
+                    roadList[i] = road;
+                    roadCount++;
+                    break;
+                }        
+            }
+        }
+    }
+    
+    public Intersection[] getSettlementList(){
+        return settlementList;
+    }
+    
+    // add settlement location to array of settlem. locations, increments settlementCount
+    public void addSettlementList(Intersection settlement) {
+        if (settlementCount >= 5) {
+            System.out.println("You have exceeded the number of settlements available");
+            return;
+        } 
+        else{
+            for(int i = 0; i <= 4; i++){
+                if(settlementList[i] == null){
+                    settlementList[i] = settlement;
+                    settlementCount++;
+                    break;
+                }        
+            }
+        }
+    }
+
+    public Intersection[] getCitytList(){
+        return cityList;
+    }
+    
+    // adds city location to array of cities locations, increments cityCount
+    public void addCitytList(Intersection city) {
+        if (cityCount >= 4) {
+            System.out.println("You have exceeded the number of cities available");
+            return;
+        } 
+        else{
+            for(int i = 0; i <= 3; i++){
+                if(settlementList[i] == null){
+                    cityList[i] = city;
+                    cityCount++;
+                    break;
+                }        
+            }
+        }   
+    }
+            
     public int getDevelopmentCardCount() {
         return developmentCardCount;
     }
@@ -311,6 +383,7 @@ public class Player {
                 + resourceMaterials[3] + " Wheat\n"
                 + resourceMaterials[4] + " Wool\n");
 
+
     }
     
      public String toStringResources() {
@@ -333,41 +406,28 @@ public class Player {
     public void printRoads() { 
 	 // Prints player's current number of roads  
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number"
-                + " of roads: " + roadCount + "\n Located at: \n");
+                + " of roads: " + roadCount + "\n Located at points: \n");
 
         // Prints the location of player's roads
-        for (Boundary b : manager.boundaries) {
-            if (b.occupied() && player.getPlayerID() == b.getPlayer()) {
-                System.out.println(
-                        + manager.sqrtToAlpha(b.getEndpointA().getLocation().getX()) + b.getEndpointA().getLocation().getY()
-                        + manager.sqrtToAlpha(b.getEndpointB().getLocation().getX()) + b.getEndpointB().getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(roadList)+ " ");	    
+        
     }
 			    
     public void printSettlements() {
 	 // Prints player's current number of settlements  
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
-                + "of settlements: " + settlementCount + "\nLocated at: ");
+                + "of settlements: " + settlementCount + "\nLocated at points: ");
 
         // Prints the location of player's settlements
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 1 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println("point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(settlementList)+ " "); 
     }
 			    
     public void printCities() {
 	// Prints player's current number of cities 
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
-                + "of cities:\n" + cityCount + "\nLocated at: ");
+                + "of cities:\n" + cityCount + "\nLocated at points: ");
 
         // Prints the location of player's cities
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 2 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println(" point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(cityList)+ " ");
     }
 }
