@@ -76,6 +76,10 @@ Activity:	  -Date-             -Person-               -Updates-
             December 5, 2016           OB          * Added methods for various types
                                                      of pop-up windows
                                                    * Added numbered circles for each tile
+
+            December 6, 2016            AT         * Added start-up phase
+                                                   * Added prompt box
+                                                   * Added moveRobber and stealFrom
                                                    
                                                     
 
@@ -122,13 +126,32 @@ public class ClientUI extends Application {
     private double maxSizeY = 800;
     private double minSizeY = 600;
 
+    String setUpPhase = "\t\t\tSetup Phase\n"
+            + "During set up phase, you will build one settlement and then one road per turn.\n\n"
+            + "Turns are serpentine during this phase, and each player will get two turns.\n\n"
+            + "It is not necessary to click end turn during this phase.";
 
-        
+    String startTurn = "\t\tStart of Turn Phase\n"
+            + "At the start of your turn you can roll the dice by clicking the"
+            + "roll button, or play development cards by clicking the Development"
+            + "Card button.";
+
+    String rolledSeven = "Select a tile to move the robber to.\n\n"
+            + "The robber will steal one resource (at random) from a player you select on that tile";
+
+    String afterRoll = "";
+
+    String gameOver = "";
+
     Insets insets = new Insets(12);
     DropShadow ds = new DropShadow();
 
     ArrayList<Circle> circles = new ArrayList<>();
     ArrayList<Line> lines = new ArrayList<>();
+
+    TextArea promptBox = new TextArea();
+
+    static boolean playerRolled = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -137,10 +160,8 @@ public class ClientUI extends Application {
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
 
-
         bgPane.getChildren().add(bp);
 
-        
         // Panel to hold Player's information
         StackPane player1Panel = new StackPane();
         StackPane player2Panel = new StackPane();
@@ -159,12 +180,14 @@ public class ClientUI extends Application {
 
         // Displays panels of players 1 and  3
         VBox left = new VBox();
-        
-        TextArea promptBox = new TextArea();
+
         promptBox.setMaxWidth(255);
         promptBox.setMinWidth(255);
         promptBox.setMaxHeight(255);
         promptBox.setMinHeight(255);
+
+        promptBox.setText(setUpPhase);
+        promptBox.setWrapText(true);
 
         left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
@@ -262,13 +285,40 @@ public class ClientUI extends Application {
         btnRoll.setStyle(btnStyle);
         btnRoll.setOnAction(e
                 -> {
-            int diceRoll = GameManager.rollDice();
-            for (HexTile tile : GameManager.tiles) {
-                if (tile.getNumRoll() == diceRoll) {
-                    tile.yieldResources();
+            if (GameManager.gamePhase == GameManager.START_TURN && !playerRolled) {
+                playerRolled = true;
+                int diceRoll = GameManager.rollDice();
+                if (diceRoll == 7) {
+                    promptBox.setText("\t\tYou Rolled a 7\n");
+                    for (Player p : GameManager.players) {
+                        if (p.getResourceTotal() > 7) {
+                            promptBox.appendText("The Robber stole "
+                                    + p.getResourceTotal() / 2 + " resources from player "
+                                    + p.getPlayerID() + 1);
+                        }
+                    }
+                    promptBox.appendText(rolledSeven);
+                    for (HexTile tile : GameManager.tiles) {
+
+                        GameManager.robberSteal();
+
+                        tile.hexagon.setOnMouseClicked(e1 -> {
+                            if (tile.hasRobber()) {
+                                promptBox.appendText("You must move the robber");
+                            } else {
+                                GUImoveRobber();
+                            }
+                        });
+                    }
+                } else {
+                    promptBox.setText("You rolled a " + diceRoll);
+                    for (HexTile tile : GameManager.tiles) {
+                        if (tile.getNumRoll() == diceRoll) {
+                            tile.yieldResources();
+                        }
+                    }
                 }
             }
-
         });
 
         Button btnBuild = new Button("Build Improvements");
@@ -284,11 +334,14 @@ public class ClientUI extends Application {
         });
 
         Button btnEndTurn = new Button("End Turn");
-        btnEndTurn.setOnAction(e -> GameManager.endTurn(GameManager.isSetUpPhase));
+
         btnEndTurn.setStyle(btnStyle);
         btnEndTurn.setOnAction(e -> {
-            // your statement
-
+            if (!GameManager.isSetUpPhase) {
+                GameManager.endTurn(GameManager.isSetUpPhase);
+                playerRolled = false;
+                promptBox.setText(startTurn);
+            }
         });
 
         /*
@@ -342,19 +395,15 @@ public class ClientUI extends Application {
         // vBoxBottom contains buttons and current player's Resource panel
         bp.setBottom(vBoxBottom);
 
-       
         Image woodImg = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/background.jpg"));
         BackgroundImage bgWood = new BackgroundImage(woodImg, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
-        
+
         bgPane.setBackground(new Background(bgWood));
-        
+
         // Set up scene size
         Scene scene = new Scene(bgPane, 1210, 845); // previous width is 1280
 
         primaryStage.setScene(scene);
-
-
-        
 
         primaryStage.show();
 
@@ -571,6 +620,7 @@ public class ClientUI extends Application {
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
         for (Circle i : intersections) {
             // For every circle, restore to strokeWidth 1
+            i.setRadius(circleSize);
             if (i.getStroke() == BLACK) {
                 // only if it is still BLACK ie unowned
                 i.setStrokeWidth(1);
@@ -635,8 +685,8 @@ public class ClientUI extends Application {
 
         pane.getChildren().add(gridPane);
     }
-    
-        void showErrorDialog(String text) {
+
+    void showErrorDialog(String text) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error Dialog");
         alert.setHeaderText("An Error Accured");
@@ -644,13 +694,44 @@ public class ClientUI extends Application {
 
         alert.showAndWait();
     }
-    
-        void showWarningDialog(String text) {
+
+    void showWarningDialog(String text) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Warning Dialog");
         alert.setHeaderText("Warning!");
         alert.setContentText(text);
 
         alert.showAndWait();
+    }
+
+    private void GUImoveRobber() {
+        for (HexTile tile : GameManager.tiles) {
+            tile.hexagon.setOnMouseClicked(e -> {
+                for (HexTile t : GameManager.tiles) {
+                    t.setRobber(false);
+                }
+                tile.setRobber(true);
+                promptBox.setText("\t\tRobber moved sucessfully\n"
+                        + "Select a player to steal from, if there are any "
+                        + "settlements on the tile.");
+                for (Intersection i : tile.getIntersections()) {
+                    if (i.occupied()) {
+                        i.getCircle().setRadius(circleSize + 5);
+                        i.getCircle().setOnMouseClicked(eh -> stealFrom(i.getPlayer()));
+                        restoreUIElements(circles, lines);
+                    }
+                }
+            });
+        }
+    }
+
+    private void stealFrom(int playerID) {
+        Player stolenFrom = GameManager.players[playerID];
+        Player activePlayer = GameManager.players[GameManager.activePlayerID];
+
+        int resourceToSteal = HexTile.getRandInt(GameManager.BRICK, GameManager.WOOL);
+
+        stolenFrom.deductResource(resourceToSteal, 1);
+        activePlayer.addResource(resourceToSteal, 1);
     }
 }
