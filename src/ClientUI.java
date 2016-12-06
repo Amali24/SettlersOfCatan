@@ -464,62 +464,6 @@ public class ClientUI extends Application {
         alert.showAndWait();
     }
 
-    static int jk = 0;
-    void showWarningDialog() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("Christmas Jokes Alert");
-        String[] jks = {"What does Miley Cyrus have at Christmas?\n"
-            + "\n"
-            + "Twerky!\n"
-            + "\n"
-            + "Knock, knock\n"
-            + "Who's there?\n"
-            + "\n"
-            + "Arthur\n"
-            + "\n"
-            + "Arthur who? \n"
-            + "Arthur any mince pies left?\n"
-            + "\n"
-            + "What do vampires sing on New Year's Eve?\n"
-            + "Auld Fang Syne\n"
-            + "\n"
-            + "Why did Santa's helper see the doctor? \n"
-            + "Because he had a low \"elf\" esteem!\n"
-            + "\n"
-            + "What happened to the man who stole an Advent Calendar? \n"
-            + "He got 25 days!\n"
-            + "\n"
-            + "What kind of motorbike does Santa ride?  \n"
-            + "A Holly Davidson!\n"
-            + "\n"
-            + "What do you get if you cross Santa with a duck?  \n"
-            + "A Christmas Quacker!\n"
-            + "\n"
-            + "What is the best Christmas present in the world? \n"
-            + "A broken drum, you just can't beat it!"
-            + "How did Scrooge win the football game? \n"
-            + "The ghost of Christmas passed!\n"
-            + "\n"
-            + "Who delivers presents to baby sharks at Christmas? \n"
-            + "Santa Jaws\n"
-            + "\n"
-            + "Who is Santa's favorite singer?\n"
-            + "Elf-is Presley!\n"};
-        
-        switch (0 % 2) {
-            case 1:
-                break;
-            default:
-                break;
-        };
-        jk++;
-
-        alert.setContentText("");
-
-        alert.showAndWait();
-    }
-
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
         // Create an ArrayList to hold roads the active player can build on
