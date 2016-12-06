@@ -73,9 +73,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                         AS&AT       * Edited images to better fit
                                                       HexTiles
             
-            Deceber 04, 2016            AS          * Added setup phase parameter
-                                                      to call of GUIBuildSettlement
-                                                      method 
+            December 5, 2016           OB          * Added methods for various types
+                                                     of pop-up windows
+                                                   * Added numbered circles for each tile
+                                                   
+                                                    
+
  */
 import java.io.*;
 import java.util.*;
@@ -85,6 +88,7 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.application.*;
 import javafx.scene.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
@@ -109,7 +113,16 @@ public class ClientUI extends Application {
     static double yOffset = .5;
     // Default size for circles
     static double circleSize = 5.0;
+    static double hexCircleSize = 20.0;
 
+    // Window sizes
+    private double maxSizeX = 900;
+    private double minSizeX = 700;
+    private double maxSizeY = 800;
+    private double minSizeY = 600;
+
+
+        
     Insets insets = new Insets(12);
     DropShadow ds = new DropShadow();
 
@@ -119,9 +132,14 @@ public class ClientUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
+        Pane bgPane = new Pane();
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
 
+
+        bgPane.getChildren().add(bp);
+
+        
         // Panel to hold Player's information
         StackPane player1Panel = new StackPane();
         StackPane player2Panel = new StackPane();
@@ -164,16 +182,43 @@ public class ClientUI extends Application {
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
-        gameBoard.setMaxSize(700, 600);
+        gameBoard.setMaxSize(900, 800);
         gameBoard.setMinSize(700, 600);
 
         // Creates a black boundary
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
         gameBoard.setBorder(b);
 
+        // Iterate over Hexes and adds them to the GUI
         for (HexTile tile : GameManager.tiles) {
             Polygon hex = tile.hexagon;
+
             gameBoard.getChildren().add(hex);
+
+        }
+
+        // Iterate over Hexes and adds numbered circles for each hex
+        for (HexTile tile : GameManager.tiles) {
+
+            double centerX = tile.centerCoordinates.getUIX();
+            double centerY = tile.centerCoordinates.getUIY();
+
+            if (!tile.isCenter()) {
+                Circle circle = new Circle(centerX, centerY, hexCircleSize);
+                circle.setFill(WHITE);
+                circle.setStroke(Color.web("black", 1.0));
+                circle.setStrokeWidth(2);
+
+                Text text = new Text(String.valueOf(tile.getNumRoll()));
+                text.setFont(Font.font(null, FontWeight.BOLD, 16));
+
+                text.setX(centerX - 5);
+                text.setY(centerY + 3);
+
+                text.setBoundsType(TextBoundsType.VISUAL);
+
+                gameBoard.getChildren().addAll(circle, text);
+            }
         }
 
         // Iterate over all boundaries and add their respective lines to the GUI
@@ -197,6 +242,7 @@ public class ClientUI extends Application {
 
         // Put game board at center of GUI frame
         bp.setCenter(gameBoard);
+
         // ___________________________  Buttons ___________________________
         // Button styling using CSS. 
         String btnStyle
@@ -221,14 +267,9 @@ public class ClientUI extends Application {
                     tile.yieldResources();
                 }
             }
+
         });
 
-        /*Button btnBuildRoad = new Button("Build a Road");
-        btnBuildRoad.setOnAction(e
-                -> {
-            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-        });*/
         Button btnBuild = new Button("Build Improvements");
         btnBuild.setStyle(btnStyle);
         btnBuild.setOnAction(e -> openBuildMenu());
@@ -237,10 +278,17 @@ public class ClientUI extends Application {
 
         Button btnTrade = new Button("Trade");
         btnTrade.setStyle(btnStyle);
+        btnTrade.setOnAction(e -> {
+            // your statement
+        });
 
         Button btnEndTurn = new Button("End Turn");
         btnEndTurn.setOnAction(e -> GameManager.endTurn(GameManager.isSetUpPhase));
         btnEndTurn.setStyle(btnStyle);
+        btnEndTurn.setOnAction(e -> {
+            // your statement
+
+        });
 
         /*
         Delete This?
@@ -253,13 +301,20 @@ public class ClientUI extends Application {
         });
         btnNewBoard.setStyle(btnStyle);
 
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnNewBoard);
+        Button btnTest = new Button("TEST");
+        btnTest.setOnAction(e -> {
+            showWarningDialog("TEST");
+            showErrorDialog("TEST");
+        });
+        btnNewBoard.setStyle(btnStyle);
+
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnNewBoard, btnTest);
         hBoxButtons.setAlignment(Pos.CENTER);
 
         // ________________________  Resource Panel ____________________________
         // VBox that holds Button and Available Resources Panels, 
         // and located at the bottom of BorderPanel
-        VBox vBoxButtom = new VBox(5);
+        VBox vBoxBottom = new VBox(5);
 
         // This HBox holds StackPane that displays available resources 
         // for the Active Player
@@ -276,22 +331,29 @@ public class ClientUI extends Application {
         resourcesHBox.setAlignment(Pos.CENTER);
 
         // Adding Resources and Button panels to the VBox
-        vBoxButtom.getChildren().addAll(resourcesHBox, hBoxButtons);
+        vBoxBottom.getChildren().addAll(resourcesHBox, hBoxButtons);
         // _____________________________________________________________________
-
-        // Adding vBoxButtom to the bottom of Boarder Pane
-        bp.setBottom(vBoxButtom);
 
         // Put players 1 and 3 information panels on the left of frame
         bp.setLeft(left);
         // Put players 2 and 4 information panels on the right of frame
         bp.setRight(right);
+        // vBoxBottom contains buttons and current player's Resource panel
+        bp.setBottom(vBoxBottom);
 
-        // bp.setBottom(hBoxButtons);
+       
+        Image woodImg = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/background.jpg"));
+        BackgroundImage bgWood = new BackgroundImage(woodImg, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
+        
+        bgPane.setBackground(new Background(bgWood));
+        
         // Set up scene size
-        Scene scene = new Scene(bp, 1280, 800);
+        Scene scene = new Scene(bgPane, 1210, 720); // previous width is 1280
 
         primaryStage.setScene(scene);
+
+
+        
 
         primaryStage.show();
 
@@ -322,13 +384,13 @@ public class ClientUI extends Application {
         gridPane.add(new Text("Resource Count: "), 0, 2);
         gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
                 getResourceTotal())), 1, 2);
-        gridPane.add(new Text("Devel. cards: "), 0, 3);
+        gridPane.add(new Text("Dev. Cards: "), 0, 3);
         gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
                 getDevelopmentCardCount())), 1, 3);
         gridPane.add(new Text("Victory Points: "), 0, 4);
         gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
                 getVisibleVictoryPoints())), 1, 4);
-        gridPane.add(new Text("Knight cards: "), 0, 5);
+        gridPane.add(new Text("Knight Cards: "), 0, 5);
         gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
                 getKnightCards())), 1, 5);
         gridPane.add(new Text("Roads Count: "), 0, 6);
