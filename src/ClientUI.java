@@ -140,15 +140,22 @@ public class ClientUI extends Application {
 
         // Displays panels of players 1 and  3
         VBox left = new VBox();
-        left.getChildren().addAll(player1Panel, player3Panel);
+        
+        TextArea promptBox = new TextArea();
+        promptBox.setMaxWidth(255);
+        promptBox.setMinWidth(255);
+        promptBox.setMaxHeight(255);
+        promptBox.setMinHeight(255);
+
+        left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
-        left.setSpacing(330);
+        left.setSpacing(50);
 
         // Displays panels of players 2 and 4
         VBox right = new VBox();
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
-        right.setSpacing(330);
+        right.setSpacing(355);
 
         Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
         BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
@@ -280,16 +287,15 @@ public class ClientUI extends Application {
         // Put players 2 and 4 information panels on the right of frame
         bp.setRight(right);
 
-        bp.setBottom(hBoxButtons);
-
+        // bp.setBottom(hBoxButtons);
         // Set up scene size
-        Scene scene = new Scene(bp, 1280, 720);
+        Scene scene = new Scene(bp, 1280, 800);
 
         primaryStage.setScene(scene);
 
         primaryStage.show();
-        
-        if(GameManager.isSetUpPhase){
+
+        if (GameManager.isSetUpPhase) {
             setUpPhase();
         }
     }
