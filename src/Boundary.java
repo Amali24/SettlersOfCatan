@@ -80,7 +80,7 @@ class Boundary {
 // _____________________________________________________________________________
     private final Intersection endpointA;
     private final Intersection endpointB;
-    private int player = -1;    //Player who has settled boundary
+    private int player = -1;    //Player who has settled intersection
     //-1 value represents no player
 
     private int harbor = -1;    //-1 value = no harbor
@@ -184,21 +184,17 @@ class Boundary {
         if (occupied()) {
 
             //Message for Testing
-            /*
             System.out.println("Player " + (playerID + 1)
                     + " is unable to build a road here because "
                     + (player + 1) + " already has.");
-            */
             return false;
 
         } 
 	   // If player already has the maximum amount of roads, returns false
 	   else if (playerInfo.getRoadCount() >= 15) {
-               /*
 		System.out.println("Player " + (playerID + 1)
                     + " is unable to build a road here because"
 		    + " it has exceeded the amount of roads available.");
-               */
 		return false;
 		
 	} 
@@ -223,11 +219,9 @@ class Boundary {
 
         //If no true condition is met, false is returned 
         //Message for Testing
-        /*
         System.out.println("Player " + (playerID + 1)
                 + " is unable to build a road here because"
                 + " she has no adjacent roads or settlements.");
-        */
         return false;
 
     }
@@ -254,7 +248,7 @@ class Boundary {
 
         }
 
-        System.out.println("Error, no boundary found with that coordinate position.");
+        System.out.println("Error, no boundary found with that cooridante position.");
         return GameManager.errorBoundary;
     }
 }

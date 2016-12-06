@@ -52,49 +52,84 @@ Activity:	  -Date-             -Person-               -Updates-
 
             November 25, 2016           AS          *Added Polygon hexagon
 
+            December 5, 2016            OB          *Added centerCoordinate property
+                                                    *Modified Constructor, so it 
+                                                     calculates centerCoordinate
+                                                     
+
+  
+
  */
-
-
 import javafx.scene.shape.Polygon;
 import static javafx.scene.paint.Color.*;
+import javafx.scene.shape.Circle;
 
 /**
  *
  * @author d101-22
  */
 public class HexTile {
-    
+
 //                              Class Properties
 // _____________________________________________________________________________
-    
     private int resourceYield; // Holds the type of resource tile will yield if numRoll is rolled
     private int numRoll; // Number if rolled, resources yielded
     private Intersection[] intersections; // Corner nodes for each corner of the HexTile
     private boolean robber; // is robber currently on tile?
     private boolean center; // center has no yield
-    
+
     Polygon hexagon = new Polygon();
 
+    Coordinate centerCoordinates;
 
 //                               Constructors
 // _____________________________________________________________________________
-   
     HexTile(Intersection[] intersections) {
         robber = false;
         center = false;
         this.intersections = intersections;
-        
-        for(Intersection i: intersections){
+
+        double tempX = 0.0;
+        double tempY = 0.0;
+
+        for (Intersection i : intersections) {
             hexagon.getPoints().add(i.getLocation().getUIX());
             hexagon.getPoints().add(i.getLocation().getUIY());
+
+            // Summing all x- and y- coodrinates
+            tempX += i.getLocation().getUIX();
+            tempY += i.getLocation().getUIY();
         }
+
+        /* Getting avarage of all values to get center coordinates for each tile.
+        
+           This is how I thought it should be done: 
+        
+                * tempX = tempX / 6;
+                * tempY = tempY / 6;
+                *
+                * centerCoordinates = new Coordinates(tempX, tempY);
+        
+            And we should be all set to go. 
+            But it wasn't working how I expected. 
+            So, I came up with this...
+        
+         */
+        
+     //   tempX = tempX / 210 - 1.3;
+      //  tempY = tempY / 210 - 0.5;
+
+        tempX = tempX / 210 - 1.3;
+        tempY = tempY / 210 - 0.5;
+        
+        centerCoordinates = new Coordinate(tempX, tempY);
+       
 
         hexagon.setFill(ALICEBLUE);
     }
-    
+
 //                          Accessors and Mutators
 // _____________________________________________________________________________
-   
     /**
      *
      * @return
@@ -104,11 +139,10 @@ public class HexTile {
     }
 
     // randomly assigns index value of resources array as resourceYield
-
     /**
      *
      */
-        public void setResourceYield() {
+    public void setResourceYield() {
         int rand = getRandInt(0, 4);
         this.resourceYield = rand;
     }
@@ -130,11 +164,10 @@ public class HexTile {
     }
 
     // numRoll must be between 2 and 12 (double dice roll), but not 7 (robber)
-
     /**
      *
      */
-        public void setNumRoll() {
+    public void setNumRoll() {
         int randInt = getRandInt(2, 12);
 
         while (randInt == 7) {
@@ -160,12 +193,11 @@ public class HexTile {
     }
 
     // called when robber is moved on (true) or off (false)
-
     /**
      *
      * @param robber
      */
-        public void setRobber(boolean robber) {
+    public void setRobber(boolean robber) {
         this.robber = robber;
     }
 
@@ -187,11 +219,10 @@ public class HexTile {
 
 //                                 Methods
 // _____________________________________________________________________________
-
     /**
      *
      */
-        public void yieldResources() {
+    public void yieldResources() {
 
         // Tiles with robber and center tile do not yield resources
         if (!this.hasRobber() && !this.isCenter()) {
@@ -199,7 +230,7 @@ public class HexTile {
             for (Intersection intersection : getIntersections()) {
                 // If intersection has a settlement on it
                 if (intersection.occupied()) {
-                    
+
                     // Player object for ease of use, represents owning player
                     Player currentPlayer = GameManager.players[intersection.getPlayer()];
                     // Yield resources corresponding to type of settlement

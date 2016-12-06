@@ -125,7 +125,7 @@ public class Intersection {
         player = p;
 
         //Message for Testing
-        //System.out.println("Intersection settled successfully!");
+        System.out.println("Intersection settled successfully!");
     }
 
     //Returns the playerID of the intersections settler
@@ -238,12 +238,11 @@ public class Intersection {
         if (occupied()) {
 
             //Message for Testing
-            /*
             System.out.println("Player " + (playerID + 1)
                     + " is unable to settle this intersection "
                     + "because it is already settled by player "
                     + (player + 1) + ".");
-            */
+
             return false;
 
         } 
@@ -251,19 +250,19 @@ public class Intersection {
         //TODO: settlement type requested must be passed as a parameter to method
         // If player wants to build a settlement, but alreary has 5, returns false
         else if (settlementType == 1 && playerInfo.getSettlementCount() >= 5) {
-            /*
+
             System.out.println("Player " + (playerID + 1)
                     + " is unable to settle this intersection because it "
                     + " has exceeded the amount of settlements available.");
-            */
+
             return false;
         } // If player wants to build a city, but alreary has 4, returns false
         else if (settlementType == 2 && playerInfo.getCityCount() >= 4) {
-            /*
+
             System.out.println("Player " + (playerID + 1)
                     + " is unable to settle this intersection because it "
                     + " has exceeded the amount of cities available.");
-            */
+
             return false;
 
         }
@@ -275,11 +274,10 @@ public class Intersection {
             if (adjacentIntersections[i].occupied()) {
 
                 //Message for Testing
-                /*
                 System.out.println("Player " + (playerID + 1)
                         + " is unable to settle this intersection "
                         + "because an adjacent intersection is already settled.");
-                */
+
                 return false;
             }
 
@@ -295,12 +293,11 @@ public class Intersection {
         if (!hasRoadAccess) {
 
             //Message for Testing
-            /*
             System.out.println("Player " + (playerID + 1)
                     + " is unable to settle this intersection "
                     + "because it is not the setup phase and "
                     + "she has not constructed a roadway to this point ");
-            */
+
             return false;
         }
 
