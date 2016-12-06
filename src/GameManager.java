@@ -750,34 +750,24 @@ public class GameManager {
 
     static void endTurn(boolean setupPhase) {
         if (setupPhase) {
-            // setupPhase is serpentine
-            // i.e. the order is 1 2 3 4 4 3 2 1
-            if (turnsPlayed < 3) {
-                // Until player 4's turn, increment player
+            // 1 2 3 4 4 3 2 1
+            if (turnsPlayed < 4) {
                 activePlayerID++;
-            } else if (turnsPlayed == 3) {
-                // On player4's first turn, give them another turn
+            } else if (turnsPlayed == 4) {
+                // Do nothing
             } else {
-                // Then begin going backwards
                 activePlayerID--;
-                if (activePlayerID < 0){
-                    activePlayerID = 0;
-                }
-            }
-            turnsPlayed++;
-            if (turnsPlayed == 8) {
-                isSetUpPhase = false;
             }
         } else {
-            // If not setupPhase, increment turn counter
-            turnsPlayed++;
             if (++activePlayerID > 3) {
-                // once playerID goes above 4, it loops back to zero
-                // order is 1234 1234 in normal play
                 activePlayerID = 0;
             }
         }
-        //saveGame();
+        turnsPlayed++;
+        if (++turnsPlayed == 8) {
+            isSetUpPhase = false;
+        }
+        saveGame();
     }
 
     static private void saveGame() {

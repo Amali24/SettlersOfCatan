@@ -91,14 +91,14 @@ class Coordinate {
         return x;
     }
     
-    // returns x value adjusted for GUI
-    double getUIX(){
-        return (x + ClientUI.xOffset) * ClientUI.scaleFactor;
-    }
-
     //returns y value
     double getY() {
         return y;
+    }
+    
+    // returns x value adjusted for GUI
+    double getUIX(){
+        return (x + ClientUI.xOffset) * ClientUI.scaleFactor;
     }
     
     // returns y value adjusted for GUI
