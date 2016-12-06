@@ -767,7 +767,7 @@ public class GameManager {
         if (++turnsPlayed == 8) {
             isSetUpPhase = false;
         }
-        saveGame();
+        //saveGame();
     }
 
     static private void saveGame() {

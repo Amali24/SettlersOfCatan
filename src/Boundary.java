@@ -80,7 +80,7 @@ class Boundary {
 // _____________________________________________________________________________
     private final Intersection endpointA;
     private final Intersection endpointB;
-    private int player = -1;    //Player who has settled intersection
+    private int player = -1;    //Player who has settled Boundary
     //-1 value represents no player
 
     private int harbor = -1;    //-1 value = no harbor
@@ -248,7 +248,7 @@ class Boundary {
 
         }
 
-        System.out.println("Error, no boundary found with that cooridante position.");
+        System.out.println("Error, no boundary found with that coordinate position.");
         return GameManager.errorBoundary;
     }
 }

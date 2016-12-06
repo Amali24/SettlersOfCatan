@@ -72,7 +72,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                         
                                         AS&AT       * Edited images to better fit
                                                       HexTiles
-
+            
             December 5, 2016           OB          * Added methods for various types
                                                      of pop-up windows
                                                    * Added numbered circles for each tile
@@ -111,11 +111,11 @@ public class ClientUI extends Application {
     // X and Y offsets are a hacky way to center the game board
     // Will hopefully come up with a better and more scalable way to do this
     static double xOffset = 1.3;
-    static double yOffset = .5;
+    static double yOffset = 2;
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
-    
+
     // Window sizes
     private double maxSizeX = 900;
     private double minSizeX = 700;
@@ -159,15 +159,27 @@ public class ClientUI extends Application {
 
         // Displays panels of players 1 and  3
         VBox left = new VBox();
-        left.getChildren().addAll(player1Panel, player3Panel);
+        
+        TextArea promptBox = new TextArea();
+        promptBox.setMaxWidth(255);
+        promptBox.setMinWidth(255);
+        promptBox.setMaxHeight(255);
+        promptBox.setMinHeight(255);
+
+        left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
-        left.setSpacing(230);
+        left.setSpacing(50);
 
         // Displays panels of players 2 and 4
         VBox right = new VBox();
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
-        right.setSpacing(230);
+        right.setSpacing(355);
+
+        Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
+        BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
+
+        gameBoard.setBackground(new Background(bgWater));
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -337,14 +349,18 @@ public class ClientUI extends Application {
         bgPane.setBackground(new Background(bgWood));
         
         // Set up scene size
-        Scene scene = new Scene(bgPane, 1210, 720); // previous width is 1280
-        
+        Scene scene = new Scene(bgPane, 1210, 845); // previous width is 1280
+
         primaryStage.setScene(scene);
-        
+
 
         
 
         primaryStage.show();
+
+        if (GameManager.isSetUpPhase) {
+            setUpPhase();
+        }
     }
 
     // Creates panels with player's information during game
@@ -395,75 +411,6 @@ public class ClientUI extends Application {
 
     }
 
-    // Creates Pane that contains information about the resources 
-    // of the current player
-    public void createResoursePanel(Pane pane) {
-        // Creates grid to hold player's informations
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
-
-        gridPane.add(new Label("Brick"), 0, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.BRICK])), 0, 1);
-
-        gridPane.add(new Label("Lumber"), 1, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.LUMBER])), 1, 1);
-
-        gridPane.add(new Label("Ore"), 2, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.ORE])), 2, 1);
-
-        gridPane.add(new Label("Wheat"), 3, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WHEAT])), 3, 1);
-
-        gridPane.add(new Label("Wool"), 4, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WOOL])), 4, 1);
-
-        // Adds a border to the pane(panel)
-        
-        /*
-        final String cssDefault
-                = "-fx-border-color: #C8C8C8;\n"
-                + "-fx-border-insets: 2;\n"
-                + "-fx-font-size: 12pt;\n"
-                + "-fx-border-width: 5;\n"
-                + "-fx-box-shadow: 5px;\n"
-                + "-fx-background-color: linear-gradient(brown,#DDDDDD);\n"
-                + "-fx-background-radius: 5;\n";
-        */
-        
-        String cssDefault = 
-                "-fx-text-fill: #2A5058;\n"
-                + "-fx-font-family: \"Arial Narrow\";\n"
-                + "-fx-font-weight: bold;\n"
-                + "-fx-font-size: 14pt;\n"
-                + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
-                + "-fx-background-color: linear-gradient(#61a2b1, #2A5058);\n"
-                + "-fx-background-radius: 5;\n";
-        
-        pane.setStyle(cssDefault);
-
-        pane.getChildren().add(gridPane);
-    }
-
-    void showErrorDialog(String text) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error Dialog");
-        alert.setHeaderText("An Error Accured");
-        alert.setContentText(text);
-
-        alert.showAndWait();
-    }
-
-    void showWarningDialog(String text) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Warning Dialog");
-        alert.setHeaderText("Warning!");
-        alert.setContentText(text);
-
-        alert.showAndWait();
-    }
-
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
 
         // Create an ArrayList to hold roads the active player can build on
@@ -496,6 +443,10 @@ public class ClientUI extends Application {
                     line.setOnMouseClicked(e -> {
                         Bank.GUIBuildRoad(activePlayerID, road);
                         restoreUIElements(circles, lines);
+                        if (GameManager.isSetUpPhase) {
+                            GameManager.endTurn(GameManager.isSetUpPhase);
+                            setUpPhase();
+                        }
                     });
                 }
             }
@@ -530,8 +481,13 @@ public class ClientUI extends Application {
                     // Make stroke thicker and set clickable if its buildable
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> {
-                        Bank.GUIBuildSettlement(activePlayerID, intersection);
+                        Bank.GUIBuildSettlement(activePlayerID, intersection, GameManager.isSetUpPhase);
                         restoreUIElements(circles, lines);
+                        // If setup phase, allow user to also build road
+                        if (GameManager.isSetUpPhase) {
+                            ArrayList<Boundary> buildableRoads = findBuildableRoads(activePlayerID);
+                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
+                        }
                     });
                 }
             }
@@ -614,20 +570,87 @@ public class ClientUI extends Application {
 
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
         for (Circle i : intersections) {
+            // For every circle, restore to strokeWidth 1
             if (i.getStroke() == BLACK) {
+                // only if it is still BLACK ie unowned
                 i.setStrokeWidth(1);
             }
+            // Set to do nothing on click
             i.setOnMouseClicked(e -> doNothing());
 
         }
         for (Line l : boundaries) {
-            l.setStrokeWidth(4);
+            // Set all lines non-clickable
             l.setOnMouseClicked(e -> doNothing());
         }
     }
 
     private void doNothing() {
-
+        // does nothing
     }
 
+    private void setUpPhase() {
+        int playerID = GameManager.activePlayerID;
+        boolean setupPhase = GameManager.isSetUpPhase;
+        Intersection[] intersections = GameManager.intersections;
+
+        ArrayList<Intersection> buildableIntersections = findBuildableSettlements(playerID, setupPhase);
+        buildASettlement(buildableIntersections, intersections, playerID);
+    }
+
+    // Creates Pane that contains information about the resources 
+    // of the current player
+    public void createResoursePanel(Pane pane) {
+        // Creates grid to hold player's informations
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);;
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
+
+        gridPane.add(new Label("Brick"), 0, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.BRICK])), 0, 1);
+
+        gridPane.add(new Label("Lumber"), 1, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.LUMBER])), 1, 1);
+
+        gridPane.add(new Label("Ore"), 2, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.ORE])), 2, 1);
+
+        gridPane.add(new Label("Wheat"), 3, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WHEAT])), 3, 1);
+
+        gridPane.add(new Label("Wool"), 4, 0);
+        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WOOL])), 4, 1);
+
+        // Adds a border to the pane(panel)
+        final String cssDefault
+                = "-fx-border-color: #C8C8C8;\n"
+                + "-fx-border-insets: 2;\n"
+                + "-fx-font-size: 12pt;\n"
+                + "-fx-border-width: 5;\n"
+                + "-fx-box-shadow: 5px;\n"
+                + "-fx-background-color: linear-gradient(white,#DDDDDD);\n"
+                + "-fx-background-radius: 5;\n";
+        pane.setStyle(cssDefault);
+
+        pane.getChildren().add(gridPane);
+    }
+    
+        void showErrorDialog(String text) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error Dialog");
+        alert.setHeaderText("An Error Accured");
+        alert.setContentText(text);
+
+        alert.showAndWait();
+    }
+    
+        void showWarningDialog(String text) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Warning Dialog");
+        alert.setHeaderText("Warning!");
+        alert.setContentText(text);
+
+        alert.showAndWait();
+    }
 }

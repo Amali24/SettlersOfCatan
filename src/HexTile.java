@@ -120,7 +120,7 @@ public class HexTile {
       //  tempY = tempY / 210 - 0.5;
 
         tempX = tempX / 210 - 1.3;
-        tempY = tempY / 210 - 0.5;
+        tempY = tempY / 210 - 2;
         
         centerCoordinates = new Coordinate(tempX, tempY);
        
