@@ -87,6 +87,9 @@ Activity:	  -Date-             -Person-               -Updates-
             December 4, 2016            AT          * Added end turn method
                                                     * Added saveGame method skeleton
 
+            December 6, 2016            AT          * Added gamePhase for allowing
+                                                      certain actions
+
 
 
  */
@@ -155,6 +158,14 @@ public class GameManager {
     static int turnsPlayed;
 
     static GameManager gm1 = new GameManager();
+
+    static final int SETUP = 0;
+    static final int START_TURN = 1;
+    static final int ROLLED_SEVEN = 2;
+    static final int AFTER_ROLL = 3;
+    static final int GAME_OVER = 4;
+
+    static int gamePhase = SETUP;
 
 //  				Methods
 //_____________________________________________________________________________
@@ -716,7 +727,7 @@ public class GameManager {
         // This will enable autosaving and not require the user to save the game manually
     }
 
-    void robberSteal() {
+    static void robberSteal() {
         // When you roll a 7 the robber steals from any player with over 7 total resources
         Scanner sc = new Scanner(System.in);
         // For each player, check their total
@@ -748,24 +759,35 @@ public class GameManager {
         return sum;
     }
 
-    static void endTurn(boolean setupPhase) {
+       static void endTurn(boolean setupPhase) {
         if (setupPhase) {
-            // 1 2 3 4 4 3 2 1
-            if (turnsPlayed < 4) {
+            // setupPhase is serpentine
+            // i.e. the order is 1 2 3 4 4 3 2 1
+            if (turnsPlayed < 3) {
+                // Until player 4's turn, increment player
                 activePlayerID++;
-            } else if (turnsPlayed == 4) {
-                // Do nothing
+            } else if (turnsPlayed == 3) {
+                // On player4's first turn, give them another turn
             } else {
+                // Then begin going backwards
                 activePlayerID--;
+                if (activePlayerID < 0){
+                    activePlayerID = 0;
+                }
+            }
+            turnsPlayed++;
+            if (turnsPlayed == 8) {
+                isSetUpPhase = false;
+                gamePhase = START_TURN;
             }
         } else {
+            // If not setupPhase, increment turn counter
+            turnsPlayed++;
             if (++activePlayerID > 3) {
+                // once playerID goes above 4, it loops back to zero
+                // order is 1234 1234 in normal play
                 activePlayerID = 0;
             }
-        }
-        turnsPlayed++;
-        if (++turnsPlayed == 8) {
-            isSetUpPhase = false;
         }
         //saveGame();
     }
