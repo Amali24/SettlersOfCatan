@@ -128,10 +128,10 @@ public class ClientUI extends Application {
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
     // Window sizes
-    private double maxSizeX = 900;
-    private double minSizeX = 700;
-    private double maxSizeY = 800;
-    private double minSizeY = 600;
+    private final double maxSizeX = 900;
+    private final double minSizeX = 700;
+    private final double maxSizeY = 800;
+    private final double minSizeY = 600;
 
     // Strings for prompts during turns
     static String setUpPhase = "Setup Phase\n"
@@ -223,7 +223,6 @@ public class ClientUI extends Application {
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(355);
-      
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -385,7 +384,7 @@ public class ClientUI extends Application {
         Button btnDevCards = new Button("Development Cards");
         btnDevCards.setOnAction(e -> {
             if (GameManager.gamePhase != GameManager.SETUP) {
-                // DevCard stuff
+                showDevCardMenu();
             }
         });
         btnDevCards.setStyle(btnStyle);
@@ -433,7 +432,7 @@ public class ClientUI extends Application {
 
         // Panel that deisplays available resources to the active player
         StackPane resourcePanel = new StackPane();
-        resourcePanel.setAlignment(new Label("Available Resources"), Pos.CENTER);
+        StackPane.setAlignment(new Label("Available Resources"), Pos.CENTER);
 
         // Calling method that fills our Resource Pane with up-to-date information
         createResoursePanel(resourcePanel);
@@ -656,7 +655,7 @@ public class ClientUI extends Application {
                 buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
                 // And close the window
                 buildMenu.close();
-            }else{
+            } else {
                 promptBox.appendText("\nYou must have one brick and one lumber to build a road");
             }
         });
@@ -670,8 +669,7 @@ public class ClientUI extends Application {
                 ArrayList<Intersection> buildableSettlements = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
                 buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
-            }
-            else{
+            } else {
                 promptBox.appendText("\nYou must have one brick, one lumber, one wool, and one wheat to build a settlement");
             }
         });
@@ -684,7 +682,7 @@ public class ClientUI extends Application {
                 ArrayList<Intersection> buildableCities = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
                 buildACity(buildableCities, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
-            }else{
+            } else {
                 promptBox.appendText("\nYou must have three ore, and two wheat to build a city");
             }
         });
@@ -869,7 +867,6 @@ public class ClientUI extends Application {
         rWoolBtn.setOnAction(e -> {
             tradeDeal.setRequestedResource(4);
         });
-        ;
 
         requestedBox.getChildren().addAll(rBrickBtn, rLumberBtn, rOreBtn, rWheatBtn, rWoolBtn);
 
@@ -1152,7 +1149,7 @@ public class ClientUI extends Application {
     public void createResoursePanel(Pane pane) {
         // Creates grid to hold player's informations
         GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);;
+        gridPane.setHgap(10);
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
 
@@ -1224,11 +1221,10 @@ public class ClientUI extends Application {
                     stealFrom(i.getPlayer());
                     promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
-                     // Set UI Elements back to defaults
+                    // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
                 });
-               
-                
+
             }
         }
     }
@@ -1241,6 +1237,104 @@ public class ClientUI extends Application {
 
         stolenFrom.deductResource(resourceToSteal, 1);
         activePlayer.addResource(resourceToSteal, 1);
+    }
+
+    private void showDevCardMenu() {
+        int activePlayerID = GameManager.activePlayerID;
+        Player activePlayer = GameManager.players[activePlayerID];
+
+        Stage stage = new Stage();
+        stage.setTitle("Development Cards");
+
+        GridPane gridPane = new GridPane();
+
+        HBox hboxButtons = new HBox();
+
+        Button btnBuyCard = new Button("Buy A Card");
+        btnBuyCard.setStyle(btnStyle);
+        btnBuyCard.setOnAction(e -> {
+            if (false/*!(activePlayer.getResourceCount(GameManager.ORE) >= 1 && activePlayer.getResourceCount(GameManager.WOOL) >= 1
+                    && activePlayer.getResourceCount(GameManager.WHEAT) >= 1)*/) {
+                promptBox.appendText("\nYou must have 1 ore, 1 wheat, and 1 wool");
+            }else if (Bank.remainingCards == 0){
+                promptBox.appendText("\nThere are no cards remaining");
+            } else{
+                GUIbuyDevCard();
+            }
+
+        });
+
+        Button btnCancel = new Button("Cancel");
+        btnCancel.setStyle(btnStyle);
+        btnCancel.setOnAction(e -> stage.close());
+
+        hboxButtons.getChildren().addAll(btnBuyCard, btnCancel);
+
+        HBox hboxCards = new HBox(15);
+
+        int i = 0;
+        for (DevelopmentCard devCard : Bank.developmentCards) {
+            if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
+                VBox cardShape = new VBox();
+                
+                Text title = new Text(devCard.getTitle());
+                Text descr = new Text(devCard.getDescription());
+
+                cardShape.getChildren().addAll(title, descr);
+
+                Pane pane = new Pane(cardShape);
+
+                hboxCards.getChildren().add(pane);
+
+                i++;
+            }
+        }
+
+        Label devCards = new Label("Your Development Cards");
+
+        gridPane.add(devCards, 0, 0);
+        gridPane.add(hboxCards, 0, 1);
+        gridPane.add(hboxButtons, 0, 2);
+
+        Scene scene = new Scene(gridPane);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void GUIbuyDevCard() {
+        int activePlayerID = GameManager.activePlayerID;
+        Player activePlayer = GameManager.players[activePlayerID];
+
+        boolean cardAssigned = false;
+        
+        while (!cardAssigned) {
+                // As long as a valid card has not been assigned
+                // Select a random card number (0 - 24)
+                int card = (int) (Math.random() * 25);
+                // Find card in "deck"
+                DevelopmentCard d = Bank.developmentCards[card];
+                // If it is unowned,
+                if (d.getPlayer() == -1) {
+                    // assign it to current player
+                    d.setPlayer(activePlayerID);
+                    // set loop control to true
+                    cardAssigned = true;
+                    // Inform player of purchase
+                    promptBox.appendText("\nYou have purchased a " + d.getTitle() + " Card.");
+
+                    // Auto-play victory point card
+                    if (d.getTitle().equals("Victory Point")) {
+                        promptBox.appendText("Victory Point Cards play automatically.");
+                        ((VictoryPointCard) d).play(activePlayerID);
+                    }
+
+                }
+
+            }
+        
+        activePlayer.deductResource(GameManager.ORE, 1);
+        activePlayer.deductResource(GameManager.WOOL, 1);
+        activePlayer.deductResource(GameManager.WHEAT, 1);
     }
 
 }
