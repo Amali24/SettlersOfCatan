@@ -562,11 +562,12 @@ public class ClientUI extends Application {
                         Bank.GUIBuildRoad(activePlayerID, road);
                         restoreUIElements(circles, lines, GameManager.tiles);
                         if (GameManager.isSetUpPhase) {
+
+                            GameManager.endTurn(GameManager.isSetUpPhase);
+                            updateTurnIndicator();
                             if (GameManager.gamePhase == GameManager.START_TURN) {
                                 promptBox.setText(startTurn);
                             }
-                            GameManager.endTurn(GameManager.isSetUpPhase);
-                            updateTurnIndicator();
                             setUpPhase();
                         }
                     });
@@ -1250,7 +1251,7 @@ public class ClientUI extends Application {
         stolenFrom.deductResource(resourceToSteal, 1);
         activePlayer.addResource(resourceToSteal, 1);
     }
-    
+
     void updateTurnIndicator() {
         turnIndicator.setText("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
     }
@@ -1340,7 +1341,7 @@ public class ClientUI extends Application {
 
                 // Auto-play victory point card
                 if (d.getTitle().equals("Victory Point")) {
-                    promptBox.appendText("Victory Point Cards play automatically.");
+                    promptBox.appendText("\nVictory Point Cards play automatically.");
                     ((VictoryPointCard) d).play(activePlayerID);
                 }
 
