@@ -126,32 +126,47 @@ public class ClientUI extends Application {
     private double maxSizeY = 800;
     private double minSizeY = 600;
 
-    String setUpPhase = "\t\t\tSetup Phase\n"
+    // Strings for prompts during turns
+    static String setUpPhase = "\t\t\tSetup Phase\n"
             + "During set up phase, you will build one settlement and then one road per turn.\n\n"
             + "Turns are serpentine during this phase, and each player will get two turns.\n\n"
             + "It is not necessary to click end turn during this phase.";
 
-    String startTurn = "\t\tStart of Turn Phase\n"
+    static String startTurn = "\t\tStart of Turn Phase\n"
             + "At the start of your turn you can roll the dice by clicking the"
             + "roll button, or play development cards by clicking the Development"
             + "Card button.";
 
-    String rolledSeven = "Select a tile to move the robber to.\n\n"
+    static String rolledSeven = "Select a tile to move the robber to.\n\n"
             + "The robber will steal one resource (at random) from a player you select on that tile";
 
-    String afterRoll = "";
+    static String afterRoll = "\nYou may now trade, build, buy development cards, or end your turn";
 
-    String gameOver = "";
+    static String gameOver = "";
 
+    // UI elements
     Insets insets = new Insets(12);
     DropShadow ds = new DropShadow();
 
+    // ArrayLists of UI elements for intersections and boundaries
     ArrayList<Circle> circles = new ArrayList<>();
     ArrayList<Line> lines = new ArrayList<>();
 
+    // Box to prompt players with available actions
     TextArea promptBox = new TextArea();
 
+    // Boolean holds whether a player has rolled this turn (only one roll per turn)
     static boolean playerRolled = false;
+
+    // Button styling using CSS. 
+    String btnStyle
+            = "-fx-text-fill: white;\n"
+            + "-fx-font-family: \"Arial Narrow\";\n"
+            + "-fx-font-weight: bold;\n"
+            + "-fx-font-size: 11pt;\n"
+            + "-fx-background-color: linear-gradient(#61a2b1, #2A5058);\n"
+            + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
+            + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
     @Override
     public void start(Stage primaryStage) {
@@ -181,14 +196,17 @@ public class ClientUI extends Application {
         // Displays panels of players 1 and  3
         VBox left = new VBox();
 
+        // Set size of prompt box
         promptBox.setMaxWidth(255);
         promptBox.setMinWidth(255);
         promptBox.setMaxHeight(255);
         promptBox.setMinHeight(255);
 
+        // Prompt box starts with setupPhase text
         promptBox.setText(setUpPhase);
         promptBox.setWrapText(true);
 
+        // Add resource panels and prompt box to left side
         left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
         left.setSpacing(50);
@@ -199,9 +217,9 @@ public class ClientUI extends Application {
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(355);
 
+        // Set "water" image as background
         Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
         BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
-
         gameBoard.setBackground(new Background(bgWater));
 
         // Min size and max size are currently the same
@@ -268,16 +286,6 @@ public class ClientUI extends Application {
         bp.setCenter(gameBoard);
 
         // ___________________________  Buttons ___________________________
-        // Button styling using CSS. 
-        String btnStyle
-                = "-fx-text-fill: white;\n"
-                + "-fx-font-family: \"Arial Narrow\";\n"
-                + "-fx-font-weight: bold;\n"
-                + "-fx-font-size: 11pt;\n"
-                + "-fx-background-color: linear-gradient(#61a2b1, #2A5058);\n"
-                + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
-                + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
-
         HBox hBoxButtons = new HBox(25);
 
         Button btnRoll = new Button("Roll");
@@ -285,11 +293,17 @@ public class ClientUI extends Application {
         btnRoll.setStyle(btnStyle);
         btnRoll.setOnAction(e
                 -> {
+            // If it is the START_TURN phase and you have not alreaady rolled
             if (GameManager.gamePhase == GameManager.START_TURN && !playerRolled) {
+                // set rolled to true
                 playerRolled = true;
+                // roll the dice
                 int diceRoll = GameManager.rollDice();
+                // If a 7 is rolled, initiate robber functions
                 if (diceRoll == 7) {
+                    // Inform player
                     promptBox.setText("\t\tYou Rolled a 7\n");
+                    // Check all the players for > 7 resource and "steal" half
                     for (Player p : GameManager.players) {
                         if (p.getResourceTotal() > 7) {
                             promptBox.appendText("The Robber stole "
@@ -297,72 +311,112 @@ public class ClientUI extends Application {
                                     + p.getPlayerID() + 1);
                         }
                     }
+                    // Steal the resources
+                    GameManager.robberSteal();
+                    // Inform user of rolledSeven actions
                     promptBox.appendText(rolledSeven);
+
                     for (HexTile tile : GameManager.tiles) {
-
-                        GameManager.robberSteal();
-
+                        // for every tile, set on click to move robber
                         tile.hexagon.setOnMouseClicked(e1 -> {
                             if (tile.hasRobber()) {
+                                // if the tile already has the robber, inform player
+                                // to try again
                                 promptBox.appendText("You must move the robber");
                             } else {
+                                // move robber
                                 GUImoveRobber();
                             }
                         });
                     }
                 } else {
+                    // any roll other than a 7 yields resources
+                    // tell player what they rolled
                     promptBox.setText("You rolled a " + diceRoll);
+
                     for (HexTile tile : GameManager.tiles) {
                         if (tile.getNumRoll() == diceRoll) {
+                            // yield the resources of every tile that matches the die roll
                             tile.yieldResources();
+                            for (Intersection i : tile.getIntersections()) {
+                                // If it's occupied, print which players gained which resources
+                                if (i.occupied()) {
+                                    promptBox.appendText("\nPlayer " + (i.getPlayer() + 1) + " received " + i.getSettlementType() + " ");
+                                    switch (tile.getResourceYield()) {
+                                        case 0:
+                                            promptBox.appendText("Brick");
+                                            break;
+                                        case 1:
+                                            promptBox.appendText("Lumber");
+                                            break;
+                                        case 2:
+                                            promptBox.appendText("Ore");
+                                            break;
+                                        case 3:
+                                            promptBox.appendText("Wheat");
+                                            break;
+                                        case 4:
+                                            promptBox.appendText("Wool");
+                                            break;
+
+                                    }
+                                }
+                            }
                         }
                     }
+                    // Add afterRoll text to promptBox
+                    promptBox.appendText(afterRoll);
                 }
             }
         });
 
+        // Build stuff button
         Button btnBuild = new Button("Build Improvements");
         btnBuild.setStyle(btnStyle);
-        btnBuild.setOnAction(e -> openBuildMenu());
+        btnBuild.setOnAction(e -> {
+            if (GameManager.gamePhase == GameManager.AFTER_ROLL) {
+                openBuildMenu();
+            }
+        });
         Button btnDevCards = new Button("Development Cards");
+        btnDevCards.setOnAction(e -> {
+            if (GameManager.gamePhase != GameManager.SETUP){
+                // DevCard stuff
+            }
+        });
         btnDevCards.setStyle(btnStyle);
 
+        // Trade Button
         Button btnTrade = new Button("Trade");
         btnTrade.setStyle(btnStyle);
         btnTrade.setOnAction(e -> {
             // your statement
         });
 
+        // End Turn Button
         Button btnEndTurn = new Button("End Turn");
-
         btnEndTurn.setStyle(btnStyle);
         btnEndTurn.setOnAction(e -> {
+            // End turn button not usable during setup phase
             if (!GameManager.isSetUpPhase) {
+                // Call end turn method
                 GameManager.endTurn(GameManager.isSetUpPhase);
+                // Set rolled flag back to false
                 playerRolled = false;
+                // Display start of turn text
                 promptBox.setText(startTurn);
             }
         });
 
-        /*
-        Delete This?
-        For Debugging only
-         */
-        Button btnNewBoard = new Button("New Board");
-        btnNewBoard.setOnAction(e -> {
-            GameManager.gm1.buildGameboard();
-            this.start(primaryStage);
-        });
-        btnNewBoard.setStyle(btnStyle);
-
+        // Error window test button
         Button btnTest = new Button("TEST");
         btnTest.setOnAction(e -> {
             showWarningDialog("TEST");
             showErrorDialog("TEST");
         });
-        btnNewBoard.setStyle(btnStyle);
 
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnNewBoard, btnTest);
+        // Add all buttons to screen
+        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnTest);
         hBoxButtons.setAlignment(Pos.CENTER);
 
         // ________________________  Resource Panel ____________________________
@@ -407,6 +461,9 @@ public class ClientUI extends Application {
 
         primaryStage.show();
 
+        // This calls the setUpPhase method as long as we aare in set up phase
+        // There's a weird sort of recursion here in the buildSettlement
+        // and buildRoad methods
         if (GameManager.isSetUpPhase) {
             setUpPhase();
         }
@@ -488,11 +545,14 @@ public class ClientUI extends Application {
                 // If the buildable road is equal to the current road
                 if (road.getLine() == line) {
                     // Make it wider and setOnClick to GUIBuildRoad method
-                    line.setStrokeWidth(4);
+                    line.setStrokeWidth(8);
                     line.setOnMouseClicked(e -> {
                         Bank.GUIBuildRoad(activePlayerID, road);
-                        restoreUIElements(circles, lines);
+                        restoreUIElements(circles, lines, GameManager.tiles);
                         if (GameManager.isSetUpPhase) {
+                            if (GameManager.gamePhase == GameManager.START_TURN) {
+                                promptBox.setText(startTurn);
+                            }
                             GameManager.endTurn(GameManager.isSetUpPhase);
                             setUpPhase();
                         }
@@ -531,7 +591,7 @@ public class ClientUI extends Application {
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> {
                         Bank.GUIBuildSettlement(activePlayerID, intersection, GameManager.isSetUpPhase);
-                        restoreUIElements(circles, lines);
+                        restoreUIElements(circles, lines, GameManager.tiles);
                         // If setup phase, allow user to also build road
                         if (GameManager.isSetUpPhase) {
                             ArrayList<Boundary> buildableRoads = findBuildableRoads(activePlayerID);
@@ -569,7 +629,7 @@ public class ClientUI extends Application {
                     circle.setStrokeWidth(4);
                     circle.setOnMouseClicked(e -> {
                         Bank.GUIBuildCity(activePlayerID, intersection);
-                        restoreUIElements(circles, lines);
+                        restoreUIElements(circles, lines, GameManager.tiles);
                     });
                 }
             }
@@ -577,28 +637,52 @@ public class ClientUI extends Application {
     }
 
     private void openBuildMenu() {
+        Player activePlayer = GameManager.players[GameManager.activePlayerID];
+
+        // Build Menu will be in a new stage
         Stage buildMenu = new Stage();
 
+        // Create an HBox for buttons
         HBox btnBox = new HBox(25);
         Button btnBuildRoad = new Button("Build a Road");
         btnBuildRoad.setOnAction(e1 -> {
-            ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
-            buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
-            buildMenu.close();
+            if (activePlayer.getResourceCount(GameManager.BRICK) >= 1 && activePlayer.getResourceCount(GameManager.LUMBER) >= 1) {
+                // When you click build a road,
+                // It will check which roads are buildable, and set those clickable
+                ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
+                buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
+                // And close the window
+                buildMenu.close();
+            }
         });
+        btnBuildRoad.setStyle(btnStyle);
 
         Button btnBuildSettlement = new Button("Build a Settlement");
         btnBuildSettlement.setOnAction(e1 -> {
-            ArrayList<Intersection> buildableSettlements = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
-            buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
-            buildMenu.close();
-
+            if (activePlayer.getResourceCount(GameManager.BRICK) >= 1 && activePlayer.getResourceCount(GameManager.LUMBER) >= 1
+                    && activePlayer.getResourceCount(GameManager.WOOL) >= 1 && activePlayer.getResourceCount(GameManager.WHEAT) >= 1) {
+                // Similar to build road button above
+                ArrayList<Intersection> buildableSettlements = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
+                buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
+                buildMenu.close();
+            }
         });
+        btnBuildSettlement.setStyle(btnStyle);
 
         Button btnBuildCity = new Button("Build a City");
+        btnBuildCity.setOnAction(e1 -> {
+            if (activePlayer.getResourceCount(GameManager.ORE) >= 3 && activePlayer.getResourceCount(GameManager.WHEAT) >= 2) {
+                // Similar to build road button above
+                ArrayList<Intersection> buildableCities = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
+                buildACity(buildableCities, GameManager.intersections, GameManager.activePlayerID);
+                buildMenu.close();
+            }
+        });
+        btnBuildCity.setStyle(btnStyle);
 
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(e -> buildMenu.close());
+        btnCancel.setStyle(btnStyle);
 
         btnBox.getChildren().addAll(btnBuildRoad, btnBuildSettlement, btnBuildCity, btnCancel);
 
@@ -617,7 +701,7 @@ public class ClientUI extends Application {
         buildMenu.show();
     }
 
-    private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {
+    private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries, HexTile[] tiles) {
         for (Circle i : intersections) {
             // For every circle, restore to strokeWidth 1
             i.setRadius(circleSize);
@@ -627,11 +711,17 @@ public class ClientUI extends Application {
             }
             // Set to do nothing on click
             i.setOnMouseClicked(e -> doNothing());
-
         }
+        
+        for (HexTile t : tiles){
+            // Make hexes not clickable
+            t.hexagon.setOnMouseClicked(e -> doNothing());
+        }
+        
         for (Line l : boundaries) {
             // Set all lines non-clickable
             l.setOnMouseClicked(e -> doNothing());
+            l.setStrokeWidth(4);
         }
     }
 
@@ -640,10 +730,14 @@ public class ClientUI extends Application {
     }
 
     private void setUpPhase() {
+        // PlayerID is equal to active player (cuts code clutter)
         int playerID = GameManager.activePlayerID;
+        // clutter removed by storing in variable
         boolean setupPhase = GameManager.isSetUpPhase;
+        // ditto above
         Intersection[] intersections = GameManager.intersections;
 
+        // Call the build settlement methods first, as a settlement must be built first
         ArrayList<Intersection> buildableIntersections = findBuildableSettlements(playerID, setupPhase);
         buildASettlement(buildableIntersections, intersections, playerID);
     }
@@ -705,20 +799,32 @@ public class ClientUI extends Application {
     }
 
     private void GUImoveRobber() {
+        // Iterate through all hexTiles
         for (HexTile tile : GameManager.tiles) {
             tile.hexagon.setOnMouseClicked(e -> {
+                // Make them clickable
+                // When clicked, every tile is set to not have robber
                 for (HexTile t : GameManager.tiles) {
                     t.setRobber(false);
                 }
+                // the one you click on gets robber
                 tile.setRobber(true);
+                // output feedback
                 promptBox.setText("\t\tRobber moved sucessfully\n"
                         + "Select a player to steal from, if there are any "
                         + "settlements on the tile.");
+                // Check all intersections on tile for players
                 for (Intersection i : tile.getIntersections()) {
+                    // If the tile is occupied, allow to steal from them
                     if (i.occupied()) {
-                        i.getCircle().setRadius(circleSize + 5);
-                        i.getCircle().setOnMouseClicked(eh -> stealFrom(i.getPlayer()));
-                        restoreUIElements(circles, lines);
+                        i.getCircle().setRadius(circleSize * 5);
+                        i.getCircle().setOnMouseClicked(eh -> {
+                            stealFrom(i.getPlayer());
+                            promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
+                            promptBox.appendText(afterRoll);
+                                });
+                        // Set UI Elements back to defaults
+                        restoreUIElements(circles, lines, GameManager.tiles);
                     }
                 }
             });
@@ -734,4 +840,5 @@ public class ClientUI extends Application {
         stolenFrom.deductResource(resourceToSteal, 1);
         activePlayer.addResource(resourceToSteal, 1);
     }
+
 }
