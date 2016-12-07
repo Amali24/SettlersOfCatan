@@ -175,6 +175,8 @@ public class ClientUI extends Application {
             + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
+    Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
@@ -183,6 +185,13 @@ public class ClientUI extends Application {
         Pane gameBoard = new Pane();
 
         bgPane.getChildren().add(bp);
+
+        bp.setTop(turnIndicator);
+
+        turnIndicator.setFont(new Font("Arial Narrow", 36));
+        turnIndicator.setStroke(BLACK);
+        turnIndicator.setFill(WHITE);
+        BorderPane.setAlignment(turnIndicator, Pos.CENTER);
 
         // Panel to hold Player's information
         StackPane player1Panel = new StackPane();
@@ -407,6 +416,7 @@ public class ClientUI extends Application {
                 // Display start of turn text
                 GameManager.gamePhase = GameManager.START_TURN;
                 promptBox.setText(startTurn);
+                updateTurnIndicator();
             }
         });
 
@@ -457,7 +467,7 @@ public class ClientUI extends Application {
         bgPane.setBackground(new Background(bgWood));
 
         // Set up scene size
-        Scene scene = new Scene(bgPane, 1210, 845); // previous width is 1280
+        Scene scene = new Scene(bgPane, 1210, 880); // previous width is 1280
 
         primaryStage.setScene(scene);
 
@@ -556,6 +566,7 @@ public class ClientUI extends Application {
                                 promptBox.setText(startTurn);
                             }
                             GameManager.endTurn(GameManager.isSetUpPhase);
+                            updateTurnIndicator();
                             setUpPhase();
                         }
                     });
@@ -1221,6 +1232,8 @@ public class ClientUI extends Application {
                     stealFrom(i.getPlayer());
                     promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
+                    
+                    GameManager.gamePhase = GameManager.AFTER_ROLL;
                     // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
                 });
@@ -1237,6 +1250,10 @@ public class ClientUI extends Application {
 
         stolenFrom.deductResource(resourceToSteal, 1);
         activePlayer.addResource(resourceToSteal, 1);
+    }
+
+    void updateTurnIndicator() {
+        turnIndicator.setText("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
     }
 
     private void showDevCardMenu() {
@@ -1256,9 +1273,9 @@ public class ClientUI extends Application {
             if (false/*!(activePlayer.getResourceCount(GameManager.ORE) >= 1 && activePlayer.getResourceCount(GameManager.WOOL) >= 1
                     && activePlayer.getResourceCount(GameManager.WHEAT) >= 1)*/) {
                 promptBox.appendText("\nYou must have 1 ore, 1 wheat, and 1 wool");
-            }else if (Bank.remainingCards == 0){
+            } else if (Bank.remainingCards == 0) {
                 promptBox.appendText("\nThere are no cards remaining");
-            } else{
+            } else {
                 GUIbuyDevCard();
             }
 
@@ -1276,7 +1293,7 @@ public class ClientUI extends Application {
         for (DevelopmentCard devCard : Bank.developmentCards) {
             if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
                 VBox cardShape = new VBox();
-                
+
                 Text title = new Text(devCard.getTitle());
                 Text descr = new Text(devCard.getDescription());
 
@@ -1306,35 +1323,32 @@ public class ClientUI extends Application {
         Player activePlayer = GameManager.players[activePlayerID];
 
         boolean cardAssigned = false;
-        
+
         while (!cardAssigned) {
-                // As long as a valid card has not been assigned
-                // Select a random card number (0 - 24)
-                int card = (int) (Math.random() * 25);
-                // Find card in "deck"
-                DevelopmentCard d = Bank.developmentCards[card];
-                // If it is unowned,
-                if (d.getPlayer() == -1) {
-                    // assign it to current player
-                    d.setPlayer(activePlayerID);
-                    // set loop control to true
-                    cardAssigned = true;
-                    // Inform player of purchase
-                    promptBox.appendText("\nYou have purchased a " + d.getTitle() + " Card.");
+            // As long as a valid card has not been assigned
+            // Select a random card number (0 - 24)
+            int card = (int) (Math.random() * 25);
+            // Find card in "deck"
+            DevelopmentCard d = Bank.developmentCards[card];
+            // If it is unowned,
+            if (d.getPlayer() == -1) {
+                // assign it to current player
+                d.setPlayer(activePlayerID);
+                // set loop control to true
+                cardAssigned = true;
+                // Inform player of purchase
+                promptBox.appendText("\nYou have purchased a " + d.getTitle() + " Card.");
 
-                    // Auto-play victory point card
-                    if (d.getTitle().equals("Victory Point")) {
-                        promptBox.appendText("Victory Point Cards play automatically.");
-                        ((VictoryPointCard) d).play(activePlayerID);
-                    }
-
+                // Auto-play victory point card
+                if (d.getTitle().equals("Victory Point")) {
+                    promptBox.appendText("Victory Point Cards play automatically.");
+                    ((VictoryPointCard) d).play(activePlayerID);
                 }
-
             }
-        
+
+        }
         activePlayer.deductResource(GameManager.ORE, 1);
         activePlayer.deductResource(GameManager.WOOL, 1);
         activePlayer.deductResource(GameManager.WHEAT, 1);
     }
-
 }
