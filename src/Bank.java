@@ -108,7 +108,7 @@ import java.util.Scanner;
 
 /**
  * The <code>Bank</code> class facilitates transactions of resources including
- * the trading of resources between players, the purchace of development cards,
+ * the trading of resources between players, the purchase of development cards,
  * and the building of roads and settlements.
  *
  */
@@ -127,8 +127,8 @@ public class Bank {
     static final int GENERAL_HARBOR = 5;
 
     private static final int DEVELOPMENT_CARD_COUNT = 25;
-    private DevelopmentCard[] developmentCards = new DevelopmentCard[DEVELOPMENT_CARD_COUNT];
-    private int remainingCards = 25;
+    static DevelopmentCard[] developmentCards = new DevelopmentCard[DEVELOPMENT_CARD_COUNT];
+    static int remainingCards = 25;
 
 //                                  Methods
 //_____________________________________________________________________________
