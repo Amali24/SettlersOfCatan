@@ -127,6 +127,7 @@ public class ClientUI extends Application {
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
+
     // Window sizes
     private double maxSizeX = 900;
     private double minSizeX = 700;
@@ -175,6 +176,8 @@ public class ClientUI extends Application {
             + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
+    Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Settlers of Catan");
@@ -183,6 +186,13 @@ public class ClientUI extends Application {
         Pane gameBoard = new Pane();
 
         bgPane.getChildren().add(bp);
+
+        bp.setTop(turnIndicator);
+        
+        turnIndicator.setFont(new Font("Arial Narrow", 36));
+        turnIndicator.setStroke(BLACK);
+        turnIndicator.setFill(WHITE);
+        BorderPane.setAlignment(turnIndicator,Pos.CENTER);
 
         // Panel to hold Player's information
         StackPane player1Panel = new StackPane();
@@ -407,6 +417,7 @@ public class ClientUI extends Application {
                 // Display start of turn text
                 GameManager.gamePhase = GameManager.START_TURN;
                 promptBox.setText(startTurn);
+                updateTurnIndicator();
             }
         });
 
@@ -457,7 +468,7 @@ public class ClientUI extends Application {
         bgPane.setBackground(new Background(bgWood));
 
         // Set up scene size
-        Scene scene = new Scene(bgPane, 1210, 845); // previous width is 1280
+        Scene scene = new Scene(bgPane, 1210, 880); // previous width is 1280
 
         primaryStage.setScene(scene);
 
@@ -556,6 +567,7 @@ public class ClientUI extends Application {
                                 promptBox.setText(startTurn);
                             }
                             GameManager.endTurn(GameManager.isSetUpPhase);
+                            updateTurnIndicator();
                             setUpPhase();
                         }
                     });
@@ -1222,6 +1234,7 @@ public class ClientUI extends Application {
                     stealFrom(i.getPlayer());
                     promptBox.setText("\nSuccessfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
+                    GameManager.gamePhase = GameManager.AFTER_ROLL;
                     // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
                 });
@@ -1239,4 +1252,7 @@ public class ClientUI extends Application {
         activePlayer.addResource(resourceToSteal, 1);
     }
 
+    void updateTurnIndicator() {
+        turnIndicator.setText("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
+    }
 }

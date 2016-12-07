@@ -741,7 +741,7 @@ public class GameManager {
                     //System.out.println("Player " + (player.getPlayerID() + 1) + " Choose a resource to surrender:");
                     // Choose type of resource to surrender one of
                     // int resourceSurrendered = Integer.parseInt(sc.nextLine()) - 1;
-                    
+
                     int resourceSurrendered = HexTile.getRandInt(BRICK, WOOL);
 
                     if (player.resourceMaterials[resourceSurrendered] > 0) {
@@ -761,7 +761,7 @@ public class GameManager {
         return sum;
     }
 
-       static void endTurn(boolean setupPhase) {
+    static void endTurn(boolean setupPhase) {
         if (setupPhase) {
             // setupPhase is serpentine
             // i.e. the order is 1 2 3 4 4 3 2 1
@@ -773,7 +773,7 @@ public class GameManager {
             } else {
                 // Then begin going backwards
                 activePlayerID--;
-                if (activePlayerID < 0){
+                if (activePlayerID < 0) {
                     activePlayerID = 0;
                 }
             }
