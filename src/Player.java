@@ -91,6 +91,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       corresponding add methods
                                                       which now take parameters
 
+            December 05, 2016           AS          * Added name field & get/set
+                                                    * name getter creates a 
+                                                      default player name if one 
+                                                      has not been entered
+                                                    * Added maxResourceCount Method
+
  */
 public class Player {
 

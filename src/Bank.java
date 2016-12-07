@@ -48,8 +48,6 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     * Made playerTrade method
                                                     * Made tradePrompt method
 
-                                                    
-
                                         AT          * Debugged test code and the 
                                                       find/buy methods
             

@@ -73,9 +73,17 @@ Activity:	  -Date-             -Person-               -Updates-
                                         AS&AT       * Edited images to better fit
                                                       HexTiles
             
-            Deceber 04, 2016            AS          * Added setup phase parameter
+            December 04, 2016           AS          * Added setup phase parameter
                                                       to call of GUIBuildSettlement
                                                       method 
+
+            December 05, 2016           AS          * Added Trade Menu
+                                                    * Added Player Trade Menu
+                                                    * Added Bank Trade Menu
+                                                    * Player and bank trade 
+                                                      menu methods agregate 
+                                                      user input and call trade 
+                                                      methods
  */
 import java.io.*;
 import java.util.*;
@@ -577,7 +585,7 @@ public class ClientUI extends Application {
         int rate = exchangeRates[0];
         int max = activePlayer.getResourceCount(0)/rate*rate;
         offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
-        requestText.setText("For every " + rate + " bricks, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        requestText.setText("\nFor every " + rate + " bricks, you will receive 1 of the following resources. \n Select which resource you would like in return.");
         if(activePlayer.getResourceCount(0) != 0 )
         tradeDeal.setOfferedResource(0);
     });
@@ -588,7 +596,7 @@ public class ClientUI extends Application {
         int rate = exchangeRates[1];
         int max = activePlayer.getResourceCount(1)/rate*rate;
         offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
-        requestText.setText("For every " + rate + " lumber, you wil receive 1 of the following resources. \n Select which resource you would like in return.");
+        requestText.setText("\nFor every " + rate + " lumber, you wil receive 1 of the following resources. \n Select which resource you would like in return.");
         if(activePlayer.getResourceCount(1) != 0)
         tradeDeal.setOfferedResource(1);
     });
@@ -599,7 +607,7 @@ public class ClientUI extends Application {
         int rate = exchangeRates[2];
         int max = activePlayer.getResourceCount(2)/rate*rate;
         offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
-        requestText.setText("For every " + rate + " ore, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        requestText.setText("\nFor every " + rate + " ore, you will receive 1 of the following resources. \n Select which resource you would like in return.");
         if(activePlayer.getResourceCount(2) != 0)
         tradeDeal.setOfferedResource(2);
     });
@@ -610,7 +618,7 @@ public class ClientUI extends Application {
         int rate = exchangeRates[3];
         int max = activePlayer.getResourceCount(3)/rate*rate;
         offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
-        requestText.setText("For every " + rate + " wheat, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        requestText.setText("\nFor every " + rate + " wheat, you will receive 1 of the following resources. \n Select which resource you would like in return.");
         if(activePlayer.getResourceCount(3) != 0)
         tradeDeal.setOfferedResource(3);
     });
@@ -621,7 +629,7 @@ public class ClientUI extends Application {
         int rate = exchangeRates[4];
         int max = activePlayer.getResourceCount(4)/rate*rate;
         offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
-        requestText.setText("For every " + rate + " wool, you can receive 1 of the following resources. \n Select which resource you would like in return.");
+        requestText.setText("\nFor every " + rate + " wool, you can receive 1 of the following resources. \n Select which resource you would like in return.");
         if(activePlayer.getResourceCount(4) != 0)
         tradeDeal.setOfferedResource(4);
     });
