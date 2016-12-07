@@ -1232,6 +1232,7 @@ public class ClientUI extends Application {
                     stealFrom(i.getPlayer());
                     promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
+                    
                     GameManager.gamePhase = GameManager.AFTER_ROLL;
                     // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
@@ -1250,7 +1251,7 @@ public class ClientUI extends Application {
         stolenFrom.deductResource(resourceToSteal, 1);
         activePlayer.addResource(resourceToSteal, 1);
     }
-    
+
     void updateTurnIndicator() {
         turnIndicator.setText("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
     }
@@ -1343,11 +1344,9 @@ public class ClientUI extends Application {
                     promptBox.appendText("Victory Point Cards play automatically.");
                     ((VictoryPointCard) d).play(activePlayerID);
                 }
-
             }
 
         }
-
         activePlayer.deductResource(GameManager.ORE, 1);
         activePlayer.deductResource(GameManager.WOOL, 1);
         activePlayer.deductResource(GameManager.WHEAT, 1);
