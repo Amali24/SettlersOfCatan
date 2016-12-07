@@ -1224,12 +1224,12 @@ public class ClientUI extends Application {
                     promptBox.appendText(afterRoll);
                     // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
-                }
-            });
+                });
+            }
         }
     }
 
-private void stealFrom(int playerID) {
+    private void stealFrom(int playerID) {
         Player stolenFrom = GameManager.players[playerID];
         Player activePlayer = GameManager.players[GameManager.activePlayerID];
 
