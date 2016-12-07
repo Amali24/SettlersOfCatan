@@ -127,7 +127,6 @@ public class ClientUI extends Application {
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
-
     // Window sizes
     private double maxSizeX = 900;
     private double minSizeX = 700;
@@ -333,7 +332,7 @@ public class ClientUI extends Application {
                                 promptBox.appendText("You must move the robber");
                             } else {
                                 // move robber
-                                GUImoveRobber();
+                                GUImoveRobber(tile);
                             }
                         });
                     }
@@ -373,6 +372,7 @@ public class ClientUI extends Application {
                         }
                     }
                     // Add afterRoll text to promptBox
+                    GameManager.gamePhase = GameManager.AFTER_ROLL;
                     promptBox.appendText(afterRoll);
                 }
             }
@@ -410,6 +410,7 @@ public class ClientUI extends Application {
                 // Set rolled flag back to false
                 playerRolled = false;
                 // Display start of turn text
+                GameManager.gamePhase = GameManager.START_TURN;
                 promptBox.setText(startTurn);
             }
         });
@@ -659,6 +660,8 @@ public class ClientUI extends Application {
                 buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
                 // And close the window
                 buildMenu.close();
+            }else{
+                promptBox.appendText("\nYou must have one brick and one lumber to build a road");
             }
         });
         btnBuildRoad.setStyle(btnStyle);
@@ -672,6 +675,9 @@ public class ClientUI extends Application {
                 buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
             }
+            else{
+                promptBox.appendText("\nYou must have one brick, one lumber, one wool, and one wheat to build a settlement");
+            }
         });
         btnBuildSettlement.setStyle(btnStyle);
 
@@ -682,6 +688,8 @@ public class ClientUI extends Application {
                 ArrayList<Intersection> buildableCities = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
                 buildACity(buildableCities, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
+            }else{
+                promptBox.appendText("\nYou must have three ore, and two wheat to build a city");
             }
         });
         btnBuildCity.setStyle(btnStyle);
@@ -1199,36 +1207,31 @@ public class ClientUI extends Application {
         alert.showAndWait();
     }
 
-    private void GUImoveRobber() {
+    private void GUImoveRobber(HexTile tile) {
         // Iterate through all hexTiles
-        for (HexTile tile : GameManager.tiles) {
-            tile.hexagon.setOnMouseClicked(e -> {
-                // Make them clickable
-                // When clicked, every tile is set to not have robber
-                for (HexTile t : GameManager.tiles) {
-                    t.setRobber(false);
-                }
-                // the one you click on gets robber
-                tile.setRobber(true);
-                // output feedback
-                promptBox.setText("\t\tRobber moved sucessfully\n"
-                        + "Select a player to steal from, if there are any "
-                        + "settlements on the tile.");
-                // Check all intersections on tile for players
-                for (Intersection i : tile.getIntersections()) {
-                    // If the tile is occupied, allow to steal from them
-                    if (i.occupied()) {
-                        i.getCircle().setRadius(circleSize * 5);
-                        i.getCircle().setOnMouseClicked(eh -> {
-                            stealFrom(i.getPlayer());
-                            promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
-                            promptBox.appendText(afterRoll);
-                        });
-                        // Set UI Elements back to defaults
-                        restoreUIElements(circles, lines, GameManager.tiles);
-                    }
-                }
-            });
+
+        for (HexTile t : GameManager.tiles) {
+            t.setRobber(false);
+        }
+        // the one you click on gets robber
+        tile.setRobber(true);
+        // output feedback
+        promptBox.setText("\t\tRobber moved sucessfully\n"
+                + "Select a player to steal from, if there are any "
+                + "settlements on the tile.");
+        // Check all intersections on tile for players
+        for (Intersection i : tile.getIntersections()) {
+            // If the tile is occupied, allow to steal from them
+            if (i.occupied()) {
+                i.getCircle().setRadius(circleSize * 5);
+                i.getCircle().setOnMouseClicked(eh -> {
+                    stealFrom(i.getPlayer());
+                    promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
+                    promptBox.appendText(afterRoll);
+                });
+                // Set UI Elements back to defaults
+                restoreUIElements(circles, lines, GameManager.tiles);
+            }
         }
     }
 
