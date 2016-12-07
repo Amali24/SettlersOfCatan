@@ -96,7 +96,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       default player name if one 
                                                       has not been entered
                                                     * Added maxResourceCount Method
-
+			
+	    December 07, 2016		RA	    * Changed printRoads, printSettlements
+	    					      and printCities methods to print
+						      the arrays that were added
+						      
+						      
  */
 public class Player {
 
@@ -379,13 +384,7 @@ public class Player {
                 + " of roads: " + roadCount + "\n Located at: \n");
 
         // Prints the location of player's roads
-        for (Boundary b : manager.boundaries) {
-            if (b.occupied() && player.getPlayerID() == b.getPlayer()) {
-                System.out.println(
-                        + manager.sqrtToAlpha(b.getEndpointA().getLocation().getX()) + b.getEndpointA().getLocation().getY()
-                        + manager.sqrtToAlpha(b.getEndpointB().getLocation().getX()) + b.getEndpointB().getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(roadList)+ " ");	    
     }
 			    
     public void printSettlements() {
@@ -394,11 +393,7 @@ public class Player {
                 + "of settlements: " + settlementCount + "\nLocated at: ");
 
         // Prints the location of player's settlements
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 1 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println("point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+         System.out.println(Arrays.toString(settlementList)+ " "); 
     }
 			    
     public void printCities() {
@@ -407,10 +402,6 @@ public class Player {
                 + "of cities:\n" + cityCount + "\nLocated at: ");
 
         // Prints the location of player's cities
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 2 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println(" point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(cityList)+ " ");
     }
 }
