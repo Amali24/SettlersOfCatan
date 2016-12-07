@@ -223,7 +223,6 @@ public class ClientUI extends Application {
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(355);
-      
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -309,9 +308,9 @@ public class ClientUI extends Application {
                     // Check all the players for > 7 resource and "steal" half
                     for (Player p : GameManager.players) {
                         if (p.getResourceTotal() > 7) {
-                            promptBox.appendText("The Robber stole "
-                                    + p.getResourceTotal() / 2 + " resources from player "
-                                    + p.getPlayerID() + 1);
+                            promptBox.appendText("\nThe Robber stole "
+                                    + (p.getResourceTotal() / 2) + " resources from player "
+                                    + (p.getPlayerID() + 1));
                         }
                     }
                     // Steal the resources
@@ -656,7 +655,7 @@ public class ClientUI extends Application {
                 buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
                 // And close the window
                 buildMenu.close();
-            }else{
+            } else {
                 promptBox.appendText("\nYou must have one brick and one lumber to build a road");
             }
         });
@@ -670,8 +669,7 @@ public class ClientUI extends Application {
                 ArrayList<Intersection> buildableSettlements = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
                 buildASettlement(buildableSettlements, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
-            }
-            else{
+            } else {
                 promptBox.appendText("\nYou must have one brick, one lumber, one wool, and one wheat to build a settlement");
             }
         });
@@ -684,7 +682,7 @@ public class ClientUI extends Application {
                 ArrayList<Intersection> buildableCities = findBuildableSettlements(GameManager.activePlayerID, GameManager.isSetUpPhase);
                 buildACity(buildableCities, GameManager.intersections, GameManager.activePlayerID);
                 buildMenu.close();
-            }else{
+            } else {
                 promptBox.appendText("\nYou must have three ore, and two wheat to build a city");
             }
         });
@@ -1218,22 +1216,20 @@ public class ClientUI extends Application {
         // Check all intersections on tile for players
         for (Intersection i : tile.getIntersections()) {
             // If the tile is occupied, allow to steal from them
-            if (i.occupied()) {
+            if (i.occupied() && i.getPlayer() != GameManager.activePlayerID) {
                 i.getCircle().setRadius(circleSize * 2.5);
                 i.getCircle().setOnMouseClicked(eh -> {
                     stealFrom(i.getPlayer());
-                    promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
+                    promptBox.setText("\nSuccessfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
-                     // Set UI Elements back to defaults
+                    // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
-                });
-               
-                
-            }
+                }
+            });
         }
     }
 
-    private void stealFrom(int playerID) {
+private void stealFrom(int playerID) {
         Player stolenFrom = GameManager.players[playerID];
         Player activePlayer = GameManager.players[GameManager.activePlayerID];
 
