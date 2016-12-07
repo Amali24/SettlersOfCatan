@@ -91,18 +91,29 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       corresponding add methods
                                                       which now take parameters
 
+            December 05, 2016           AS          * Added name field & get/set
+                                                    * name getter creates a 
+                                                      default player name if one 
+                                                      has not been entered
+                                                    * Added maxResourceCount Method
+			
+	    December 07, 2016		RA	    * Changed printRoads, printSettlements
+	    					      and printCities methods to print
+						      the arrays that were added
+						      
+						      
  */
 public class Player {
 
 //  				Class Variables
 //_____________________________________________________________________________
     private int playerID = -1;
+    private String name = "";
 
     private Intersection settlementList[] = new Intersection[5]; 
     private Intersection cityList[] = new Intersection[4]; 
     private Boundary roadList[] = new Boundary[15]; 
 
- 
     private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 4
     private int roadCount = 0; 			//max of 15
@@ -159,7 +170,19 @@ public class Player {
     public int getPlayerID() {
         return playerID;
     }
+    public String getName() {
+        if(name.equals("")){
+            name = ("Player").concat(Integer.toString(playerID+1));
+            return name;
+        }else{
+            return name;
+        }
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public int getRoadCount() {
 	    
         return roadCount;
@@ -317,6 +340,15 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
+    public int maxResourceCount(){
+        int max = 0;
+    for(int i:resourceMaterials){
+        if(i>max){
+            max=i;
+        }
+    }
+    return max;
+}
     public void printResources() {
         // Prints player's resource total for each resource
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
@@ -352,13 +384,7 @@ public class Player {
                 + " of roads: " + roadCount + "\n Located at: \n");
 
         // Prints the location of player's roads
-        for (Boundary b : manager.boundaries) {
-            if (b.occupied() && player.getPlayerID() == b.getPlayer()) {
-                System.out.println(
-                        + manager.sqrtToAlpha(b.getEndpointA().getLocation().getX()) + b.getEndpointA().getLocation().getY()
-                        + manager.sqrtToAlpha(b.getEndpointB().getLocation().getX()) + b.getEndpointB().getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(roadList)+ " ");	    
     }
 			    
     public void printSettlements() {
@@ -367,11 +393,7 @@ public class Player {
                 + "of settlements: " + settlementCount + "\nLocated at: ");
 
         // Prints the location of player's settlements
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 1 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println("point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+         System.out.println(Arrays.toString(settlementList)+ " "); 
     }
 			    
     public void printCities() {
@@ -380,10 +402,6 @@ public class Player {
                 + "of cities:\n" + cityCount + "\nLocated at: ");
 
         // Prints the location of player's cities
-        for (Intersection i : manager.intersections) {
-            if (i.occupied() && i.getSettlementType() == 2 && player.getPlayerID() == i.getPlayer()) {
-                System.out.println(" point " + manager.sqrtToAlpha(i.getLocation().getX()) + i.getLocation().getY());
-            }
-        }
+        System.out.println(Arrays.toString(cityList)+ " ");
     }
 }
