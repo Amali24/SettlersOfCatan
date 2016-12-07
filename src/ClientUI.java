@@ -88,6 +88,11 @@ Activity:	  -Date-             -Person-               -Updates-
             December 6, 2016            AT         * Added start-up phase
                                                    * Added prompt box
                                                    * Added moveRobber and stealFrom
+
+            December 7, 2016            AT         * Fixed moveRobber
+                                                   * Various gameplay flow fixes
+                                                   * Added Development Cards (incomplete)
+                                                   * Added turnIndicator (needs improvement)
                                                    
                                                     
 

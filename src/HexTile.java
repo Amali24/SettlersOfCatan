@@ -62,7 +62,6 @@ Activity:	  -Date-             -Person-               -Updates-
  */
 import javafx.scene.shape.Polygon;
 import static javafx.scene.paint.Color.*;
-import javafx.scene.shape.Circle;
 
 /**
  *

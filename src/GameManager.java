@@ -90,11 +90,15 @@ Activity:	  -Date-             -Person-               -Updates-
             December 6, 2016            AT          * Added gamePhase for allowing
                                                       certain actions
 
+            December 7, 2016            AT          * Added findAdjacentTiles
+                                                      method
+
 
 
  */
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -796,6 +800,18 @@ public class GameManager {
 
     static private void saveGame() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    static public ArrayList<HexTile> findAdjacentTiles(Intersection intersection){
+        ArrayList<HexTile> adjacentTiles = new ArrayList<>();
+        for (HexTile tile : tiles){
+            for (Intersection i : tile.getIntersections()){
+                if (i == intersection){
+                    adjacentTiles.add(tile);
+                }
+            }
+        }
+        return adjacentTiles;
     }
 
     int buildGameboard() {

@@ -104,6 +104,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                       GUIBuildSettlement method
  */
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -233,6 +234,12 @@ public class Bank {
             GameManager.players[activePlayerID].deductResource(LUMBER, 1);
             GameManager.players[activePlayerID].deductResource(WOOL, 1);
             GameManager.players[activePlayerID].deductResource(WHEAT, 1);
+        }else if(GameManager.turnsPlayed > 4){
+            ArrayList<HexTile> adjacentTiles = GameManager.findAdjacentTiles(settlementToBuy);
+            for (HexTile tile : adjacentTiles){
+                int resource = tile.getResourceYield();
+                activePlayer.addResource(resource, 1);
+            }
         }
 
         // Resource checking, etc. is not necessary in the GUI as only buildable
@@ -423,7 +430,7 @@ public class Bank {
      * @param activePlayerID
      * @param roadToBuy
      */
-    public static void GUIBuildRoad(int activePlayerID, Boundary roadToBuy) {
+    static void GUIBuildRoad(int activePlayerID, Boundary roadToBuy) {
         // Player object for ease of use
         Player activePlayer = GameManager.players[activePlayerID];
         // Make road appear thicker
