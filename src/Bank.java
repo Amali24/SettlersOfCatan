@@ -221,6 +221,7 @@ public class Bank {
         Player activePlayer = GameManager.players[activePlayerID];
         // Set settlement to owned by player
         settlementToBuy.setPlayer(activePlayerID);
+        settlementToBuy.setSettlementType(1);
         // Set circle stroke to player color
         settlementToBuy.getCircle().setStroke(activePlayer.getColor());
         //update player's settlements

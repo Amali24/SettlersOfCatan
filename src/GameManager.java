@@ -738,9 +738,11 @@ public class GameManager {
                 int resourcesToLose = player.resourceTotal / 2;
                 // As long as you still have to lose resources
                 while (resourcesToLose > 0) {
-                    System.out.println("Player " + (player.getPlayerID() + 1) + " Choose a resource to surrender:");
+                    //System.out.println("Player " + (player.getPlayerID() + 1) + " Choose a resource to surrender:");
                     // Choose type of resource to surrender one of
-                    int resourceSurrendered = Integer.parseInt(sc.nextLine()) - 1;
+                    // int resourceSurrendered = Integer.parseInt(sc.nextLine()) - 1;
+                    
+                    int resourceSurrendered = HexTile.getRandInt(BRICK, WOOL);
 
                     if (player.resourceMaterials[resourceSurrendered] > 0) {
                         // Surrender one of those and decremement resources left to lose
