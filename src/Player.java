@@ -1,4 +1,5 @@
 
+import java.util.Arrays;
 import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.*;
 
@@ -375,7 +376,6 @@ public class Player {
                 + resourceMaterials[4] + " Wool\n";
         
         return resources;
-
     }
 	
     public void printRoads() { 
