@@ -229,6 +229,7 @@ public class ClientUI extends Application {
         btnDevCards.setStyle(btnStyle);
 
         Button btnTrade = new Button("Trade");
+        btnTrade.setOnAction(e -> openTradeMenu());
         btnTrade.setStyle(btnStyle);
 
         Button btnEndTurn = new Button("End Turn");
@@ -463,6 +464,7 @@ public class ClientUI extends Application {
 
         HBox btnBox = new HBox(25);
         Button btnBuildRoad = new Button("Build a Road");
+        
         btnBuildRoad.setOnAction(e1 -> {
             ArrayList<Boundary> buildableRoads = findBuildableRoads(GameManager.activePlayerID);
             buildARoad(buildableRoads, GameManager.boundaries, GameManager.activePlayerID);
@@ -497,6 +499,409 @@ public class ClientUI extends Application {
         buildMenu.setScene(new Scene(boPa));
         buildMenu.setTitle("Build Menu");
         buildMenu.show();
+    }
+        private void openTradeMenu() {
+        Stage tradeMenu = new Stage();       
+        tradeMenu.setTitle("Trade Menu");
+
+        HBox btnBox = new HBox(25);
+        Button btnBankTrade = new Button("Trade with Bank");
+        
+        btnBankTrade.setOnAction(e -> {
+            bankTradeMenu();
+            tradeMenu.close();
+        });
+
+        Button btnPlayerTrade = new Button("Trade with Player");
+        btnPlayerTrade.setOnAction(e1 -> {
+            playerTradeMenu();
+            tradeMenu.close();
+
+        });
+
+        Button btnCancel = new Button("Cancel");
+        btnCancel.setOnAction(e -> tradeMenu.close());
+
+        btnBox.getChildren().addAll(btnBankTrade, btnPlayerTrade, btnCancel);
+
+
+
+        tradeMenu.initModality(Modality.APPLICATION_MODAL);
+
+        tradeMenu.setScene(new Scene(btnBox));
+ 
+        tradeMenu.show();
+    }
+    
+    private void bankTradeMenu(){
+
+    int activePlayerID = GameManager.activePlayerID;   
+    Player activePlayer = GameManager.players[activePlayerID];
+    int exchangeRates[] = Bank.exchangeRates(activePlayerID);
+    
+    Stage bankTradeMenu = new Stage();
+    bankTradeMenu.setTitle("Bank Trade");
+
+    
+    VBox vBox = new VBox();
+    HBox offeredBox = new HBox();
+    HBox requestedBox = new HBox();
+
+    HBox btnBox = new HBox();
+    
+    //placing the buttons into each toggle group means that only one can be selected
+    ToggleGroup offeredGroup = new ToggleGroup();
+    ToggleGroup requestedGroup = new ToggleGroup();
+
+    //spinners for resource selection
+    Spinner<Integer> offeredSpinner = new Spinner<>();
+
+    Trade tradeDeal = new Trade(activePlayerID);
+    tradeDeal.setBankTrade(true);
+    
+        //Text intructions
+    Text offerText = new Text("Select the type and quantity of the resource you would like to trade away:");
+    Text requestText = new Text("\n\nSelect the resource you would like in return:");
+
+    
+    offerText.setFont(new Font(14));
+    offerText.setTextAlignment(TextAlignment.CENTER);
+    
+    requestText.setFont(new Font(14));
+    requestText.setTextAlignment(TextAlignment.CENTER);
+    
+    
+    //these are the buttons in the offered resource group
+    RadioButton oBrickBtn = new RadioButton("Brick");
+    oBrickBtn.setOnAction(e -> {
+        int rate = exchangeRates[0];
+        int max = activePlayer.getResourceCount(0)/rate*rate;
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
+        requestText.setText("For every " + rate + " bricks, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        if(activePlayer.getResourceCount(0) != 0 )
+        tradeDeal.setOfferedResource(0);
+    });
+    oBrickBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oLumberBtn = new RadioButton("Lumber");
+    oLumberBtn.setOnAction(e -> {
+        int rate = exchangeRates[1];
+        int max = activePlayer.getResourceCount(1)/rate*rate;
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
+        requestText.setText("For every " + rate + " lumber, you wil receive 1 of the following resources. \n Select which resource you would like in return.");
+        if(activePlayer.getResourceCount(1) != 0)
+        tradeDeal.setOfferedResource(1);
+    });
+    oLumberBtn.setToggleGroup(offeredGroup);
+   
+    RadioButton oOreBtn = new RadioButton("Ore");
+    oOreBtn.setOnAction(e -> {
+        int rate = exchangeRates[2];
+        int max = activePlayer.getResourceCount(2)/rate*rate;
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
+        requestText.setText("For every " + rate + " ore, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        if(activePlayer.getResourceCount(2) != 0)
+        tradeDeal.setOfferedResource(2);
+    });
+    oOreBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oWheatBtn = new RadioButton("Wheat");
+    oWheatBtn.setOnAction(e -> {
+        int rate = exchangeRates[3];
+        int max = activePlayer.getResourceCount(3)/rate*rate;
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
+        requestText.setText("For every " + rate + " wheat, you will receive 1 of the following resources. \n Select which resource you would like in return.");
+        if(activePlayer.getResourceCount(3) != 0)
+        tradeDeal.setOfferedResource(3);
+    });
+    oWheatBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oWoolBtn = new RadioButton("Wool");
+    oWoolBtn.setOnAction(e -> {
+        int rate = exchangeRates[4];
+        int max = activePlayer.getResourceCount(4)/rate*rate;
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, rate));
+        requestText.setText("For every " + rate + " wool, you can receive 1 of the following resources. \n Select which resource you would like in return.");
+        if(activePlayer.getResourceCount(4) != 0)
+        tradeDeal.setOfferedResource(4);
+    });
+    oWoolBtn.setToggleGroup(offeredGroup);
+  
+    offeredBox.getChildren().addAll(oBrickBtn, oLumberBtn, oOreBtn, oWheatBtn, oWoolBtn,  offeredSpinner);
+    
+
+    //these are the buttons in the requested resource group
+    RadioButton rBrickBtn = new RadioButton("Brick");
+    rBrickBtn.setOnAction(e -> {
+        tradeDeal.setRequestedResource(0);
+    });
+    rBrickBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rLumberBtn = new RadioButton("Lumber");
+    rLumberBtn.setOnAction(e -> {
+        tradeDeal.setRequestedResource(1);
+    });
+    rLumberBtn.setToggleGroup(requestedGroup);
+   
+    RadioButton rOreBtn = new RadioButton("Ore");
+    rOreBtn.setOnAction(e -> {
+        tradeDeal.setRequestedResource(2);
+    });
+    rOreBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rWheatBtn = new RadioButton("Wheat");
+    rWheatBtn.setOnAction(e -> {
+        tradeDeal.setRequestedResource(3);
+    });
+    rWheatBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rWoolBtn = new RadioButton("Wool");
+    rWoolBtn.setOnAction(e -> {
+        tradeDeal.setRequestedResource(4);
+    });
+;
+
+    
+    requestedBox.getChildren().addAll(rBrickBtn, rLumberBtn, rOreBtn, rWheatBtn, rWoolBtn);
+    
+    
+    //ungrouped buttons
+    Button submitBtn = new Button("Request Trade");
+        submitBtn.setOnAction(e -> {
+                tradeDeal.setOfferedAmount(offeredSpinner.getValue());
+                if(tradeDeal.getOfferedResource()!= -2 && tradeDeal.getRequestedResource() != -2 && tradeDeal.getOfferedAmount() != 0){
+                    tradeDeal.setRequestedAmount(tradeDeal.getOfferedAmount()/exchangeRates[tradeDeal.getRequestedResource()]);
+
+                Trade.executeTrade(tradeDeal);
+                }
+        });
+    Button cancelBtn = new Button("Cancel");
+    cancelBtn.setOnAction(e -> {
+
+        bankTradeMenu.close();    
+    });
+    
+    btnBox.getChildren().addAll(submitBtn, cancelBtn);
+    
+
+    //add HBoxes to VBox
+    vBox.getChildren().addAll(offerText, offeredBox, requestText, requestedBox, btnBox);
+    
+    bankTradeMenu.initModality(Modality.APPLICATION_MODAL);
+    bankTradeMenu.setScene(new Scene(vBox));
+    bankTradeMenu.show();
+    
+  
+        
+    }
+    private void playerTradeMenu(){
+
+    int activePlayerID = GameManager.activePlayerID;   
+    Player activePlayer = GameManager.players[activePlayerID];
+    
+    Stage playerTradeMenu = new Stage();
+    playerTradeMenu.setTitle("PlayerTrade");
+
+    
+    VBox vBox = new VBox();
+    HBox offeredBox = new HBox();
+    HBox requestedBox = new HBox();
+    HBox tradingPartnersBox = new HBox();
+    HBox btnBox = new HBox();
+    
+    //placing the buttons into each toggle group means that only one can be selected
+    ToggleGroup offeredGroup = new ToggleGroup();
+    ToggleGroup requestedGroup = new ToggleGroup();
+    ToggleGroup tradingPartners = new ToggleGroup();
+    
+    //spinners for resource selection
+    Spinner<Integer> offeredSpinner = new Spinner<>();
+    Spinner<Integer> requestedSpinner = new Spinner<>();
+    
+    Trade tradeDeal = new Trade(activePlayerID);
+    
+    //these are the buttons in the offered resource group
+    RadioButton oBrickBtn = new RadioButton("Brick");
+    oBrickBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.getResourceCount(0)));
+        tradeDeal.setOfferedResource(0);
+    });
+    oBrickBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oLumberBtn = new RadioButton("Lumber");
+    oLumberBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.getResourceCount(1)));
+        tradeDeal.setOfferedResource(1);
+    });
+    oLumberBtn.setToggleGroup(offeredGroup);
+   
+    RadioButton oOreBtn = new RadioButton("Ore");
+    oOreBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.getResourceCount(2)));
+        tradeDeal.setOfferedResource(2);
+    });
+    oOreBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oWheatBtn = new RadioButton("Wheat");
+    oWheatBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.getResourceCount(3)));
+        tradeDeal.setOfferedResource(3);
+    });
+    oWheatBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oWoolBtn = new RadioButton("Wool");
+    oWoolBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.getResourceCount(4)));
+        tradeDeal.setOfferedResource(4);
+    });
+    oWoolBtn.setToggleGroup(offeredGroup);
+    
+    RadioButton oUnknownBtn = new RadioButton("Unknown");
+    oUnknownBtn.setOnAction(e -> {
+        offeredSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,activePlayer.maxResourceCount()));
+        tradeDeal.setOfferedResource(-1);
+    });
+    oUnknownBtn.setToggleGroup(offeredGroup);
+  
+
+    offeredBox.getChildren().addAll(oBrickBtn, oLumberBtn, oOreBtn, oWheatBtn, oWoolBtn, oUnknownBtn, offeredSpinner);
+    
+
+    //these are the buttons in the requested resource group
+    RadioButton rBrickBtn = new RadioButton("Brick");
+    rBrickBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(0);
+    });
+    rBrickBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rLumberBtn = new RadioButton("Lumber");
+    rLumberBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(1);
+    });
+    rLumberBtn.setToggleGroup(requestedGroup);
+   
+    RadioButton rOreBtn = new RadioButton("Ore");
+    rOreBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(2);
+    });
+    rOreBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rWheatBtn = new RadioButton("Wheat");
+    rWheatBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(3);
+    });
+    rWheatBtn.setToggleGroup(requestedGroup);
+    
+    RadioButton rWoolBtn = new RadioButton("Wool");
+    rWoolBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(4);
+    });
+    rWoolBtn.setToggleGroup(requestedGroup);
+
+    RadioButton rUnknownBtn = new RadioButton("Unknown");
+
+    rUnknownBtn.setOnAction(e -> {
+        requestedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10));
+        tradeDeal.setRequestedResource(-1);
+    });
+    rUnknownBtn.setToggleGroup(requestedGroup);
+    
+    requestedBox.getChildren().addAll(rBrickBtn, rLumberBtn, rOreBtn, rWheatBtn, rWoolBtn, rUnknownBtn, requestedSpinner);
+    
+    //these are the buttons in the tradingPartners group
+    RadioButton player1Btn = new RadioButton(GameManager.players[0].getName()); 
+    player1Btn.setOnAction(e -> {
+        tradeDeal.setTradingPartner(0);
+    });
+    player1Btn.setToggleGroup(tradingPartners);
+    
+    RadioButton player2Btn = new RadioButton(GameManager.players[1].getName());
+    player2Btn.setOnAction(e -> {
+        tradeDeal.setTradingPartner(1);
+    });
+    player2Btn.setToggleGroup(tradingPartners);
+    
+    RadioButton player3Btn = new RadioButton(GameManager.players[2].getName());
+    player3Btn.setOnAction(e -> {
+        tradeDeal.setTradingPartner(2);
+    });
+    player3Btn.setToggleGroup(tradingPartners);
+    
+    RadioButton player4Btn = new RadioButton(GameManager.players[3].getName());
+    player4Btn.setOnAction(e -> {
+        tradeDeal.setTradingPartner(3);
+    });
+    player4Btn.setToggleGroup(tradingPartners);
+    
+    RadioButton playerUnknownBtn = new RadioButton("Unknown");
+
+    playerUnknownBtn.setOnAction(e -> {
+        tradeDeal.setTradingPartner(-1);
+    });
+    player4Btn.setToggleGroup(tradingPartners);
+    
+    if(GameManager.activePlayerID != 0)
+        tradingPartnersBox.getChildren().add(player1Btn);
+    
+    if(GameManager.activePlayerID != 1)
+        tradingPartnersBox.getChildren().add(player2Btn);
+    
+    
+    if(GameManager.activePlayerID != 2)
+        tradingPartnersBox.getChildren().add(player3Btn);
+    
+    if(GameManager.activePlayerID != 3)
+        tradingPartnersBox.getChildren().add(player4Btn);
+    
+    tradingPartnersBox.getChildren().add(playerUnknownBtn);
+    
+    
+
+    //ungrouped buttons
+    Button submitBtn = new Button("Request Trade");
+        submitBtn.setOnAction(e -> {
+                if(tradeDeal.getOfferedResource()!= -2 && tradeDeal.getRequestedResource() != -2 && tradeDeal.getTradingPartner() != -2){
+                tradeDeal.setOfferedAmount(offeredSpinner.getValue());
+                tradeDeal.setRequestedAmount(requestedSpinner.getValue());
+                tradeDeal.distributeTradeRequest();
+                }
+        });
+    Button cancelBtn = new Button("Cancel");
+    cancelBtn.setOnAction(e -> {
+
+        playerTradeMenu.close();    
+    });
+    
+    btnBox.getChildren().addAll(submitBtn, cancelBtn);
+    
+    //Text intructions
+    Text offerText = new Text("Select the type and quantity of the resource you would like to trade away:");
+    Text requestText = new Text("Select the type and quantity of the resource you would like in return:");
+    Text partnerText = new Text("Select the player you would like to offer this trade to:");
+    
+    offerText.setFont(new Font(14));
+    offerText.setTextAlignment(TextAlignment.CENTER);
+    
+    requestText.setFont(new Font(14));
+    requestText.setTextAlignment(TextAlignment.CENTER);
+    
+    partnerText.setFont(new Font(14));
+    partnerText.setTextAlignment(TextAlignment.CENTER);
+    
+    //add HBoxes to VBox
+    vBox.getChildren().addAll(offerText, offeredBox, requestText, requestedBox, partnerText, tradingPartnersBox, btnBox);
+    
+    playerTradeMenu.initModality(Modality.APPLICATION_MODAL);
+    playerTradeMenu.setScene(new Scene(vBox));
+    playerTradeMenu.show();
+    
+  
+        
     }
 
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries) {

@@ -23,6 +23,7 @@ Files:      Bank.java
             Trade.java (Current File)
             READ_THIS_FIRST.txt
             CatanGameboard.jpeg
+
 Classes:    Trade
 
                                     Summary:
@@ -61,7 +62,7 @@ Activity:	  -Date-             -Person-               -Updates-
 import java.util.Scanner;
 
 /**
- * <code> Trade </code> class facilitates trade for players both with other
+ * <code>Trade</code> class facilitates trade for players both with other
  * players and with the bank.
  */
 class Trade {
@@ -83,23 +84,23 @@ class Trade {
     private boolean accepted;           //has the tradeing partner accepted the offer
 
     private int requestingPlayer;       //ID of player who set terms of trade
-    private int tradingPartner;         //ID of player to whom trade is offered
-    private int offeredResource;        //Resource offered in return for another
-    private int offeredAmount;          //Quantity of offeredResource
-    private int requestedResource;      //Resource asked for in return
-    private int requestedAmount;        //Quantity of requestedResource
+    private int tradingPartner = -2;         //ID of player to whom trade is offered
+    private int offeredResource = -2;        //Resource offered in return for another
+    private int offeredAmount = -2;          //Quantity of offeredResource
+    private int requestedResource = -2;      //Resource asked for in return
+    private int requestedAmount = -2;        //Quantity of requestedResource
 
 //                               Constructors
 // _____________________________________________________________________________
     /**
-     * <code> Trade </code> constructor used when making an offer response.
+     * <code>Trade</code> constructor used when making an offer response.
      */
     Trade() {
         accepted = false;
     }
 
     /**
-     * <code> Trade </code> constructor used when making an initial offer.
+     * <code>Trade</code> constructor used when making an initial offer.
      *
      * @param int ID of player requesting the trade
      */
@@ -187,7 +188,7 @@ class Trade {
 //                                 Methods
 // _____________________________________________________________________________
     /**
-     * <code> cloneTrade </code> method takes one <code> Trade </clone> object
+     * <code>cloneTrade</code> method takes one <code>Trade </clone> object
      * and makes it a clone of another.
      *
      * @param clonedTrade
@@ -208,7 +209,7 @@ class Trade {
     }
 
     /**
-     * <code> distributeTradeRequest </code> method sends a trade offer to a
+     * <code>distributeTradeRequest</code> method sends a trade offer to a
      * specific player, or, if no player is specified, to all eligible players.
      */
     public void distributeTradeRequest() {
@@ -361,7 +362,7 @@ class Trade {
     }
 
     /**
-     * <code> tradePrompt </code> method prompts players to accept or reject
+     * <code>tradePrompt</code> method prompts players to accept or reject
      * trades and revise the terms.
      *
      * @param currentTradingPartner
@@ -401,7 +402,7 @@ class Trade {
 
             if (receiveOption || tradeOption) {
                 //if receiveOption or trade option are true, then a new Trade object named
-                //counterOffer is created and the <code> tradePrompt </code>
+                //counterOffer is created and the <code>tradePrompt</code>
                 Trade counterOffer = new Trade();
 
                 counterOffer.setInitialOffering(false);
@@ -465,7 +466,7 @@ class Trade {
     }
 
     /**
-     * <code> executeTrade </code> method alters players' resources according to
+     * <code>executeTrade</code> method alters players' resources according to
      * the terms of the Trade object passed as parameter and prints out the
      * resources of the involved players.
      *

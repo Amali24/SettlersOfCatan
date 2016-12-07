@@ -97,11 +97,11 @@ public class Player {
 //  				Class Variables
 //_____________________________________________________________________________
     private int playerID = -1;
-
+    private String name = "";
+    
     private Intersection settlementList[] = new Intersection[5]; 
     private Intersection cityList[] = new Intersection[4]; 
-    private Boundary roadList[] = new Boundary[15]; 
-
+    private Boundary roadList[] = new Boundary[15];
  
     private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 4
@@ -159,7 +159,19 @@ public class Player {
     public int getPlayerID() {
         return playerID;
     }
-
+    public String getName() {
+        if(name.equals("")){
+            name = ("Player").concat(Integer.toString(playerID+1));
+            return name;
+        }else{
+            return name;
+        }
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public int getRoadCount() {
 	    
         return roadCount;
@@ -316,7 +328,16 @@ public class Player {
     public void resetResource(int position) {
         resourceMaterials[position] = 0;
     }
-
+    
+    public int maxResourceCount(){
+        int max = 0;
+    for(int i:resourceMaterials){
+        if(i>max){
+            max=i;
+        }
+    }
+    return max;
+}
     public void printResources() {
         // Prints player's resource total for each resource
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"

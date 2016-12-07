@@ -3,16 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/GameManager.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/HexTile.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Intersection.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Player.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Bank.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Coordinate.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/ClientUI.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/DevelopmentCard.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Trade.java</file>
-            <file>file:/C:/Users/apt41/Documents/NetBeansProjects/SettlersOfCatan/src/Boundary.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Boundary.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Intersection.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/ClientUI.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Player.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/HexTile.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/GameManager.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Coordinate.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/DevelopmentCard.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Bank.java</file>
+            <file>file:/home/andrew/Github%20Repositories/SettlersOfCatan/src/Trade.java</file>
         </group>
     </open-files>
 </project-private>

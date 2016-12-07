@@ -698,7 +698,7 @@ public class Bank {
         String continueTrading = "y";
 
         // exchangeRates are used for trade with bank
-        int exchangeRates[] = exchangeRates(playerID).clone();
+        int exchangeRates[] = exchangeRates(playerID);
 
         while (continueTrading.equals("y")) {
 
@@ -753,6 +753,7 @@ public class Bank {
         while (continueTrading.equals("y")) {
 
             Trade tradeDeal = new Trade(playerID);
+           
 
             Scanner sc = new Scanner(System.in);
 
