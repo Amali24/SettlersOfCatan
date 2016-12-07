@@ -134,14 +134,14 @@ public class ClientUI extends Application {
     private double minSizeY = 600;
 
     // Strings for prompts during turns
-    static String setUpPhase = "\t\t\tSetup Phase\n"
+    static String setUpPhase = "Setup Phase\n"
             + "During set up phase, you will build one settlement and then one road per turn.\n\n"
             + "Turns are serpentine during this phase, and each player will get two turns.\n\n"
             + "It is not necessary to click end turn during this phase.";
 
-    static String startTurn = "\t\tStart of Turn Phase\n"
-            + "At the start of your turn you can roll the dice by clicking the"
-            + "roll button, or play development cards by clicking the Development"
+    static String startTurn = "Start of Turn Phase\n"
+            + "At the start of your turn you can roll the dice by clicking the "
+            + "roll button, or play development cards by clicking the Development "
             + "Card button.";
 
     static String rolledSeven = "Select a tile to move the robber to.\n\n"
@@ -223,11 +223,7 @@ public class ClientUI extends Application {
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(355);
-
-        // Set "water" image as background
-        Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
-        BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
-        gameBoard.setBackground(new Background(bgWater));
+      
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -309,7 +305,7 @@ public class ClientUI extends Application {
                 // If a 7 is rolled, initiate robber functions
                 if (diceRoll == 7) {
                     // Inform player
-                    promptBox.setText("\t\tYou Rolled a 7\n");
+                    promptBox.setText("You Rolled a 7\n");
                     // Check all the players for > 7 resource and "steal" half
                     for (Player p : GameManager.players) {
                         if (p.getResourceTotal() > 7) {
@@ -1216,21 +1212,23 @@ public class ClientUI extends Application {
         // the one you click on gets robber
         tile.setRobber(true);
         // output feedback
-        promptBox.setText("\t\tRobber moved sucessfully\n"
+        promptBox.setText("Robber moved sucessfully\n"
                 + "Select a player to steal from, if there are any "
                 + "settlements on the tile.");
         // Check all intersections on tile for players
         for (Intersection i : tile.getIntersections()) {
             // If the tile is occupied, allow to steal from them
             if (i.occupied()) {
-                i.getCircle().setRadius(circleSize * 5);
+                i.getCircle().setRadius(circleSize * 2.5);
                 i.getCircle().setOnMouseClicked(eh -> {
                     stealFrom(i.getPlayer());
                     promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
+                     // Set UI Elements back to defaults
+                    restoreUIElements(circles, lines, GameManager.tiles);
                 });
-                // Set UI Elements back to defaults
-                restoreUIElements(circles, lines, GameManager.tiles);
+               
+                
             }
         }
     }
