@@ -140,8 +140,8 @@ public class ClientUI extends Application {
             + "It is not necessary to click end turn during this phase.";
 
     static String startTurn = "Start of Turn Phase\n"
-            + "At the start of your turn you can roll the dice by clicking the"
-            + "roll button, or play development cards by clicking the Development"
+            + "At the start of your turn you can roll the dice by clicking the "
+            + "roll button, or play development cards by clicking the Development "
             + "Card button.";
 
     static String rolledSeven = "Select a tile to move the robber to.\n\n"
@@ -223,13 +223,7 @@ public class ClientUI extends Application {
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
         right.setSpacing(355);
-        
-        /*
-        // Set "water" image as background
-        Image waterImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
-        BackgroundImage bgWater = new BackgroundImage(waterImage, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
-        gameBoard.setBackground(new Background(bgWater));
-*/
+      
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
@@ -1225,14 +1219,16 @@ public class ClientUI extends Application {
         for (Intersection i : tile.getIntersections()) {
             // If the tile is occupied, allow to steal from them
             if (i.occupied()) {
-                i.getCircle().setRadius(circleSize * 5);
+                i.getCircle().setRadius(circleSize * 2.5);
                 i.getCircle().setOnMouseClicked(eh -> {
                     stealFrom(i.getPlayer());
                     promptBox.setText("Successfully stole from player " + (i.getPlayer() + 1));
                     promptBox.appendText(afterRoll);
+                     // Set UI Elements back to defaults
+                    restoreUIElements(circles, lines, GameManager.tiles);
                 });
-                // Set UI Elements back to defaults
-                restoreUIElements(circles, lines, GameManager.tiles);
+               
+                
             }
         }
     }
