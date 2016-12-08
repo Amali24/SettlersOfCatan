@@ -188,6 +188,10 @@ public class GameManager {
         // Close scanner
         sc.close();
     }
+    public static void updatePanels() {
+        for (int i = 0; i < 5; i++)
+            players[i].updateProperties();
+    }
 
     void debugMode() {
         String quit = "n";
@@ -578,6 +582,8 @@ public class GameManager {
                 + "\n9");
 
     }
+    
+    
 
     static boolean moveRobber(int tileChoice, int playerID) {
 
