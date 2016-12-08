@@ -166,6 +166,15 @@ public class ClientUI extends Application {
 
     // Box to prompt players with available actions
     TextArea promptBox = new TextArea();
+    
+    // Panel for resource panel
+    StackPane resourcePanel = new StackPane();
+
+    // Panel to hold Player's information
+    StackPane player1Panel = new StackPane();
+    StackPane player2Panel = new StackPane();
+    StackPane player3Panel = new StackPane();
+    StackPane player4Panel = new StackPane();
 
     // Boolean holds whether a player has rolled this turn (only one roll per turn)
     static boolean playerRolled = false;
@@ -180,7 +189,7 @@ public class ClientUI extends Application {
             + "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );\n"
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
-    Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
+    Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");	
 
     @Override
     public void start(Stage primaryStage) {
@@ -198,18 +207,12 @@ public class ClientUI extends Application {
         turnIndicator.setFill(WHITE);
         BorderPane.setAlignment(turnIndicator, Pos.CENTER);
 
-        // Panel to hold Player's information
-        StackPane player1Panel = new StackPane();
-        StackPane player2Panel = new StackPane();
-        StackPane player3Panel = new StackPane();
-        StackPane player4Panel = new StackPane();
-
         try {
             // Creates player's information panels (Pane, playerId, background)
-            createStatsPanel(player1Panel, 0, "Images/bluePlayer3.png");
-            createStatsPanel(player2Panel, 1, "Images/redPlayer3.png");
-            createStatsPanel(player3Panel, 2, "Images/greenPlayer2.png");
-            createStatsPanel(player4Panel, 3, "Images/yellowPlayer.png");
+            createStatsPanel(0);
+            createStatsPanel(1);
+            createStatsPanel(2);
+            createStatsPanel(3);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -393,6 +396,7 @@ public class ClientUI extends Application {
         btnBuild.setOnAction(e -> {
             if (GameManager.gamePhase == GameManager.AFTER_ROLL) {
                 openBuildMenu();
+		createResoursePanel();
             }
         });
         Button btnDevCards = new Button("Development Cards");
@@ -445,12 +449,11 @@ public class ClientUI extends Application {
         // for the Active Player
         HBox resourcesHBox = new HBox(300);
 
-        // Panel that deisplays available resources to the active player
-        StackPane resourcePanel = new StackPane();
-        StackPane.setAlignment(new Label("Available Resources"), Pos.CENTER);
+        // Panel that deisplays available resources to the active player     
+        resourcePanel.setAlignment(new Label("Available Resources"), Pos.CENTER);
 
         // Calling method that fills our Resource Pane with up-to-date information
-        createResoursePanel(resourcePanel);
+        createResoursePanel();
 
         resourcesHBox.getChildren().add(resourcePanel);
         resourcesHBox.setAlignment(Pos.CENTER);
@@ -487,8 +490,20 @@ public class ClientUI extends Application {
     }
 
     // Creates panels with player's information during game
-    public void createStatsPanel(Pane pane, int playerId, String backgroundAddress) throws FileNotFoundException {
+    public void createStatsPanel(int playerId) throws FileNotFoundException {
 
+	String backgroundAddress = "";
+        
+        switch(playerId){
+            case 0: backgroundAddress = "Images/bluePlayer3.png";
+            break;
+            case 1: backgroundAddress = "Images/redPlayer3.png";
+            break;
+            case 2: backgroundAddress = "Images/greenPlayer2.png";
+            break;
+            case 3: backgroundAddress = "Images/yellowPlayer.png";
+        }
+	    
         Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundAddress));
         ImageView imageView = new ImageView(image);
 
@@ -526,11 +541,28 @@ public class ClientUI extends Application {
                 + "-fx-border-insets: 2;\n"
                 + "-fx-border-width: 10;\n"
                 + "-fx-background-radius: 5;\n";
-        pane.setStyle(cssDefault);
-
-        // Adds background(imageView) and player's info(gridPane) to pane
-        pane.getChildren().add(imageView);
-        pane.getChildren().add(gridPane);
+	    
+	// Adds background(imageView) and player's info(gridPane) to pane
+        if (playerId == 0) {
+            player1Panel.getChildren().add(imageView);
+            player1Panel.getChildren().add(gridPane);
+            player1Panel.setStyle(cssDefault);
+        }
+        else if(playerId == 1){
+            player2Panel.getChildren().add(imageView);
+            player2Panel.getChildren().add(gridPane);
+            player2Panel.setStyle(cssDefault);
+        }
+        else if(playerId == 2){
+            player3Panel.getChildren().add(imageView);
+            player3Panel.getChildren().add(gridPane);
+            player3Panel.setStyle(cssDefault);
+        }
+        else if(playerId == 3){
+            player4Panel.getChildren().add(imageView);
+            player4Panel.getChildren().add(gridPane);
+            player4Panel.setStyle(cssDefault);
+        }
 
     }
 
@@ -539,7 +571,8 @@ public class ClientUI extends Application {
         // Create an ArrayList to hold roads the active player can build on
         ArrayList<Boundary> buildableRoads = new ArrayList<>();
 
-        for (Boundary b : GameManager.boundaries) {
+
+	    for (Boundary b : GameManager.boundaries) {
             if (b.isOccupiable(currentPlayerID)) {
                 // For each boundary, if it is buildable, add it to the ArrayList
                 buildableRoads.add(b);
@@ -576,6 +609,8 @@ public class ClientUI extends Application {
                             setUpPhase();
                         }
                     });
+		     createStatsPanel(activePlayerID);
+                     createResoursePanel();
                 }
             }
         }
@@ -617,6 +652,8 @@ public class ClientUI extends Application {
                             buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
                         }
                     });
+			createStatsPanel(activePlayerID);
+                       createResoursePanel();
                 }
             }
         }
@@ -650,6 +687,8 @@ public class ClientUI extends Application {
                         Bank.GUIBuildCity(activePlayerID, intersection);
                         restoreUIElements(circles, lines, GameManager.tiles);
                     });
+		    createStatsPanel(activePlayerID);
+                    createResoursePanel();
                 }
             }
         }
@@ -908,6 +947,10 @@ public class ClientUI extends Application {
         //add HBoxes to VBox
         vBox.getChildren().addAll(offerText, offeredBox, requestText, requestedBox, btnBox);
 
+	// Recreate panels to update info
+        createStatsPanel(GameManager.activePlayerID);
+        createResoursePanel();
+	    
         bankTradeMenu.initModality(Modality.APPLICATION_MODAL);
         bankTradeMenu.setScene(new Scene(vBox));
         bankTradeMenu.show();
@@ -1163,7 +1206,7 @@ public class ClientUI extends Application {
 
     // Creates Pane that contains information about the resources 
     // of the current player
-    public void createResoursePanel(Pane pane) {
+    public void createResoursePanel() {
         // Creates grid to hold player's informations
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
@@ -1194,9 +1237,9 @@ public class ClientUI extends Application {
                 + "-fx-box-shadow: 5px;\n"
                 + "-fx-background-color: linear-gradient(white,#DDDDDD);\n"
                 + "-fx-background-radius: 5;\n";
-        pane.setStyle(cssDefault);
+        resourcePanel.setStyle(cssDefault);
 
-        pane.getChildren().add(gridPane);
+        resourcePanel.getChildren().add(gridPane);
     }
 
     void showErrorDialog(String text) {
@@ -1241,6 +1284,8 @@ public class ClientUI extends Application {
                     GameManager.gamePhase = GameManager.AFTER_ROLL;
                     // Set UI Elements back to defaults
                     restoreUIElements(circles, lines, GameManager.tiles);
+		   createStatsPanel(activePlayerID);
+		   createResoursePanel();
                 });
 
             }
@@ -1283,7 +1328,7 @@ public class ClientUI extends Application {
             } else {
                 GUIbuyDevCard();
             }
-
+	    
         });
 
         Button btnCancel = new Button("Cancel");
@@ -1291,7 +1336,6 @@ public class ClientUI extends Application {
         btnCancel.setOnAction(e -> stage.close());
 
         hboxButtons.getChildren().addAll(btnBuyCard, btnCancel);
-
         HBox hboxCards = new HBox(15);
 
         int i = 0;
@@ -1357,5 +1401,8 @@ public class ClientUI extends Application {
         activePlayer.deductResource(GameManager.ORE, 1);
         activePlayer.deductResource(GameManager.WOOL, 1);
         activePlayer.deductResource(GameManager.WHEAT, 1);
+	    
+	createStatsPanel(activePlayerID);
+	createResourcePanel();
     }
 }
