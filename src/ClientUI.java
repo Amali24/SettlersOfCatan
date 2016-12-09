@@ -93,6 +93,12 @@ Activity:	  -Date-             -Person-               -Updates-
                                                    * Various gameplay flow fixes
                                                    * Added Development Cards (incomplete)
                                                    * Added turnIndicator (needs improvement)
+
+            December 8, 2016            OB         * Added methods that returns stats and resources 
+                                                     panels that binded to the player's info
+                                                   * Minor UI changes for the devices with
+                                                     smaller screen sizes
+                                                   * Added test2() method for testing panels
                                                    
                                                     
 
@@ -128,15 +134,14 @@ public class ClientUI extends Application {
     // X and Y offsets are a hacky way to center the game board
     // Will hopefully come up with a better and more scalable way to do this
     static double xOffset = 1.3;
-    static double yOffset = 2;
+    static double yOffset = 2; 
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
-    // Window sizes
-    private final double maxSizeX = 900;
-    private final double minSizeX = 700;
-    private final double maxSizeY = 800;
-    private final double minSizeY = 600;
+
+    // Label's array for stats panels
+    private static Label[][] myLables
+            = new Label[GameManager.NUM_PLAYERS][GameManager.NUM_RESOURCES];
 
     // Strings for prompts during turns
     static String setUpPhase = "Setup Phase\n"
@@ -183,7 +188,7 @@ public class ClientUI extends Application {
     Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws FileNotFoundException {
         primaryStage.setTitle("Settlers of Catan");
         Pane bgPane = new Pane();
         BorderPane bp = new BorderPane();
@@ -199,29 +204,25 @@ public class ClientUI extends Application {
         BorderPane.setAlignment(turnIndicator, Pos.CENTER);
 
         // Panel to hold Player's information
-        StackPane player1Panel = new StackPane();
-        StackPane player2Panel = new StackPane();
-        StackPane player3Panel = new StackPane();
-        StackPane player4Panel = new StackPane();
+        StackPane player1Panel;
+        StackPane player2Panel;
+        StackPane player3Panel;
+        StackPane player4Panel;
 
-        try {
-            // Creates player's information panels (Pane, playerId, background)
-            createStatsPanel(player1Panel, 0, "Images/bluePlayer3.png");
-            createStatsPanel(player2Panel, 1, "Images/redPlayer3.png");
-            createStatsPanel(player3Panel, 2, "Images/greenPlayer2.png");
-            createStatsPanel(player4Panel, 3, "Images/yellowPlayer.png");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // Creates player's information panels (Pane, playerId, background)
+        player1Panel = createStatsPanel(0, "Images/bluePlayer3.png");
+        player2Panel = createStatsPanel(1, "Images/redPlayer3.png");
+        player3Panel = createStatsPanel(2, "Images/greenPlayer2.png");
+        player4Panel = createStatsPanel(3, "Images/yellowPlayer.png");
 
         // Displays panels of players 1 and  3
         VBox left = new VBox();
 
         // Set size of prompt box
-        promptBox.setMaxWidth(255);
-        promptBox.setMinWidth(255);
-        promptBox.setMaxHeight(255);
-        promptBox.setMinHeight(255);
+        promptBox.setMaxWidth(200);
+        promptBox.setMinWidth(200);
+        promptBox.setMaxHeight(200);
+        promptBox.setMinHeight(200);
 
         // Prompt box starts with setupPhase text
         promptBox.setText(setUpPhase);
@@ -230,17 +231,17 @@ public class ClientUI extends Application {
         // Add resource panels and prompt box to left side
         left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
-        left.setSpacing(50);
+        left.setSpacing(10);
 
         // Displays panels of players 2 and 4
         VBox right = new VBox();
         right.getChildren().addAll(player2Panel, player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
-        right.setSpacing(355);
+        right.setSpacing(210);
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
-        gameBoard.setMaxSize(900, 800);
+        gameBoard.setMaxSize(800, 700);
         gameBoard.setMinSize(700, 600);
 
         // Creates a black boundary
@@ -428,8 +429,8 @@ public class ClientUI extends Application {
         // Error window test button
         Button btnTest = new Button("TEST");
         btnTest.setOnAction(e -> {
-            showWarningDialog("TEST");
-            showErrorDialog("TEST");
+            //test();
+            test2();
         });
 
         // Add all buttons to screen
@@ -446,11 +447,11 @@ public class ClientUI extends Application {
         HBox resourcesHBox = new HBox(300);
 
         // Panel that deisplays available resources to the active player
-        StackPane resourcePanel = new StackPane();
+        StackPane resourcePanel;
         StackPane.setAlignment(new Label("Available Resources"), Pos.CENTER);
 
         // Calling method that fills our Resource Pane with up-to-date information
-        createResoursePanel(resourcePanel);
+        resourcePanel = createResoursePanel();
 
         resourcesHBox.getChildren().add(resourcePanel);
         resourcesHBox.setAlignment(Pos.CENTER);
@@ -487,10 +488,27 @@ public class ClientUI extends Application {
     }
 
     // Creates panels with player's information during game
-    public void createStatsPanel(Pane pane, int playerId, String backgroundAddress) throws FileNotFoundException {
+    public StackPane createStatsPanel(int playerId, String backgroundAddress) throws FileNotFoundException {
 
+        StackPane pane = new StackPane();
         Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundAddress));
         ImageView imageView = new ImageView(image);
+
+        // Setting up personal labels for each planer
+        myLables[playerId][0] = new Label();
+        myLables[playerId][0].textProperty().bindBidirectional(GameManager.players[playerId].strResCount);
+
+        myLables[playerId][1] = new Label();
+        myLables[playerId][1].textProperty().bindBidirectional(GameManager.players[playerId].strDevCardsCount);
+
+        myLables[playerId][2] = new Label();
+        myLables[playerId][2].textProperty().bindBidirectional(GameManager.players[playerId].strVicPoints);
+
+        myLables[playerId][3] = new Label();
+        myLables[playerId][3].textProperty().bindBidirectional(GameManager.players[playerId].strKCCount);
+
+        myLables[playerId][4] = new Label();
+        myLables[playerId][4].textProperty().bindBidirectional(GameManager.players[playerId].strRoadCount);
 
         // Creates text for player number
         Text txtPlayer = new Text("   Player " + (playerId + 1));
@@ -504,22 +522,19 @@ public class ClientUI extends Application {
         GridPane gridPane = new GridPane();
         gridPane.setPadding(insets);
         gridPane.add(txtPlayer, 0, 0);
+
         gridPane.add(new Label(" "), 0, 1);
+
         gridPane.add(new Text("Resource Count: "), 0, 2);
-        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
-                getResourceTotal())), 1, 2);
+        gridPane.add(myLables[playerId][0], 1, 2);
         gridPane.add(new Text("Dev. Cards: "), 0, 3);
-        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
-                getDevelopmentCardCount())), 1, 3);
+        gridPane.add(myLables[playerId][1], 1, 3);
         gridPane.add(new Text("Victory Points: "), 0, 4);
-        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
-                getVisibleVictoryPoints())), 1, 4);
+        gridPane.add(myLables[playerId][2], 1, 4);
         gridPane.add(new Text("Knight Cards: "), 0, 5);
-        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
-                getKnightCards())), 1, 5);
+        gridPane.add(myLables[playerId][3], 1, 5);
         gridPane.add(new Text("Roads Count: "), 0, 6);
-        gridPane.add(new Label(String.valueOf(GameManager.players[playerId].
-                getRoadCount())), 1, 6);
+        gridPane.add(myLables[playerId][4], 1, 6);
 
         // Adds a border to the pane(panel)
         final String cssDefault = "-fx-border-color: firebrick;\n"
@@ -532,6 +547,7 @@ public class ClientUI extends Application {
         pane.getChildren().add(imageView);
         pane.getChildren().add(gridPane);
 
+        return pane;
     }
 
     ArrayList<Boundary> findBuildableRoads(int currentPlayerID) {
@@ -1087,6 +1103,7 @@ public class ClientUI extends Application {
                 tradeDeal.setOfferedAmount(offeredSpinner.getValue());
                 tradeDeal.setRequestedAmount(requestedSpinner.getValue());
                 tradeDeal.distributeTradeRequest();
+                GameManager.updatePanels();
             }
         });
         Button cancelBtn = new Button("Cancel");
@@ -1144,6 +1161,21 @@ public class ClientUI extends Application {
         }
     }
 
+    // Method for testing Information panes
+    private void test2() {
+        for (int i = 0; i < 4; i++) {
+            GameManager.players[0 + (int) (Math.random() * 4)].addKnightCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].addDevelopmentCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].addRoad();
+            GameManager.players[0 + (int) (Math.random() * 4)].addVictoryPointCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].resourceTotal++;
+            for(int k = 0; k < 5; k++)
+                GameManager.players[0 + (int) (Math.random() * 4)].resourceMaterials[0 + (int) (Math.random() * 5)]++;
+        }
+        // Updating panels
+        GameManager.updatePanels();
+    }
+
     private void doNothing() {
         // does nothing
     }
@@ -1161,9 +1193,15 @@ public class ClientUI extends Application {
         buildASettlement(buildableIntersections, intersections, playerID);
     }
 
+    public void updateResourcePanel() {
+
+    }
+
     // Creates Pane that contains information about the resources 
     // of the current player
-    public void createResoursePanel(Pane pane) {
+    public StackPane createResoursePanel() {
+
+        StackPane pane = new StackPane();
         // Creates grid to hold player's informations
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
@@ -1171,19 +1209,31 @@ public class ClientUI extends Application {
         gridPane.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
 
         gridPane.add(new Label("Brick"), 0, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.BRICK])), 0, 1);
+        Label lbBrick = new Label("0");
+        lbBrick.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strBrick);
+        gridPane.add(lbBrick, 0, 1);
 
         gridPane.add(new Label("Lumber"), 1, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.LUMBER])), 1, 1);
+        Label lbLumber = new Label("0");
+        lbLumber.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strLumber);
+        //lbLumber.setAlignment(Pos.CENTER);
+        gridPane.add(lbLumber, 1, 1);
 
         gridPane.add(new Label("Ore"), 2, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.ORE])), 2, 1);
+        Label lbOre = new Label("0");
+        lbOre.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strOre);
+        gridPane.add(lbOre, 2, 1);
 
         gridPane.add(new Label("Wheat"), 3, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WHEAT])), 3, 1);
+        Label lbWheat = new Label("0");
+        lbWheat.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strWheat);
+
+        gridPane.add(lbWheat, 3, 1);
 
         gridPane.add(new Label("Wool"), 4, 0);
-        gridPane.add(new Label("  " + String.valueOf(GameManager.players[GameManager.activePlayerID].resourceMaterials[GameManager.WOOL])), 4, 1);
+        Label lbWool = new Label("0");
+        lbWool.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strWool);
+        gridPane.add(lbWool, 4, 1);
 
         // Adds a border to the pane(panel)
         final String cssDefault
@@ -1197,6 +1247,8 @@ public class ClientUI extends Application {
         pane.setStyle(cssDefault);
 
         pane.getChildren().add(gridPane);
+
+        return pane;
     }
 
     void showErrorDialog(String text) {

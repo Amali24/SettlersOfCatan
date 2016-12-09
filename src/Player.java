@@ -1,7 +1,11 @@
 
 import java.util.Arrays;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.*;
+import javafx.util.converter.NumberStringConverter;
 
 /*  
                         Player - Settlers of Catan
@@ -101,6 +105,15 @@ Activity:	  -Date-             -Person-               -Updates-
 	    December 07, 2016		RA	    * Changed printRoads, printSettlements
 	    					      and printCities methods to print
 						      the arrays that were added
+          
+            December 8, 2016            OB          * Added SimpleString and SimpleInt
+                                                      properties for each resource, 
+                                                      that being used for binding 
+                                                      player's info to the UI
+                                                    * Added bindProperties() and
+                                                      updateProperties() methods
+                                                    * Added addRoad() method for 
+                                                      testing purposes
 						      
 						      
  */
@@ -111,9 +124,9 @@ public class Player {
     private int playerID = -1;
     private String name = "";
 
-    private Intersection settlementList[] = new Intersection[5]; 
-    private Intersection cityList[] = new Intersection[4]; 
-    private Boundary roadList[] = new Boundary[15]; 
+    private Intersection settlementList[] = new Intersection[5];
+    private Intersection cityList[] = new Intersection[4];
+    private Boundary roadList[] = new Boundary[15];
 
     private int settlementCount = 0;            //max of 5
     private int cityCount = 0; 			//max of 4
@@ -138,10 +151,73 @@ public class Player {
     private boolean longestRoad = false; //has built most roads
     private boolean largestArmy = false; //played the most knight cards
 
+    // Setting up Integer properties for further binding them to resource's value 
+    // For Stats Panels
+    private SimpleIntegerProperty intResCount = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intDevCardsCount = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intVicPoints = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intKCCount = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intRoadCount = new SimpleIntegerProperty();
+    //For Resource Panel
+    private SimpleIntegerProperty intBrick = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intLumber = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intOre = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intWheat = new SimpleIntegerProperty();
+    private SimpleIntegerProperty intWool = new SimpleIntegerProperty();
+
+    // Setting up String properties for further binding them to the labels
+    // For Stats Panels
+    SimpleStringProperty strResCount = new SimpleStringProperty();
+    SimpleStringProperty strDevCardsCount = new SimpleStringProperty();
+    SimpleStringProperty strVicPoints = new SimpleStringProperty();
+    SimpleStringProperty strKCCount = new SimpleStringProperty();
+    SimpleStringProperty strRoadCount = new SimpleStringProperty();
+    //For Resource Panel
+    SimpleStringProperty strBrick = new SimpleStringProperty();
+    SimpleStringProperty strLumber = new SimpleStringProperty();
+    SimpleStringProperty strOre = new SimpleStringProperty();
+    SimpleStringProperty strWheat = new SimpleStringProperty();
+    SimpleStringProperty strWool = new SimpleStringProperty();
+
     private GameManager manager;
     private Player player;
-    
+
     private final Color color;
+
+    // binding String and Integer resource properties, so any change that was made 
+    // to the Integer will be shown in String property. 
+    // We need it for binding Labels in the UI. 
+    public void bindProperties() {
+        Bindings.bindBidirectional(strResCount, intResCount, new NumberStringConverter());
+        Bindings.bindBidirectional(strDevCardsCount, intDevCardsCount, new NumberStringConverter());
+        Bindings.bindBidirectional(strVicPoints, intVicPoints, new NumberStringConverter());
+        Bindings.bindBidirectional(strKCCount, intKCCount, new NumberStringConverter());
+        Bindings.bindBidirectional(strRoadCount, intRoadCount, new NumberStringConverter());
+
+        Bindings.bindBidirectional(strBrick, intBrick, new NumberStringConverter());
+        Bindings.bindBidirectional(strLumber, intLumber, new NumberStringConverter());
+        Bindings.bindBidirectional(strWheat, intWheat, new NumberStringConverter());
+        Bindings.bindBidirectional(strOre, intOre, new NumberStringConverter());
+        Bindings.bindBidirectional(strWool, intWool, new NumberStringConverter());
+    }
+
+    // Updating SimpleIntValues with up-to-date information
+    public void updateProperties() {
+
+        // Updating properties for stats panes
+        intResCount.set(resourceTotal);
+        intDevCardsCount.set(developmentCardCount);
+        intVicPoints.set(victoryPointCards);
+        intKCCount.set(knightCards);
+        intRoadCount.set(roadCount);
+
+        // Updating properties for resource panel
+        intBrick.set(resourceMaterials[GameManager.BRICK]);
+        intLumber.set(resourceMaterials[GameManager.LUMBER]);
+        intWheat.set(resourceMaterials[GameManager.ORE]);
+        intOre.set(resourceMaterials[GameManager.WHEAT]);
+        intWool.set(resourceMaterials[GameManager.WOOL]);
+    }
 
 // 				Constructors
 //_____________________________________________________________________________
@@ -164,6 +240,7 @@ public class Player {
             default:
                 color = BLACK;
         }
+        bindProperties();
     }
 
 //                          Accessors and Mutators
@@ -171,11 +248,12 @@ public class Player {
     public int getPlayerID() {
         return playerID;
     }
+
     public String getName() {
-        if(name.equals("")){
-            name = ("Player").concat(Integer.toString(playerID+1));
+        if (name.equals("")) {
+            name = ("Player").concat(Integer.toString(playerID + 1));
             return name;
-        }else{
+        } else {
             return name;
         }
     }
@@ -183,20 +261,24 @@ public class Player {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public int getRoadCount() {
-	    
+
         return roadCount;
     }
 
     public void addRoad(Boundary newRoad) {
-        if(roadCount >= 15){
-		System.out.println("You have exceeded the number of roads available");
-	}
-        else{
-            roadList[roadCount]= newRoad;
-	    roadCount++;
+        if (roadCount >= 15) {
+            System.out.println("You have exceeded the number of roads available");
+        } else {
+            roadList[roadCount] = newRoad;
+            roadCount++;
+        }
     }
+    
+    public void addRoad() {
+        if (roadCount < 15) 
+            roadCount++; 
     }
 
     public int getSettlementCount() {
@@ -204,29 +286,27 @@ public class Player {
     }
 
     public void addSettlement(Intersection newSettlement) {
-	if(settlementCount >= 5){
-		System.out.println("You have exceeded the number of settlements available");
-	      
-	}
-        else{
-            settlementList[settlementCount]= newSettlement;
+        if (settlementCount >= 5) {
+            System.out.println("You have exceeded the number of settlements available");
+
+        } else {
+            settlementList[settlementCount] = newSettlement;
             settlementCount++;
-    }
+        }
     }
 
-    public int getCityCount() {	
-            return cityCount;
+    public int getCityCount() {
+        return cityCount;
     }
 
     public void addCity(Intersection newCity) {
-	if(cityCount >= 4){
-		System.out.println("You have exceeded the number of cities available");
+        if (cityCount >= 4) {
+            System.out.println("You have exceeded the number of cities available");
 
-	}
-        else{       
-            cityList[cityCount]= newCity;
+        } else {
+            cityList[cityCount] = newCity;
             cityCount++;
-    }
+        }
     }
 
     public int getDevelopmentCardCount() {
@@ -251,7 +331,7 @@ public class Player {
         if (longestRoad) {
             visibleVictoryPoints += 2;
         }
-	    
+
         if (largestArmy) {
             visibleVictoryPoints += 2;
         }
@@ -296,7 +376,7 @@ public class Player {
 
     public boolean isLongestRoad() {
 
-	    return longestRoad;
+        return longestRoad;
     }
 
     public void setLongestRoad(boolean longestRoad) {
@@ -341,15 +421,16 @@ public class Player {
         resourceMaterials[position] = 0;
     }
 
-    public int maxResourceCount(){
+    public int maxResourceCount() {
         int max = 0;
-    for(int i:resourceMaterials){
-        if(i>max){
-            max=i;
+        for (int i : resourceMaterials) {
+            if (i > max) {
+                max = i;
+            }
         }
+        return max;
     }
-    return max;
-}
+
     public void printResources() {
         // Prints player's resource total for each resource
         System.out.println("\nPlayer " + (playerID + 1) + "'s current Resources:\n"
@@ -361,11 +442,11 @@ public class Player {
                 + resourceMaterials[4] + " Wool\n");
 
     }
-    
-     public String toStringResources() {
-        
+
+    public String toStringResources() {
+
         String resources = "";
-        
+
         // Creates a string with player's resource total
         resources = "\nPlayer " + (playerID + 1) + "'s current Resources:\n"
                 + "_____________________________\n"
@@ -374,34 +455,34 @@ public class Player {
                 + resourceMaterials[2] + " Ore\n"
                 + resourceMaterials[3] + " Wheat\n"
                 + resourceMaterials[4] + " Wool\n";
-        
+
         return resources;
     }
-	
-    public void printRoads() { 
-	 // Prints player's current number of roads  
+
+    public void printRoads() {
+        // Prints player's current number of roads  
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number"
                 + " of roads: " + roadCount + "\n Located at: \n");
 
         // Prints the location of player's roads
-        System.out.println(Arrays.toString(roadList)+ " ");	    
+        System.out.println(Arrays.toString(roadList) + " ");
     }
-			    
+
     public void printSettlements() {
-	 // Prints player's current number of settlements  
+        // Prints player's current number of settlements  
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
                 + "of settlements: " + settlementCount + "\nLocated at: ");
 
         // Prints the location of player's settlements
-         System.out.println(Arrays.toString(settlementList)+ " "); 
+        System.out.println(Arrays.toString(settlementList) + " ");
     }
-			    
+
     public void printCities() {
-	// Prints player's current number of cities 
+        // Prints player's current number of cities 
         System.out.println("\nPlayer " + (playerID + 1) + " 's current number "
                 + "of cities:\n" + cityCount + "\nLocated at: ");
 
         // Prints the location of player's cities
-        System.out.println(Arrays.toString(cityList)+ " ");
+        System.out.println(Arrays.toString(cityList) + " ");
     }
 }
