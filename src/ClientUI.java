@@ -98,7 +98,7 @@ Activity:	  -Date-             -Person-               -Updates-
                                                      panels that binded to the player's info
                                                    * Minor UI changes for the devices with
                                                      smaller screen sizes
-                                                   * Added test() method for testing panels
+                                                   * Added test2() method for testing panels
                                                    
                                                     
 
@@ -134,10 +134,14 @@ public class ClientUI extends Application {
     // X and Y offsets are a hacky way to center the game board
     // Will hopefully come up with a better and more scalable way to do this
     static double xOffset = 1.3;
-    static double yOffset = 2; // previous 2
+    static double yOffset = 2; 
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
+
+    // Label's array for stats panels
+    private static Label[][] myLables
+            = new Label[GameManager.NUM_PLAYERS][GameManager.NUM_RESOURCES];
 
     // Strings for prompts during turns
     static String setUpPhase = "Setup Phase\n"
@@ -237,7 +241,7 @@ public class ClientUI extends Application {
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
-        gameBoard.setMaxSize(900, 800);
+        gameBoard.setMaxSize(800, 700);
         gameBoard.setMinSize(700, 600);
 
         // Creates a black boundary
@@ -425,7 +429,8 @@ public class ClientUI extends Application {
         // Error window test button
         Button btnTest = new Button("TEST");
         btnTest.setOnAction(e -> {
-            test();
+            //test();
+            test2();
         });
 
         // Add all buttons to screen
@@ -489,6 +494,22 @@ public class ClientUI extends Application {
         Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundAddress));
         ImageView imageView = new ImageView(image);
 
+        // Setting up personal labels for each planer
+        myLables[playerId][0] = new Label();
+        myLables[playerId][0].textProperty().bindBidirectional(GameManager.players[playerId].strResCount);
+
+        myLables[playerId][1] = new Label();
+        myLables[playerId][1].textProperty().bindBidirectional(GameManager.players[playerId].strDevCardsCount);
+
+        myLables[playerId][2] = new Label();
+        myLables[playerId][2].textProperty().bindBidirectional(GameManager.players[playerId].strVicPoints);
+
+        myLables[playerId][3] = new Label();
+        myLables[playerId][3].textProperty().bindBidirectional(GameManager.players[playerId].strKCCount);
+
+        myLables[playerId][4] = new Label();
+        myLables[playerId][4].textProperty().bindBidirectional(GameManager.players[playerId].strRoadCount);
+
         // Creates text for player number
         Text txtPlayer = new Text("   Player " + (playerId + 1));
         txtPlayer.setFill(WHITE);
@@ -501,32 +522,19 @@ public class ClientUI extends Application {
         GridPane gridPane = new GridPane();
         gridPane.setPadding(insets);
         gridPane.add(txtPlayer, 0, 0);
+
         gridPane.add(new Label(" "), 0, 1);
-        
+
         gridPane.add(new Text("Resource Count: "), 0, 2);
-        Label lbRC = new Label();
-        lbRC.textProperty().bindBidirectional(GameManager.players[0].strResCount);
-        gridPane.add(lbRC, 1, 2);
-        
+        gridPane.add(myLables[playerId][0], 1, 2);
         gridPane.add(new Text("Dev. Cards: "), 0, 3);
-        Label lbDCs = new Label();
-        lbDCs.textProperty().bindBidirectional(GameManager.players[0].strDevCardsCount);
-        gridPane.add(lbDCs, 1, 3);
-        
+        gridPane.add(myLables[playerId][1], 1, 3);
         gridPane.add(new Text("Victory Points: "), 0, 4);
-        Label lbVPs = new Label();
-        lbVPs.textProperty().bindBidirectional(GameManager.players[0].strVicPoints);
-        gridPane.add(lbVPs, 1, 4);
-        
+        gridPane.add(myLables[playerId][2], 1, 4);
         gridPane.add(new Text("Knight Cards: "), 0, 5);
-        Label lbKCs = new Label();
-        lbKCs.textProperty().bindBidirectional(GameManager.players[0].strKCCount);
-        gridPane.add(lbKCs, 1, 5);
-        
+        gridPane.add(myLables[playerId][3], 1, 5);
         gridPane.add(new Text("Roads Count: "), 0, 6);
-        Label lbRoadC = new Label();
-        lbRoadC.textProperty().bindBidirectional(GameManager.players[0].strRoadCount);
-        gridPane.add(lbRoadC, 1, 6);
+        gridPane.add(myLables[playerId][4], 1, 6);
 
         // Adds a border to the pane(panel)
         final String cssDefault = "-fx-border-color: firebrick;\n"
@@ -1095,6 +1103,7 @@ public class ClientUI extends Application {
                 tradeDeal.setOfferedAmount(offeredSpinner.getValue());
                 tradeDeal.setRequestedAmount(requestedSpinner.getValue());
                 tradeDeal.distributeTradeRequest();
+                GameManager.updatePanels();
             }
         });
         Button cancelBtn = new Button("Cancel");
@@ -1128,7 +1137,6 @@ public class ClientUI extends Application {
 
     }
 
-    
     private void restoreUIElements(ArrayList<Circle> intersections, ArrayList<Line> boundaries, HexTile[] tiles) {
         for (Circle i : intersections) {
             // For every circle, restore to strokeWidth 1
@@ -1153,28 +1161,21 @@ public class ClientUI extends Application {
         }
     }
 
-        private void test() {
+    // Method for testing Information panes
+    private void test2() {
         for (int i = 0; i < 4; i++) {
-            for (int k = 0; k < 5; k++) {
-                GameManager.players[i].resourceMaterials[k]++;
-                GameManager.players[i].resourceTotal++;
-                GameManager.players[i].addKnightCard();
-                GameManager.players[i].addDevelopmentCard();
-                GameManager.players[i].addVictoryPointCard();
-                GameManager.players[i].addRoad();
-                System.out.println("Resources Added");
-                System.out.println(GameManager.players[i].toStringResources());
-                System.out.println("Resource Count : " + GameManager.players[i].resourceTotal);
-                System.out.println(GameManager.players[i].strResCount);
-                System.out.println(GameManager.players[i].getVictoryPointCards());
-                System.out.println(GameManager.players[i].getKnightCards());
-                System.out.println(GameManager.players[i].getRoadCount());
-            }  
+            GameManager.players[0 + (int) (Math.random() * 4)].addKnightCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].addDevelopmentCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].addRoad();
+            GameManager.players[0 + (int) (Math.random() * 4)].addVictoryPointCard();
+            GameManager.players[0 + (int) (Math.random() * 4)].resourceTotal++;
+            for(int k = 0; k < 5; k++)
+                GameManager.players[0 + (int) (Math.random() * 4)].resourceMaterials[0 + (int) (Math.random() * 5)]++;
         }
         // Updating panels
         GameManager.updatePanels();
     }
-    
+
     private void doNothing() {
         // does nothing
     }
@@ -1192,6 +1193,10 @@ public class ClientUI extends Application {
         buildASettlement(buildableIntersections, intersections, playerID);
     }
 
+    public void updateResourcePanel() {
+
+    }
+
     // Creates Pane that contains information about the resources 
     // of the current player
     public StackPane createResoursePanel() {
@@ -1205,34 +1210,29 @@ public class ClientUI extends Application {
 
         gridPane.add(new Label("Brick"), 0, 0);
         Label lbBrick = new Label("0");
-        lbBrick.textProperty().bindBidirectional(GameManager
-                .players[GameManager.activePlayerID].strBrick);
+        lbBrick.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strBrick);
         gridPane.add(lbBrick, 0, 1);
 
         gridPane.add(new Label("Lumber"), 1, 0);
         Label lbLumber = new Label("0");
-        lbLumber.textProperty().bindBidirectional(GameManager
-                .players[GameManager.activePlayerID].strLumber);
+        lbLumber.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strLumber);
         //lbLumber.setAlignment(Pos.CENTER);
         gridPane.add(lbLumber, 1, 1);
 
         gridPane.add(new Label("Ore"), 2, 0);
         Label lbOre = new Label("0");
-        lbOre.textProperty().bindBidirectional(GameManager
-                .players[GameManager.activePlayerID].strOre);
+        lbOre.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strOre);
         gridPane.add(lbOre, 2, 1);
 
         gridPane.add(new Label("Wheat"), 3, 0);
         Label lbWheat = new Label("0");
-        lbWheat.textProperty().bindBidirectional(GameManager
-                .players[GameManager.activePlayerID].strWheat);
-               
+        lbWheat.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strWheat);
+
         gridPane.add(lbWheat, 3, 1);
 
         gridPane.add(new Label("Wool"), 4, 0);
         Label lbWool = new Label("0");
-        lbWool.textProperty().bindBidirectional(GameManager
-                .players[GameManager.activePlayerID].strWool);
+        lbWool.textProperty().bindBidirectional(GameManager.players[GameManager.activePlayerID].strWool);
         gridPane.add(lbWool, 4, 1);
 
         // Adds a border to the pane(panel)

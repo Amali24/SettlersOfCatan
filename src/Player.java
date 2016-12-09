@@ -203,6 +203,7 @@ public class Player {
 
     // Updating SimpleIntValues with up-to-date information
     public void updateProperties() {
+
         // Updating properties for stats panes
         intResCount.set(resourceTotal);
         intDevCardsCount.set(developmentCardCount);
