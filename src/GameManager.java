@@ -121,6 +121,9 @@ public class GameManager {
     static final int WHEAT = 3;
     static final int WOOL = 4;
     static final int GENERAL_HARBOR = 5;
+    static final int NUM_PLAYERS = 4;
+    static final int NUM_RESOURCES = 5;
+    
 
     // "Constant" doubles refer to mathematical ratio of hexagon sides. Will be used more in GUI
     // But are helpful to have here as they make variable naming more intuitive
@@ -187,6 +190,10 @@ public class GameManager {
         Scanner sc = new Scanner(System.in);
         // Close scanner
         sc.close();
+    }
+    public static void updatePanels() {
+        for (int i = 0; i < NUM_PLAYERS; i++)
+            players[i].updateProperties();
     }
 
     void debugMode() {
@@ -578,6 +585,8 @@ public class GameManager {
                 + "\n9");
 
     }
+    
+    
 
     static boolean moveRobber(int tileChoice, int playerID) {
 
