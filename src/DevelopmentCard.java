@@ -154,8 +154,9 @@ class KnightCard extends DevelopmentCard {
     KnightCard() {
 
         this.setTitle("Knight");
-        this.setDescription("Move the Robber to a new tile.\n Steal a resource "
-                + "material from a player with an adjacent settlement.");
+        this.setDescription("Move the Robber to a new tile."
+                + "\nSteal a resource material from\n"
+                + "a player with an adjacent settlement.");
         this.setPlayed(false);
 
     }
@@ -196,6 +197,7 @@ class KnightCard extends DevelopmentCard {
             this.setPlayed(true);
         }
     }
+
 
 }
 
@@ -317,8 +319,9 @@ class MonopolyCard extends DevelopmentCard {
     MonopolyCard() {
 
         this.setTitle("Monopoly");
-        this.setDescription("Select a type of resource material. \n"
-                + "All other players will give you \ntheir entire supply of this material.");
+        this.setDescription("Select a type of resource material.\n"
+                + "All other players will give you \n"
+                + "their entire supply of this material.");
         this.setPlayed(false);
 
     }

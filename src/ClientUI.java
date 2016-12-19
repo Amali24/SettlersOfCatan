@@ -181,6 +181,8 @@ public class ClientUI extends Application {
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
     Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
+    
+    boolean clicked = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -1275,8 +1277,8 @@ public class ClientUI extends Application {
         Button btnBuyCard = new Button("Buy A Card");
         btnBuyCard.setStyle(btnStyle);
         btnBuyCard.setOnAction(e -> {
-            if (false/*!(activePlayer.getResourceCount(GameManager.ORE) >= 1 && activePlayer.getResourceCount(GameManager.WOOL) >= 1
-                    && activePlayer.getResourceCount(GameManager.WHEAT) >= 1)*/) {
+            if (activePlayer.getResourceCount(GameManager.ORE) < 1 && activePlayer.getResourceCount(GameManager.WOOL) < 1
+                    && activePlayer.getResourceCount(GameManager.WHEAT) < 1) {
                 promptBox.appendText("\nYou must have 1 ore, 1 wheat, and 1 wool");
             } else if (Bank.remainingCards == 0) {
                 promptBox.appendText("\nThere are no cards remaining");
@@ -1297,14 +1299,56 @@ public class ClientUI extends Application {
         int i = 0;
         for (DevelopmentCard devCard : Bank.developmentCards) {
             if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
-                VBox cardShape = new VBox();
 
-                Text title = new Text(devCard.getTitle());
-                Text descr = new Text(devCard.getDescription());
+                String cardType = devCard.getTitle();
+                String description = devCard.getDescription();
+                Text cardText = new Text(cardType + '\n' + description);
 
-                cardShape.getChildren().addAll(title, descr);
+                cardText.setTextAlignment(TextAlignment.CENTER);
 
-                Pane pane = new Pane(cardShape);
+                StackPane pane = new StackPane();
+
+                Rectangle cardShape = new Rectangle(200, 200);
+                cardShape.setFill(null);
+                cardShape.setStroke(BLACK);
+                cardShape.setArcHeight(20);
+                cardShape.setArcWidth(20);
+
+                pane.setOnMouseClicked(e -> {
+                    devCard.setPlayed(true);
+                    switch (devCard.getTitle()) {
+                        case "Knight":
+                            for (HexTile tile : GameManager.tiles) {
+                                tile.hexagon.setOnMouseClicked(eh -> GUImoveRobber(tile));
+                            }
+                            promptBox.appendText("\nSelect a tile to move the robber to");
+                            activePlayer.addKnightCard();
+                            break;
+                        case "Road Building":
+                            RoadBuildingCard rbcard = (RoadBuildingCard) devCard;
+                            ArrayList<Boundary> buildableRoads = findBuildableRoads(activePlayerID);
+                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
+                            buildableRoads = findBuildableRoads(activePlayerID);
+                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
+                            break;
+                        case "Monopoly":
+                            showMonopolyCardMenu();
+                            break;
+                        case "Year of Plenty":
+                            showYearOfPlentyCardMenu();
+                            break;
+                    }
+                });
+
+                // Code from http://stackoverflow.com/questions/10628410/how-to-center-wrap-truncate-text-to-fit-within-rectangle-in-javafx-2-1
+                // to center text on rectangle
+                cardText.wrappingWidthProperty().bind(cardShape.widthProperty().multiply(0.9));
+                cardText.xProperty().bind(cardShape.xProperty().add(cardShape.widthProperty().subtract(cardText.boundsInLocalProperty().getValue().getWidth() / 2.0)));
+                cardText.yProperty().bind(cardShape.yProperty().add(cardShape.heightProperty().divide(2)));
+                cardText.setTextAlignment(TextAlignment.CENTER);
+                cardText.setTextOrigin(VPos.CENTER);
+
+                pane.getChildren().addAll(cardShape, cardText);
 
                 hboxCards.getChildren().add(pane);
 
@@ -1357,5 +1401,198 @@ public class ClientUI extends Application {
         activePlayer.deductResource(GameManager.ORE, 1);
         activePlayer.deductResource(GameManager.WOOL, 1);
         activePlayer.deductResource(GameManager.WHEAT, 1);
+    }
+
+    private void showMonopolyCardMenu() {
+        Stage stage = new Stage();
+
+        HBox resources = new HBox(25);
+
+        StackPane brick = new StackPane();
+        Circle circleBrick = new Circle();
+        Label labelBrick = new Label("Brick");
+        brick.getChildren().addAll(circleBrick, labelBrick);
+        brick.setOnMouseClicked(e -> {
+            int resourceToSteal = 0;
+            int resourcesToAdd = 0;
+            for (Player player : GameManager.players) {
+                resourcesToAdd += player.resourceMaterials[resourceToSteal];
+                player.resourceMaterials[resourceToSteal] = 0;
+            }
+
+            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
+            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
+            stage.close();
+        });
+
+        StackPane lumber = new StackPane();
+        Circle circleLumber = new Circle();
+        Label labelLumber = new Label("Lumber");
+        lumber.getChildren().addAll(circleLumber, labelLumber);
+        lumber.setOnMouseClicked(e -> {
+            int resourceToSteal = 1;
+            int resourcesToAdd = 0;
+            for (Player player : GameManager.players) {
+                resourcesToAdd += player.resourceMaterials[resourceToSteal];
+                player.resourceMaterials[resourceToSteal] = 0;
+            }
+
+            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
+            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
+            stage.close();
+        });
+
+        StackPane ore = new StackPane();
+        Circle circleOre = new Circle();
+        Label labelOre = new Label("Ore");
+        ore.getChildren().addAll(circleOre, labelOre);
+        ore.setOnMouseClicked(e -> {
+            int resourceToSteal = 2;
+            int resourcesToAdd = 0;
+            for (Player player : GameManager.players) {
+                resourcesToAdd += player.resourceMaterials[resourceToSteal];
+                player.resourceMaterials[resourceToSteal] = 0;
+            }
+
+            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
+            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
+            stage.close();
+        });
+
+        StackPane wheat = new StackPane();
+        Circle circleWheat = new Circle();
+        Label labelWheat = new Label("Wheat");
+        wheat.getChildren().addAll(circleWheat, labelWheat);
+        wheat.setOnMouseClicked(e -> {
+            int resourceToSteal = 3;
+            int resourcesToAdd = 0;
+            for (Player player : GameManager.players) {
+                resourcesToAdd += player.resourceMaterials[resourceToSteal];
+                player.resourceMaterials[resourceToSteal] = 0;
+            }
+
+            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
+            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
+            stage.close();
+        });
+
+        StackPane wool = new StackPane();
+        Circle circleWool = new Circle();
+        Label labelWool = new Label("Wool");
+        wool.getChildren().addAll(circleWool, labelWool);
+        wool.setOnMouseClicked(e -> {
+            int resourceToSteal = 4;
+            int resourcesToAdd = 0;
+            for (Player player : GameManager.players) {
+                resourcesToAdd += player.resourceMaterials[resourceToSteal];
+                player.resourceMaterials[resourceToSteal] = 0;
+            }
+
+            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
+            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
+            stage.close();
+        });
+
+        resources.getChildren().addAll(brick, lumber, ore, wheat, wool);
+
+        stage.setScene(new Scene(resources));
+        stage.show();
+    }
+
+    private void showYearOfPlentyCardMenu() {
+        Stage stage = new Stage();
+        
+        Player activePlayer = GameManager.players[GameManager.activePlayerID];
+
+        HBox resources = new HBox(25);
+
+        StackPane brick = new StackPane();
+        Circle circleBrick = new Circle();
+        Label labelBrick = new Label("Brick");
+        brick.getChildren().addAll(circleBrick, labelBrick);
+        brick.setOnMouseClicked(e -> {
+            if (!clicked){
+                setClicked(true);
+                activePlayer.addResource(0, 1);
+            }
+            else{
+                setClicked(false);
+                activePlayer.addResource(0,1);
+                stage.close();
+            }
+        });
+
+        StackPane lumber = new StackPane();
+        Circle circleLumber = new Circle();
+        Label labelLumber = new Label("Lumber");
+        lumber.getChildren().addAll(circleLumber, labelLumber);
+        lumber.setOnMouseClicked(e -> {
+            if (!clicked){
+                setClicked(true);
+                activePlayer.addResource(1, 1);
+            }
+            else{
+                setClicked(false);
+                activePlayer.addResource(1,1);
+                stage.close();
+            }
+        });
+        
+        StackPane ore = new StackPane();
+        Circle circleOre = new Circle();
+        Label labelOre = new Label("Ore");
+        ore.getChildren().addAll(circleOre, labelOre);
+        ore.setOnMouseClicked(e -> {
+            if (!clicked){
+                setClicked(true);
+                activePlayer.addResource(2, 1);
+            }
+            else{
+                setClicked(false);
+                activePlayer.addResource(2,1);
+                stage.close();
+            }
+        });
+        
+        StackPane wheat = new StackPane();
+        Circle circleWheat = new Circle();
+        Label labelWheat = new Label("Wheat");
+        wheat.getChildren().addAll(circleWheat, labelWheat);
+        wheat.setOnMouseClicked(e -> {
+            if (!clicked){
+                setClicked(true);
+                activePlayer.addResource(3, 1);
+            }
+            else{
+                setClicked(false);
+                activePlayer.addResource(3,1);
+                stage.close();
+            }
+        });
+        
+        StackPane wool = new StackPane();
+        Circle circleWool = new Circle();
+        Label labelWool = new Label("Wool");
+        wool.getChildren().addAll(circleWool, labelWool);
+        wool.setOnMouseClicked(e -> {
+            if (!clicked){
+                setClicked(true);
+                activePlayer.addResource(4, 1);
+            }
+            else{
+                setClicked(false);
+                activePlayer.addResource(4,1);
+                stage.close();
+            }
+        });
+        
+        resources.getChildren().addAll(brick, lumber, ore, wheat, wool);
+
+        stage.setScene(new Scene(resources));
+        stage.show();
+    }
+    
+    public void setClicked(boolean clicked){
+        this.clicked = true;
     }
 }
