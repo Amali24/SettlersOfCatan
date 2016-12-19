@@ -181,7 +181,7 @@ public class ClientUI extends Application {
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
     Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
-    
+
     boolean clicked = false;
 
     @Override
@@ -1266,6 +1266,10 @@ public class ClientUI extends Application {
     private void showDevCardMenu() {
         int activePlayerID = GameManager.activePlayerID;
         Player activePlayer = GameManager.players[activePlayerID];
+        
+
+        HBox hboxCards = new HBox(15);
+        showDevCards(hboxCards);
 
         Stage stage = new Stage();
         stage.setTitle("Development Cards");
@@ -1284,6 +1288,8 @@ public class ClientUI extends Application {
                 promptBox.appendText("\nThere are no cards remaining");
             } else {
                 GUIbuyDevCard();
+                hboxCards.getChildren().removeAll();
+                showDevCards(hboxCards);
             }
 
         });
@@ -1294,9 +1300,22 @@ public class ClientUI extends Application {
 
         hboxButtons.getChildren().addAll(btnBuyCard, btnCancel);
 
-        HBox hboxCards = new HBox(15);
+        Label devCards = new Label("Your Development Cards");
 
-        int i = 0;
+        gridPane.add(devCards, 0, 0);
+        gridPane.add(hboxCards, 0, 1);
+        gridPane.add(hboxButtons, 0, 2);
+
+        Scene scene = new Scene(gridPane);
+        stage.setMinWidth(250);
+        stage.setMinHeight(350);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void showDevCards(HBox hboxCards) {
+        int activePlayerID = GameManager.activePlayerID;
+        Player activePlayer = GameManager.players[activePlayerID];
         for (DevelopmentCard devCard : Bank.developmentCards) {
             if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
 
@@ -1338,6 +1357,7 @@ public class ClientUI extends Application {
                             showYearOfPlentyCardMenu();
                             break;
                     }
+                    hboxCards.getChildren().remove(pane);
                 });
 
                 // Code from http://stackoverflow.com/questions/10628410/how-to-center-wrap-truncate-text-to-fit-within-rectangle-in-javafx-2-1
@@ -1351,20 +1371,8 @@ public class ClientUI extends Application {
                 pane.getChildren().addAll(cardShape, cardText);
 
                 hboxCards.getChildren().add(pane);
-
-                i++;
             }
         }
-
-        Label devCards = new Label("Your Development Cards");
-
-        gridPane.add(devCards, 0, 0);
-        gridPane.add(hboxCards, 0, 1);
-        gridPane.add(hboxButtons, 0, 2);
-
-        Scene scene = new Scene(gridPane);
-        stage.setScene(scene);
-        stage.show();
     }
 
     private void GUIbuyDevCard() {
@@ -1409,7 +1417,9 @@ public class ClientUI extends Application {
         HBox resources = new HBox(25);
 
         StackPane brick = new StackPane();
-        Circle circleBrick = new Circle();
+        Circle circleBrick = new Circle(30);
+        circleBrick.setStroke(BLACK);
+        circleBrick.setStrokeWidth(4);
         Label labelBrick = new Label("Brick");
         brick.getChildren().addAll(circleBrick, labelBrick);
         brick.setOnMouseClicked(e -> {
@@ -1426,7 +1436,9 @@ public class ClientUI extends Application {
         });
 
         StackPane lumber = new StackPane();
-        Circle circleLumber = new Circle();
+        Circle circleLumber = new Circle(30);
+        circleLumber.setStroke(BLACK);
+        circleLumber.setStrokeWidth(4);
         Label labelLumber = new Label("Lumber");
         lumber.getChildren().addAll(circleLumber, labelLumber);
         lumber.setOnMouseClicked(e -> {
@@ -1443,7 +1455,9 @@ public class ClientUI extends Application {
         });
 
         StackPane ore = new StackPane();
-        Circle circleOre = new Circle();
+        Circle circleOre = new Circle(30);
+        circleOre.setStroke(BLACK);
+        circleOre.setStrokeWidth(4);
         Label labelOre = new Label("Ore");
         ore.getChildren().addAll(circleOre, labelOre);
         ore.setOnMouseClicked(e -> {
@@ -1460,7 +1474,9 @@ public class ClientUI extends Application {
         });
 
         StackPane wheat = new StackPane();
-        Circle circleWheat = new Circle();
+        Circle circleWheat = new Circle(30);
+        circleWheat.setStroke(BLACK);
+        circleWheat.setStrokeWidth(4);
         Label labelWheat = new Label("Wheat");
         wheat.getChildren().addAll(circleWheat, labelWheat);
         wheat.setOnMouseClicked(e -> {
@@ -1477,7 +1493,9 @@ public class ClientUI extends Application {
         });
 
         StackPane wool = new StackPane();
-        Circle circleWool = new Circle();
+        Circle circleWool = new Circle(30);
+        circleWool.setStroke(BLACK);
+        circleWool.setStrokeWidth(4);
         Label labelWool = new Label("Wool");
         wool.getChildren().addAll(circleWool, labelWool);
         wool.setOnMouseClicked(e -> {
@@ -1501,98 +1519,103 @@ public class ClientUI extends Application {
 
     private void showYearOfPlentyCardMenu() {
         Stage stage = new Stage();
-        
+
         Player activePlayer = GameManager.players[GameManager.activePlayerID];
 
         HBox resources = new HBox(25);
 
         StackPane brick = new StackPane();
-        Circle circleBrick = new Circle();
+        Circle circleBrick = new Circle(30);
+        circleBrick.setStroke(BLACK);
+        circleBrick.setStrokeWidth(4);
         Label labelBrick = new Label("Brick");
         brick.getChildren().addAll(circleBrick, labelBrick);
         brick.setOnMouseClicked(e -> {
-            if (!clicked){
+            if (!clicked) {
                 setClicked(true);
                 activePlayer.addResource(0, 1);
-            }
-            else{
+            } else {
                 setClicked(false);
-                activePlayer.addResource(0,1);
+                activePlayer.addResource(0, 1);
                 stage.close();
             }
         });
 
         StackPane lumber = new StackPane();
-        Circle circleLumber = new Circle();
+        Circle circleLumber = new Circle(30);
+        circleLumber.setStroke(BLACK);
+        circleLumber.setStrokeWidth(4);
         Label labelLumber = new Label("Lumber");
         lumber.getChildren().addAll(circleLumber, labelLumber);
         lumber.setOnMouseClicked(e -> {
-            if (!clicked){
+            if (!clicked) {
                 setClicked(true);
                 activePlayer.addResource(1, 1);
-            }
-            else{
+            } else {
                 setClicked(false);
-                activePlayer.addResource(1,1);
+                activePlayer.addResource(1, 1);
                 stage.close();
             }
         });
-        
+
         StackPane ore = new StackPane();
-        Circle circleOre = new Circle();
+        Circle circleOre = new Circle(30);
+        circleOre.setStroke(BLACK);
+        circleOre.setStrokeWidth(4);
         Label labelOre = new Label("Ore");
         ore.getChildren().addAll(circleOre, labelOre);
         ore.setOnMouseClicked(e -> {
-            if (!clicked){
+            if (!clicked) {
                 setClicked(true);
                 activePlayer.addResource(2, 1);
-            }
-            else{
+            } else {
                 setClicked(false);
-                activePlayer.addResource(2,1);
+                activePlayer.addResource(2, 1);
                 stage.close();
             }
         });
-        
+
         StackPane wheat = new StackPane();
-        Circle circleWheat = new Circle();
+        Circle circleWheat = new Circle(30);
+        circleWheat.setStroke(BLACK);
+        circleWheat.setStrokeWidth(4);
         Label labelWheat = new Label("Wheat");
         wheat.getChildren().addAll(circleWheat, labelWheat);
         wheat.setOnMouseClicked(e -> {
-            if (!clicked){
+            if (!clicked) {
                 setClicked(true);
                 activePlayer.addResource(3, 1);
-            }
-            else{
+            } else {
                 setClicked(false);
-                activePlayer.addResource(3,1);
+                activePlayer.addResource(3, 1);
                 stage.close();
             }
         });
-        
+
         StackPane wool = new StackPane();
-        Circle circleWool = new Circle();
+        Circle circleWool = new Circle(30);
+        circleWool.setStroke(BLACK);
+        circleWool.setStrokeWidth(4);
         Label labelWool = new Label("Wool");
         wool.getChildren().addAll(circleWool, labelWool);
         wool.setOnMouseClicked(e -> {
-            if (!clicked){
+            if (!clicked) {
                 setClicked(true);
                 activePlayer.addResource(4, 1);
-            }
-            else{
+            } else {
                 setClicked(false);
-                activePlayer.addResource(4,1);
+                activePlayer.addResource(4, 1);
                 stage.close();
             }
         });
-        
+
         resources.getChildren().addAll(brick, lumber, ore, wheat, wool);
 
         stage.setScene(new Scene(resources));
         stage.show();
     }
-    
-    public void setClicked(boolean clicked){
+
+    public void setClicked(boolean clicked) {
         this.clicked = true;
     }
 }
