@@ -193,13 +193,13 @@ public class ClientUI extends Application {
         Pane bgPane = new Pane();
         BorderPane bp = new BorderPane();
         Pane gameBoard = new Pane();
-
         bgPane.getChildren().add(bp);
 
-        bp.setTop(turnIndicator);
+        // Buttons pane
+        VBox vBoxButtons = new VBox(15);
 
         turnIndicator.setFont(new Font("Arial Narrow", 36));
-        turnIndicator.setStroke(BLACK);
+         turnIndicator.setStroke(BLACK);
         turnIndicator.setFill(WHITE);
         BorderPane.setAlignment(turnIndicator, Pos.CENTER);
 
@@ -214,10 +214,7 @@ public class ClientUI extends Application {
         player2Panel = createStatsPanel(1, "Images/redPlayer3.png");
         player3Panel = createStatsPanel(2, "Images/greenPlayer2.png");
         player4Panel = createStatsPanel(3, "Images/yellowPlayer.png");
-
-        // Displays panels of players 1 and  3
-        VBox left = new VBox();
-
+       
         // Set size of prompt box
         promptBox.setMaxWidth(200);
         promptBox.setMinWidth(200);
@@ -228,20 +225,21 @@ public class ClientUI extends Application {
         promptBox.setText(setUpPhase);
         promptBox.setWrapText(true);
 
-        // Add resource panels and prompt box to left side
+	// Displays panels of players 1 and  3 and prompt box to left side
+        VBox left = new VBox();         
         left.getChildren().addAll(player1Panel, promptBox, player3Panel);
         left.setAlignment(Pos.TOP_LEFT);
-        left.setSpacing(10);
+        left.setSpacing(70);
 
         // Displays panels of players 2 and 4
         VBox right = new VBox();
-        right.getChildren().addAll(player2Panel, player4Panel);
+        right.getChildren().addAll(player2Panel, vBoxButtons,player4Panel);
         right.setAlignment(Pos.TOP_RIGHT);
-        right.setSpacing(210);
+        right.setSpacing(52);
 
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
-        gameBoard.setMaxSize(800, 700);
+        gameBoard.setMaxSize(900, 800);
         gameBoard.setMinSize(700, 600);
 
         // Creates a black boundary
@@ -303,8 +301,7 @@ public class ClientUI extends Application {
         bp.setCenter(gameBoard);
 
         // ___________________________  Buttons ___________________________
-        HBox hBoxButtons = new HBox(25);
-
+        
         Button btnRoll = new Button("Roll");
         // Applying predefined Style for each button
         btnRoll.setStyle(btnStyle);
@@ -434,8 +431,8 @@ public class ClientUI extends Application {
         });
 
         // Add all buttons to screen
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnTest);
-        hBoxButtons.setAlignment(Pos.CENTER);
+        vBoxButtons.getChildren().addAll(btnTest, btnRoll, btnBuild, btnTrade, btnDevCards, btnEndTurn);
+        vBoxButtons.setAlignment(Pos.CENTER);
 
         // ________________________  Resource Panel ____________________________
         // VBox that holds Button and Available Resources Panels, 
@@ -454,24 +451,29 @@ public class ClientUI extends Application {
         resourcePanel = createResoursePanel();
 
         resourcesHBox.getChildren().add(resourcePanel);
-        resourcesHBox.setAlignment(Pos.CENTER);
+        resourcesHBox.setAlignment(Pos.BOTTOM_CENTER);
 
-        // Adding Resources and Button panels to the VBox
-        vBoxBottom.getChildren().addAll(resourcesHBox, hBoxButtons);
         // _____________________________________________________________________
 
+	bgPane.getChildren().add(resourcesHBox);
+        resourcesHBox.setLayoutX(480);
+        resourcesHBox.setLayoutY(648);
+        StackPane.setAlignment(resourcesHBox, Pos.BOTTOM_CENTER);
+	    
         // Put players 1 and 3 information panels on the left of frame
         bp.setLeft(left);
         // Put players 2 and 4 information panels on the right of frame
         bp.setRight(right);
-        // vBoxBottom contains buttons and current player's Resource panel
-        bp.setBottom(vBoxBottom);
-
+        
         Image woodImg = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/background.jpg"));
         BackgroundImage bgWood = new BackgroundImage(woodImg, NO_REPEAT, NO_REPEAT, CENTER, BackgroundSize.DEFAULT);
 
         bgPane.setBackground(new Background(bgWood));
 
+	 bgPane.getChildren().add(turnIndicator);
+        turnIndicator.setLayoutX(480);
+        turnIndicator.setLayoutY(50);
+	    
         // Set up scene size
         Scene scene = new Scene(bgPane, 1210, 880); // previous width is 1280
 
