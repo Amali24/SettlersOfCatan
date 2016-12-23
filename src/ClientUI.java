@@ -831,7 +831,6 @@ public class ClientUI extends Application {
 
         // Credential for database access 
         String login = "root";
-        String pass = "number92";
         Class.forName("com.mysql.jdbc.Driver");
         System.out.println("Driver Loaded");
 
