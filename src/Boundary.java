@@ -1,5 +1,6 @@
 
 import static javafx.scene.paint.Color.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 /*  
@@ -92,6 +93,10 @@ class Boundary {
     //5 value = general harbor
 
     private final Line line;
+    
+    public Coordinate midPoint;
+    
+    Circle circle;  
 
 //                               Constructors
 // _____________________________________________________________________________
@@ -125,6 +130,14 @@ class Boundary {
         return endpointA;
     }
 
+    Coordinate getEndpointACoord() {
+        return new Coordinate(endpointA.getLocation().getUIX(), endpointA.getLocation().getUIY());
+    }
+    
+     Coordinate getEndpointBCoord() {
+        return new Coordinate(endpointB.getLocation().getUIX(), endpointB.getLocation().getUIY());
+    }
+     
     //Returns second endpoint (they are stored in alphabetical order)
     Intersection getEndpointB() {
         return endpointB;
@@ -136,10 +149,28 @@ class Boundary {
         System.out.println("Road built successfully!");
 
     }
+    
+    void findMidPoint() {
+        double tempX = (endpointA.getLocation().getUIX() + endpointB.getLocation().getUIX())/2;
+        double tempY = (endpointA.getLocation().getUIY() + endpointB.getLocation().getUIY())/2;
+        
+        
+        midPoint = new Coordinate(tempX, tempY);
+    }
+    
+    
 
     //returns ID of player who owns road
     int getPlayer() {
         return player;
+    }
+    
+    //Returns true if boundary has harbor  
+    boolean hasHarbor() {
+        if(harbor == -1)
+            return false;
+        else 
+            return true; 
     }
 
     //Sets type of harbor boundary contains, if any 

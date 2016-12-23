@@ -103,15 +103,23 @@ Activity:	  -Date-             -Person-               -Updates-
                                                     
 
  */
+import com.sun.rowset.JdbcRowSetImpl;
 import java.io.*;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.*;
 
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.application.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
@@ -125,6 +133,8 @@ import static javafx.scene.paint.Color.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import javafx.util.Callback;
+import javax.sql.RowSet;
 
 public class ClientUI extends Application {
 
@@ -134,7 +144,7 @@ public class ClientUI extends Application {
     // X and Y offsets are a hacky way to center the game board
     // Will hopefully come up with a better and more scalable way to do this
     static double xOffset = 1.3;
-    static double yOffset = 2; 
+    static double yOffset = 2;
     // Default size for circles
     static double circleSize = 5.0;
     static double hexCircleSize = 20.0;
@@ -161,6 +171,10 @@ public class ClientUI extends Application {
 
     static String gameOver = "";
 
+    //TABLE VIEW AND DATA
+    private ObservableList<ObservableList> data;
+    private TableView table;
+
     // UI elements
     Insets insets = new Insets(12);
     DropShadow ds = new DropShadow();
@@ -186,8 +200,6 @@ public class ClientUI extends Application {
             + "-fx-background-color: linear-gradient(#2A5058, #61a2b1);\n";
 
     Text turnIndicator = new Text("It's player " + (GameManager.activePlayerID + 1) + "'s turn");
-
-    boolean clicked = false;
 
     @Override
     public void start(Stage primaryStage) throws FileNotFoundException {
@@ -230,21 +242,17 @@ public class ClientUI extends Application {
         promptBox.setText(setUpPhase);
         promptBox.setWrapText(true);
 
-        // Add resource panels and prompt box to left side
-        left.getChildren().addAll(player1Panel, promptBox, player3Panel);
-        left.setAlignment(Pos.TOP_LEFT);
-        left.setSpacing(10);
-
-        // Displays panels of players 2 and 4
-        VBox right = new VBox();
-        right.getChildren().addAll(player2Panel, player4Panel);
-        right.setAlignment(Pos.TOP_RIGHT);
-        right.setSpacing(210);
-
         // Min size and max size are currently the same
         // Will hopefully allow resizing eventually
         gameBoard.setMaxSize(800, 700);
         gameBoard.setMinSize(700, 600);
+
+        // Setting background image for gameboard Pane
+        Image image = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/waterCrop.jpg"));
+        BackgroundSize backgroundSize = new BackgroundSize(800, 800, true, true, true, false);
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        Background background = new Background(backgroundImage);
+        gameBoard.setBackground(background);
 
         // Creates a black boundary
         Border b = new Border(new BorderStroke(BLACK, SOLID, EMPTY, DEFAULT_WIDTHS));
@@ -280,12 +288,31 @@ public class ClientUI extends Application {
 
                 gameBoard.getChildren().addAll(circle, text);
             }
+
+            if (tile.hasHarbor()) {
+                Circle circle = tile.harbourCircle;
+                circle.setFill(Color.CORNFLOWERBLUE);
+                circle.setStroke(Color.web("black", 1.0));
+
+                Text text = new Text(
+                        tile.getHarbourCoordinate().getX() - 12,
+                        tile.getHarbourCoordinate().getY() + 2,
+                        GameManager.indexToString(tile.harborType));
+                //text.setFont(Font.font(8));
+                text.setFont(Font.font("SansSerif", FontWeight.BOLD, 9));
+                Line line = tile.harbourLine;
+                line.setStroke(Color.BROWN);
+                gameBoard.getChildren().addAll(line, circle, text);
+            }
         }
 
         // Iterate over all boundaries and add their respective lines to the GUI
         for (Boundary boundary : GameManager.boundaries) {
             lines.add(boundary.getLine());
             gameBoard.getChildren().add(boundary.getLine());
+            if (boundary.hasHarbor()) {
+                gameBoard.getChildren().add(boundary.circle);
+            }
         }
 
         // Iterate over intersections and add their circles to the GUI
@@ -305,7 +332,7 @@ public class ClientUI extends Application {
         bp.setCenter(gameBoard);
 
         // ___________________________  Buttons ___________________________
-        HBox hBoxButtons = new HBox(25);
+        VBox vBoxButtons = new VBox(10);
 
         Button btnRoll = new Button("Roll");
         // Applying predefined Style for each button
@@ -435,9 +462,21 @@ public class ClientUI extends Application {
             test2();
         });
 
-        // Add all buttons to screen
-        hBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnTest);
-        hBoxButtons.setAlignment(Pos.CENTER);
+        // Button for populating Leaderboard
+        Button btnLeaderBrd = new Button("Leaderboard");
+        btnLeaderBrd.setOnAction(e -> {
+            try {
+                openLeaderboard();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        // Add all buttons to screen (add btnLeaderBrd) 
+        vBoxButtons.getChildren().addAll(btnRoll, btnBuild, btnDevCards, btnTrade, btnEndTurn, btnTest);
+        vBoxButtons.setAlignment(Pos.CENTER);
 
         // ________________________  Resource Panel ____________________________
         // VBox that holds Button and Available Resources Panels, 
@@ -459,8 +498,19 @@ public class ClientUI extends Application {
         resourcesHBox.setAlignment(Pos.CENTER);
 
         // Adding Resources and Button panels to the VBox
-        vBoxBottom.getChildren().addAll(resourcesHBox, hBoxButtons);
+        vBoxBottom.getChildren().addAll(resourcesHBox);
         // _____________________________________________________________________
+
+        // Add resource panels and prompt box to left side
+        left.getChildren().addAll(player1Panel, promptBox, player3Panel);
+        left.setAlignment(Pos.TOP_LEFT);
+        left.setSpacing(30);
+
+        // Displays buttons and panels of players 2 and 4
+        VBox right = new VBox();
+        right.getChildren().addAll(player2Panel, vBoxButtons, player4Panel);
+        right.setAlignment(Pos.TOP_RIGHT);
+        right.setSpacing(40);
 
         // Put players 1 and 3 information panels on the left of frame
         bp.setLeft(left);
@@ -475,7 +525,7 @@ public class ClientUI extends Application {
         bgPane.setBackground(new Background(bgWood));
 
         // Set up scene size
-        Scene scene = new Scene(bgPane, 1210, 880); // previous width is 1280
+        Scene scene = new Scene(bgPane, 1200, 800); // previous width is 1280
 
         primaryStage.setScene(scene);
 
@@ -496,19 +546,15 @@ public class ClientUI extends Application {
         Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundAddress));
         ImageView imageView = new ImageView(image);
 
-        // Setting up personal labels for each planer
+        // Initializing personal labels for each player's stats panel
         myLables[playerId][0] = new Label();
         myLables[playerId][0].textProperty().bindBidirectional(GameManager.players[playerId].strResCount);
-
         myLables[playerId][1] = new Label();
         myLables[playerId][1].textProperty().bindBidirectional(GameManager.players[playerId].strDevCardsCount);
-
         myLables[playerId][2] = new Label();
         myLables[playerId][2].textProperty().bindBidirectional(GameManager.players[playerId].strVicPoints);
-
         myLables[playerId][3] = new Label();
         myLables[playerId][3].textProperty().bindBidirectional(GameManager.players[playerId].strKCCount);
-
         myLables[playerId][4] = new Label();
         myLables[playerId][4].textProperty().bindBidirectional(GameManager.players[playerId].strRoadCount);
 
@@ -774,6 +820,78 @@ public class ClientUI extends Application {
 
         tradeMenu.show();
     }
+
+    // Needs debug at this point. Otherwise it reads existing database
+    // from MySQL and displays output. 
+    private void openLeaderboard() throws ClassNotFoundException, SQLException {
+ /*
+        data = FXCollections.observableArrayList();
+
+        StackPane pane = new StackPane();
+
+        // Credential for database access 
+        String login = "root";
+        Class.forName("com.mysql.jdbc.Driver");
+        System.out.println("Driver Loaded");
+
+        // Create a Row Set for player's resources 
+        RowSet rowSetRes = new JdbcRowSetImpl();
+
+        // Set RowSet properties 
+        rowSetRes.setUrl("jdbc:mysql://localhost:3306/playerinfo");
+        rowSetRes.setUsername(login);
+        rowSetRes.setPassword(pass);
+        rowSetRes.setCommand("select * from playerResources;");
+        rowSetRes.execute();
+
+        ResultSetMetaData rsMetaData = rowSetRes.getMetaData();
+
+        //  TABLE COLUMN ADDED DYNAMICALLY  
+            for(int i=0 ; i < rowSetRes.getMetaData().getColumnCount(); i++){
+                //We are using non property style for making dynamic table
+                final int j = i;               
+                TableColumn col = new TableColumn(rowSetRes.getMetaData().getColumnName(i+1));
+                col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                   
+                 public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {                                                                                             
+                        return new SimpleStringProperty(param.getValue().get(j).toString());                       
+                    }                   
+                });
+
+            //table.getColumns().addAll(col);
+
+            
+           
+            // Reading database and assigns it's values to the table 
+            while (rowSetRes.next()) {
+
+                ObservableList<String> row = FXCollections.observableArrayList();
+
+                row.add(rowSetRes.getString(1));
+                row.add(String.valueOf(rowSetRes.getInt(2)));
+                row.add(String.valueOf(rowSetRes.getInt(3)));
+                row.add(String.valueOf(rowSetRes.getInt(4)));
+                row.add(String.valueOf(rowSetRes.getInt(5)));
+                row.add(String.valueOf(rowSetRes.getInt(6)));
+
+                data.add(row);
+            }
+
+            table.setEditable(false);
+            table.setItems(data);
+
+            //pane.getChildren().add(table);
+            Scene secondScene = new Scene(table, 300, 300);
+
+            Stage secondStage = new Stage();
+            secondStage.setTitle("Leaderboard");
+            secondStage.setScene(secondScene);
+
+            secondStage.setScene(secondScene);
+            secondStage.show();
+*/
+        }
+
+    
 
     private void bankTradeMenu() {
 
@@ -1171,8 +1289,9 @@ public class ClientUI extends Application {
             GameManager.players[0 + (int) (Math.random() * 4)].addRoad();
             GameManager.players[0 + (int) (Math.random() * 4)].addVictoryPointCard();
             GameManager.players[0 + (int) (Math.random() * 4)].resourceTotal++;
-            for(int k = 0; k < 5; k++)
+            for (int k = 0; k < 5; k++) {
                 GameManager.players[0 + (int) (Math.random() * 4)].resourceMaterials[0 + (int) (Math.random() * 5)]++;
+            }
         }
         // Updating panels
         GameManager.updatePanels();
@@ -1193,10 +1312,6 @@ public class ClientUI extends Application {
         // Call the build settlement methods first, as a settlement must be built first
         ArrayList<Intersection> buildableIntersections = findBuildableSettlements(playerID, setupPhase);
         buildASettlement(buildableIntersections, intersections, playerID);
-    }
-
-    public void updateResourcePanel() {
-
     }
 
     // Creates Pane that contains information about the resources 
@@ -1318,10 +1433,6 @@ public class ClientUI extends Application {
     private void showDevCardMenu() {
         int activePlayerID = GameManager.activePlayerID;
         Player activePlayer = GameManager.players[activePlayerID];
-        
-
-        HBox hboxCards = new HBox(15);
-        showDevCards(hboxCards);
 
         Stage stage = new Stage();
         stage.setTitle("Development Cards");
@@ -1333,15 +1444,13 @@ public class ClientUI extends Application {
         Button btnBuyCard = new Button("Buy A Card");
         btnBuyCard.setStyle(btnStyle);
         btnBuyCard.setOnAction(e -> {
-            if (activePlayer.getResourceCount(GameManager.ORE) < 1 && activePlayer.getResourceCount(GameManager.WOOL) < 1
-                    && activePlayer.getResourceCount(GameManager.WHEAT) < 1) {
+            if (false/*!(activePlayer.getResourceCount(GameManager.ORE) >= 1 && activePlayer.getResourceCount(GameManager.WOOL) >= 1
+                    && activePlayer.getResourceCount(GameManager.WHEAT) >= 1)*/) {
                 promptBox.appendText("\nYou must have 1 ore, 1 wheat, and 1 wool");
             } else if (Bank.remainingCards == 0) {
                 promptBox.appendText("\nThere are no cards remaining");
             } else {
                 GUIbuyDevCard();
-                hboxCards.getChildren().removeAll();
-                showDevCards(hboxCards);
             }
 
         });
@@ -1352,6 +1461,26 @@ public class ClientUI extends Application {
 
         hboxButtons.getChildren().addAll(btnBuyCard, btnCancel);
 
+        HBox hboxCards = new HBox(15);
+
+        int i = 0;
+        for (DevelopmentCard devCard : Bank.developmentCards) {
+            if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
+                VBox cardShape = new VBox();
+
+                Text title = new Text(devCard.getTitle());
+                Text descr = new Text(devCard.getDescription());
+
+                cardShape.getChildren().addAll(title, descr);
+
+                Pane pane = new Pane(cardShape);
+
+                hboxCards.getChildren().add(pane);
+
+                i++;
+            }
+        }
+
         Label devCards = new Label("Your Development Cards");
 
         gridPane.add(devCards, 0, 0);
@@ -1359,72 +1488,8 @@ public class ClientUI extends Application {
         gridPane.add(hboxButtons, 0, 2);
 
         Scene scene = new Scene(gridPane);
-        stage.setMinWidth(250);
-        stage.setMinHeight(350);
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void showDevCards(HBox hboxCards) {
-        int activePlayerID = GameManager.activePlayerID;
-        Player activePlayer = GameManager.players[activePlayerID];
-        for (DevelopmentCard devCard : Bank.developmentCards) {
-            if (devCard.getPlayer() == activePlayerID && !devCard.isPlayed()) {
-
-                String cardType = devCard.getTitle();
-                String description = devCard.getDescription();
-                Text cardText = new Text(cardType + '\n' + description);
-
-                cardText.setTextAlignment(TextAlignment.CENTER);
-
-                StackPane pane = new StackPane();
-
-                Rectangle cardShape = new Rectangle(200, 200);
-                cardShape.setFill(null);
-                cardShape.setStroke(BLACK);
-                cardShape.setArcHeight(20);
-                cardShape.setArcWidth(20);
-
-                pane.setOnMouseClicked(e -> {
-                    devCard.setPlayed(true);
-                    switch (devCard.getTitle()) {
-                        case "Knight":
-                            for (HexTile tile : GameManager.tiles) {
-                                tile.hexagon.setOnMouseClicked(eh -> GUImoveRobber(tile));
-                            }
-                            promptBox.appendText("\nSelect a tile to move the robber to");
-                            activePlayer.addKnightCard();
-                            break;
-                        case "Road Building":
-                            RoadBuildingCard rbcard = (RoadBuildingCard) devCard;
-                            ArrayList<Boundary> buildableRoads = findBuildableRoads(activePlayerID);
-                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
-                            buildableRoads = findBuildableRoads(activePlayerID);
-                            buildARoad(buildableRoads, GameManager.boundaries, activePlayerID);
-                            break;
-                        case "Monopoly":
-                            showMonopolyCardMenu();
-                            break;
-                        case "Year of Plenty":
-                            showYearOfPlentyCardMenu();
-                            break;
-                    }
-                    hboxCards.getChildren().remove(pane);
-                });
-
-                // Code from http://stackoverflow.com/questions/10628410/how-to-center-wrap-truncate-text-to-fit-within-rectangle-in-javafx-2-1
-                // to center text on rectangle
-                cardText.wrappingWidthProperty().bind(cardShape.widthProperty().multiply(0.9));
-                cardText.xProperty().bind(cardShape.xProperty().add(cardShape.widthProperty().subtract(cardText.boundsInLocalProperty().getValue().getWidth() / 2.0)));
-                cardText.yProperty().bind(cardShape.yProperty().add(cardShape.heightProperty().divide(2)));
-                cardText.setTextAlignment(TextAlignment.CENTER);
-                cardText.setTextOrigin(VPos.CENTER);
-
-                pane.getChildren().addAll(cardShape, cardText);
-
-                hboxCards.getChildren().add(pane);
-            }
-        }
     }
 
     private void GUIbuyDevCard() {
@@ -1461,213 +1526,5 @@ public class ClientUI extends Application {
         activePlayer.deductResource(GameManager.ORE, 1);
         activePlayer.deductResource(GameManager.WOOL, 1);
         activePlayer.deductResource(GameManager.WHEAT, 1);
-    }
-
-    private void showMonopolyCardMenu() {
-        Stage stage = new Stage();
-
-        HBox resources = new HBox(25);
-
-        StackPane brick = new StackPane();
-        Circle circleBrick = new Circle(30);
-        circleBrick.setStroke(BLACK);
-        circleBrick.setStrokeWidth(4);
-        Label labelBrick = new Label("Brick");
-        brick.getChildren().addAll(circleBrick, labelBrick);
-        brick.setOnMouseClicked(e -> {
-            int resourceToSteal = 0;
-            int resourcesToAdd = 0;
-            for (Player player : GameManager.players) {
-                resourcesToAdd += player.resourceMaterials[resourceToSteal];
-                player.resourceMaterials[resourceToSteal] = 0;
-            }
-
-            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
-            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
-            stage.close();
-        });
-
-        StackPane lumber = new StackPane();
-        Circle circleLumber = new Circle(30);
-        circleLumber.setStroke(BLACK);
-        circleLumber.setStrokeWidth(4);
-        Label labelLumber = new Label("Lumber");
-        lumber.getChildren().addAll(circleLumber, labelLumber);
-        lumber.setOnMouseClicked(e -> {
-            int resourceToSteal = 1;
-            int resourcesToAdd = 0;
-            for (Player player : GameManager.players) {
-                resourcesToAdd += player.resourceMaterials[resourceToSteal];
-                player.resourceMaterials[resourceToSteal] = 0;
-            }
-
-            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
-            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
-            stage.close();
-        });
-
-        StackPane ore = new StackPane();
-        Circle circleOre = new Circle(30);
-        circleOre.setStroke(BLACK);
-        circleOre.setStrokeWidth(4);
-        Label labelOre = new Label("Ore");
-        ore.getChildren().addAll(circleOre, labelOre);
-        ore.setOnMouseClicked(e -> {
-            int resourceToSteal = 2;
-            int resourcesToAdd = 0;
-            for (Player player : GameManager.players) {
-                resourcesToAdd += player.resourceMaterials[resourceToSteal];
-                player.resourceMaterials[resourceToSteal] = 0;
-            }
-
-            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
-            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
-            stage.close();
-        });
-
-        StackPane wheat = new StackPane();
-        Circle circleWheat = new Circle(30);
-        circleWheat.setStroke(BLACK);
-        circleWheat.setStrokeWidth(4);
-        Label labelWheat = new Label("Wheat");
-        wheat.getChildren().addAll(circleWheat, labelWheat);
-        wheat.setOnMouseClicked(e -> {
-            int resourceToSteal = 3;
-            int resourcesToAdd = 0;
-            for (Player player : GameManager.players) {
-                resourcesToAdd += player.resourceMaterials[resourceToSteal];
-                player.resourceMaterials[resourceToSteal] = 0;
-            }
-
-            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
-            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
-            stage.close();
-        });
-
-        StackPane wool = new StackPane();
-        Circle circleWool = new Circle(30);
-        circleWool.setStroke(BLACK);
-        circleWool.setStrokeWidth(4);
-        Label labelWool = new Label("Wool");
-        wool.getChildren().addAll(circleWool, labelWool);
-        wool.setOnMouseClicked(e -> {
-            int resourceToSteal = 4;
-            int resourcesToAdd = 0;
-            for (Player player : GameManager.players) {
-                resourcesToAdd += player.resourceMaterials[resourceToSteal];
-                player.resourceMaterials[resourceToSteal] = 0;
-            }
-
-            GameManager.players[GameManager.activePlayerID].addResource(resourceToSteal, resourcesToAdd);
-            promptBox.appendText("\nStole a total of " + resourcesToAdd + " resources.");
-            stage.close();
-        });
-
-        resources.getChildren().addAll(brick, lumber, ore, wheat, wool);
-
-        stage.setScene(new Scene(resources));
-        stage.show();
-    }
-
-    private void showYearOfPlentyCardMenu() {
-        Stage stage = new Stage();
-
-        Player activePlayer = GameManager.players[GameManager.activePlayerID];
-
-        HBox resources = new HBox(25);
-
-        StackPane brick = new StackPane();
-        Circle circleBrick = new Circle(30);
-        circleBrick.setStroke(BLACK);
-        circleBrick.setStrokeWidth(4);
-        Label labelBrick = new Label("Brick");
-        brick.getChildren().addAll(circleBrick, labelBrick);
-        brick.setOnMouseClicked(e -> {
-            if (!clicked) {
-                setClicked(true);
-                activePlayer.addResource(0, 1);
-            } else {
-                setClicked(false);
-                activePlayer.addResource(0, 1);
-                stage.close();
-            }
-        });
-
-        StackPane lumber = new StackPane();
-        Circle circleLumber = new Circle(30);
-        circleLumber.setStroke(BLACK);
-        circleLumber.setStrokeWidth(4);
-        Label labelLumber = new Label("Lumber");
-        lumber.getChildren().addAll(circleLumber, labelLumber);
-        lumber.setOnMouseClicked(e -> {
-            if (!clicked) {
-                setClicked(true);
-                activePlayer.addResource(1, 1);
-            } else {
-                setClicked(false);
-                activePlayer.addResource(1, 1);
-                stage.close();
-            }
-        });
-
-        StackPane ore = new StackPane();
-        Circle circleOre = new Circle(30);
-        circleOre.setStroke(BLACK);
-        circleOre.setStrokeWidth(4);
-        Label labelOre = new Label("Ore");
-        ore.getChildren().addAll(circleOre, labelOre);
-        ore.setOnMouseClicked(e -> {
-            if (!clicked) {
-                setClicked(true);
-                activePlayer.addResource(2, 1);
-            } else {
-                setClicked(false);
-                activePlayer.addResource(2, 1);
-                stage.close();
-            }
-        });
-
-        StackPane wheat = new StackPane();
-        Circle circleWheat = new Circle(30);
-        circleWheat.setStroke(BLACK);
-        circleWheat.setStrokeWidth(4);
-        Label labelWheat = new Label("Wheat");
-        wheat.getChildren().addAll(circleWheat, labelWheat);
-        wheat.setOnMouseClicked(e -> {
-            if (!clicked) {
-                setClicked(true);
-                activePlayer.addResource(3, 1);
-            } else {
-                setClicked(false);
-                activePlayer.addResource(3, 1);
-                stage.close();
-            }
-        });
-
-        StackPane wool = new StackPane();
-        Circle circleWool = new Circle(30);
-        circleWool.setStroke(BLACK);
-        circleWool.setStrokeWidth(4);
-        Label labelWool = new Label("Wool");
-        wool.getChildren().addAll(circleWool, labelWool);
-        wool.setOnMouseClicked(e -> {
-            if (!clicked) {
-                setClicked(true);
-                activePlayer.addResource(4, 1);
-            } else {
-                setClicked(false);
-                activePlayer.addResource(4, 1);
-                stage.close();
-            }
-        });
-
-        resources.getChildren().addAll(brick, lumber, ore, wheat, wool);
-
-        stage.setScene(new Scene(resources));
-        stage.show();
-    }
-
-    public void setClicked(boolean clicked) {
-        this.clicked = true;
     }
 }

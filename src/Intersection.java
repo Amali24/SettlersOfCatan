@@ -116,6 +116,7 @@ public class Intersection {
         location = c;
         // Create circle at location c for UI
         circle = new Circle(location.getUIX(), location.getUIY(), ClientUI.circleSize);
+       
     }
 
 //                          Accessors and Mutators

@@ -93,6 +93,9 @@ Activity:	  -Date-             -Person-               -Updates-
             December 7, 2016            AT          * Added findAdjacentTiles
                                                       method
 
+           December 20, 2016            OB         * Rearranged externalBourners initialization 
+                                                   * Added harbor's graphical representation 
+
 
 
  */
@@ -102,7 +105,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.application.Application;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import static javafx.scene.paint.Color.WHITE;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 public class GameManager {
 
@@ -123,7 +130,6 @@ public class GameManager {
     static final int GENERAL_HARBOR = 5;
     static final int NUM_PLAYERS = 4;
     static final int NUM_RESOURCES = 5;
-    
 
     // "Constant" doubles refer to mathematical ratio of hexagon sides. Will be used more in GUI
     // But are helpful to have here as they make variable naming more intuitive
@@ -156,7 +162,7 @@ public class GameManager {
     Image wheatImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/wheat.jpg"));
     Image woolImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/woolCrop.jpg"));
     Image desertImage = new Image(this.getClass().getClassLoader().getResourceAsStream("Images/desert.jpg"));
-
+    
     //During the first two rounds of the game, the "set up phase", the gameplay is different
     static boolean isSetUpPhase = true;
 
@@ -191,9 +197,36 @@ public class GameManager {
         // Close scanner
         sc.close();
     }
+
     public static void updatePanels() {
-        for (int i = 0; i < NUM_PLAYERS; i++)
+        for (int i = 0; i < NUM_PLAYERS; i++) {
             players[i].updateProperties();
+        }
+    }
+    
+    /**
+     * All the spacing is necessary for providing the best alignment on the screen.
+     * Used for harbor tags
+     * @param index
+     * @return 
+     */
+    public static String indexToString(int index) {
+        String temp = "";
+        switch(index) {
+            case 0: temp = " Brick"; 
+                break;
+            case 1: temp = "Lumber"; 
+                break;
+            case 2: temp = "  Ore"; 
+                break;
+            case 3: temp = "Wheat"; 
+                break;
+            case 4: temp = " Wool"; 
+                break;
+            case 5: temp = "General \nHarbor";
+            break;
+        }
+        return temp;
     }
 
     void debugMode() {
@@ -585,8 +618,6 @@ public class GameManager {
                 + "\n9");
 
     }
-    
-    
 
     static boolean moveRobber(int tileChoice, int playerID) {
 
@@ -810,12 +841,12 @@ public class GameManager {
     static private void saveGame() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    static public ArrayList<HexTile> findAdjacentTiles(Intersection intersection){
+
+    static public ArrayList<HexTile> findAdjacentTiles(Intersection intersection) {
         ArrayList<HexTile> adjacentTiles = new ArrayList<>();
-        for (HexTile tile : tiles){
-            for (Intersection i : tile.getIntersections()){
-                if (i == intersection){
+        for (HexTile tile : tiles) {
+            for (Intersection i : tile.getIntersections()) {
+                if (i == intersection) {
                     adjacentTiles.add(tile);
                 }
             }
@@ -1037,7 +1068,7 @@ public class GameManager {
         HexTile T5 = new HexTile(new Intersection[]{D4, E3, F4, F6, E7, D6});
         HexTile T6 = new HexTile(new Intersection[]{F4, G3, H4, H6, G7, F6});
         HexTile T7 = new HexTile(new Intersection[]{H4, I3, J4, J6, I7, H6});
-        HexTile T8 = new HexTile(new Intersection[]{A7, B6, C7, C9, B10, A9});
+        HexTile T8 = new HexTile(new Intersection[]{A7, B6, C7, C9, B10, A9}); // has harbor
         HexTile T9 = new HexTile(new Intersection[]{C7, D6, E7, E9, D10, C9});
         HexTile T10 = new HexTile(new Intersection[]{E7, F6, G7, G9, F10, E9});
         HexTile T11 = new HexTile(new Intersection[]{G7, H6, I7, I9, H10, G9});
@@ -1071,8 +1102,10 @@ public class GameManager {
         boundaries = boundariesTemp.clone();
 
         //array of all external boundaries
-        Boundary[] externalBoundariesTemp = {A7A9, A7B6, A9B10, B4B6, B4C3, B10B12, B12C13, C1C3, C1D0, C13C15, C15D16, D0E1, D16E15, E1F0, E15F16,
-            F0G1, F16G15, G1H0, G15H16, H0I1, H16I15, I1I3, I3J4, I13I15, I13J12, J4J6, J6K7, J10K9, J10J12, K7K9};
+        Boundary[] externalBoundariesTemp
+                = {A7A9, A7B6, B4B6, B4C3, C1C3, C1D0, D0E1, E1F0, F0G1, G1H0, H0I1, I1I3, I3J4, J4J6,
+                    J6K7, K7K9, J10K9, J10J12, I13J12, I13I15, H16I15, G15H16, F16G15, E15F16, D16E15,
+                    C15D16, C13C15, B12C13, B10B12, A9B10};
 
         //set externalBoundaries equal to externalBoundariesTemp to easily populate
         externalBoundaries = externalBoundariesTemp.clone();
@@ -1080,6 +1113,8 @@ public class GameManager {
         // Array of hex tiles to easily loop through
         HexTile[] tilesTemp = {T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
             T14, T15, T16, T17, T18, T19};
+
+        HexTile[] externalTiles = {T8, T4, T1, T2, T3, T7, T12, T16, T19, T18, T17, T13};
 
         //set tiles equal to tilesTemp to easily populate
         tiles = tilesTemp.clone();
@@ -1101,53 +1136,161 @@ public class GameManager {
         }
 
         //For-loop assigned 9 ports (4 general and 5 specialty) to random external boundaries
-        for (int i = 0; i < 9; i++) {
+        // Loops through the array of all external boundaries and assigns harbours in pattern 3-3-4
+        // Explanation: We have total of 30 boundaries and 9 harbours and it'll never change.
+        // If we will go through externalBoundaries array and assing harbours every 3-3-4 boundaries, 
+        // we will assing all 9 harbors for 30 available boundaries in exactly 3 full cycles.
+        // Example: skip 3 boundaries - assing general harbor, skip 3 boundaries - assing specific harbor,
+        // skip 4 boundaries - assing genarl harbour again, and so on. 
+        for (int i = -3, counter = 0, harbCounter = 0, resType = 0; i < externalBoundaries.length;) {
 
-            //generates a random int between 0 and the length of the externalBoundaraies array
-            int randPosition = (int) (Math.random() * (externalBoundaries.length));
+            //if (counter % 2 == 0) 
+            //i += 4;
+            //else 
+            // ... will be every 3
+            i += 3;
 
-            //uses random int as an index in the externalBoundaries array to get a random boundary
-            Boundary chosenBoundary = externalBoundaries[randPosition];
-
-            //if condition ensures that the chosen boundary has not already been assigned a harbor
-            if (chosenBoundary.getHarbor() == -1) {
-
-                //switch statement assigns the first 4 boundaries a general harbor, and one specialty harbor to the remainder
-                switch (i) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        chosenBoundary.setHarbor(GENERAL_HARBOR);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has a general harbor.");
-                        break;
-                    case 4:
-                        chosenBoundary.setHarbor(BRICK);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has a brick harbor.");
-                        break;
-                    case 5:
-                        chosenBoundary.setHarbor(LUMBER);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has a lumber harbor.");
-                        break;
-                    case 6:
-                        chosenBoundary.setHarbor(ORE);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has an ore harbor.");
-                        break;
-                    case 7:
-                        chosenBoundary.setHarbor(WHEAT);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has a wheat harbor.");
-                        break;
-                    case 8:
-                        chosenBoundary.setHarbor(WOOL);
-                        System.out.println(i + ": Exterior Border " + randPosition + " has a wool harbor.");
-                        break;
+            if (i < externalBoundaries.length) {
+                if (harbCounter < 9) {
+                    if (harbCounter == 8) {
+                        i++;
+                    }
+                    if (counter % 2 != 0) {
+                        externalBoundaries[i].setHarbor(GENERAL_HARBOR);
+                        externalBoundaries[i].findMidPoint();
+                        externalBoundaries[i].circle = new Circle(externalBoundaries[i].midPoint.getX(), externalBoundaries[i].midPoint.getY(), 7.0);
+                        externalBoundaries[i].circle.setFill(Color.AQUAMARINE);
+                        externalBoundaries[i].circle.setStroke(Color.web("black", 1.0));
+                        harbCounter++;
+                    } else {
+                        externalBoundaries[i].setHarbor(resType++ % 5);
+                        externalBoundaries[i].findMidPoint();
+                        externalBoundaries[i].circle = new Circle(externalBoundaries[i].midPoint.getX(), externalBoundaries[i].midPoint.getY(), 7.0);
+                        externalBoundaries[i].circle.setFill(Color.RED);
+                        externalBoundaries[i].circle.setStroke(Color.web("black", 1.0));
+                        harbCounter++;
+                    }
+                    counter++;
                 }
-            } else {
-                //if a border is chosen twice, i is decremented so that the full 9 harbors are made
-                i--;
             }
-
         }
+
+        // A7A9, A7B6, B4B6, B4C3, C1C3, C1D0, D0E1, E1F0, F0G1, G1H0, H0I1, I1I3, I3J4, J4J6,
+        // J6K7, K7K9, J10K9, J10J12, I13J12, I13I15, H16I15, G15H16, F16G15, E15F16, D16E15,
+        // C15D16, C13C15, B12C13, B10B12, A9B10
+        //T8, T4, T1, T3, T7, T12, T16, T19, T17
+        T8.setHarbor(BRICK);
+        T8.setBoundaryCoordinates(A7A9);
+        T8.findHarborCoordinates();
+        T8.harbourCircle = new Circle(T8.getHarbourCoordinate().getX(), T8.getHarbourCoordinate().getY(), 17.0);
+        T8.harbourCircle.setFill(Color.RED);
+        
+
+        T8.harbourLine
+                = new Line(
+                        A7A9.midPoint.getX(),
+                        A7A9.midPoint.getY(),
+                        T8.getHarbourCoordinate().getX(),
+                        T8.getHarbourCoordinate().getY());
+        T8.harbourLine.setStrokeWidth(4);
+
+        T4.setHarbor(GENERAL_HARBOR);
+        T4.setBoundaryCoordinates(B4C3);
+        T4.findHarborCoordinates();
+        T4.harbourCircle = new Circle(T4.getHarbourCoordinate().getX(), T4.getHarbourCoordinate().getY(), 17.0);
+        T4.harbourLine
+                = new Line(
+                        B4C3.midPoint.getX(),
+                        B4C3.midPoint.getY(),
+                        T4.getHarbourCoordinate().getX(),
+                        T4.getHarbourCoordinate().getY());
+        T4.harbourLine.setStrokeWidth(4);
+
+
+        T1.setHarbor(LUMBER);
+        T1.setBoundaryCoordinates(D0E1);
+        T1.findHarborCoordinates();
+        T1.harbourCircle = new Circle(T1.getHarbourCoordinate().getX(), T1.getHarbourCoordinate().getY(), 17.0);
+        T1.harbourLine
+                = new Line(
+                        D0E1.midPoint.getX(),
+                        D0E1.midPoint.getY(),
+                        T1.getHarbourCoordinate().getX(),
+                        T1.getHarbourCoordinate().getY());
+        T1.harbourLine.setStrokeWidth(4);
+        
+        T3.setHarbor(GENERAL_HARBOR);
+        T3.setBoundaryCoordinates(G1H0);
+        T3.findHarborCoordinates();
+        T3.harbourCircle = new Circle(T3.getHarbourCoordinate().getX(), T3.getHarbourCoordinate().getY(), 17.0);
+        T3.harbourLine
+                = new Line(
+                        G1H0.midPoint.getX(),
+                        G1H0.midPoint.getY(),
+                        T3.getHarbourCoordinate().getX(),
+                        T3.getHarbourCoordinate().getY());
+        T3.harbourLine.setStrokeWidth(4);
+        
+        T7.setHarbor(ORE);
+        T7.setBoundaryCoordinates(I3J4);
+        T7.findHarborCoordinates();
+        T7.harbourCircle = new Circle(T7.getHarbourCoordinate().getX(), T7.getHarbourCoordinate().getY(), 17.0);
+        T7.harbourLine
+                = new Line(
+                        I3J4.midPoint.getX(),
+                        I3J4.midPoint.getY(),
+                        T7.getHarbourCoordinate().getX(),
+                        T7.getHarbourCoordinate().getY());
+        T7.harbourLine.setStrokeWidth(4);
+        
+        T12.setHarbor(GENERAL_HARBOR);
+        T12.setBoundaryCoordinates(K7K9);
+        T12.findHarborCoordinates();
+        T12.harbourCircle = new Circle(T12.getHarbourCoordinate().getX(), T12.getHarbourCoordinate().getY(), 17.0);
+        T12.harbourLine
+                = new Line(
+                        K7K9.midPoint.getX(),
+                        K7K9.midPoint.getY(),
+                        T12.getHarbourCoordinate().getX(),
+                        T12.getHarbourCoordinate().getY());
+        T12.harbourLine.setStrokeWidth(4);
+        
+        T16.setHarbor(WHEAT);
+        T16.setBoundaryCoordinates(I13J12);
+        T16.findHarborCoordinates();
+        T16.harbourCircle = new Circle(T16.getHarbourCoordinate().getX(), T16.getHarbourCoordinate().getY(), 17.0);
+        T16.harbourLine
+                = new Line(
+                        I13J12.midPoint.getX(),
+                        I13J12.midPoint.getY(),
+                        T16.getHarbourCoordinate().getX(),
+                        T16.getHarbourCoordinate().getY());
+        T16.harbourLine.setStrokeWidth(4);
+        
+        T19.setHarbor(GENERAL_HARBOR);
+        T19.setBoundaryCoordinates(G15H16);
+        T19.findHarborCoordinates();
+        T19.harbourCircle = new Circle(T19.getHarbourCoordinate().getX(), T19.getHarbourCoordinate().getY(), 17.0);
+        T19.harbourLine
+                = new Line(
+                        G15H16.midPoint.getX(),
+                        G15H16.midPoint.getY(),
+                        T19.getHarbourCoordinate().getX(),
+                        T19.getHarbourCoordinate().getY());
+        T19.harbourLine.setStrokeWidth(4);
+
+        T17.setHarbor(WOOL);
+        T17.setBoundaryCoordinates(C15D16);
+        T17.findHarborCoordinates();
+        T17.harbourCircle = new Circle(T17.getHarbourCoordinate().getX(), T17.getHarbourCoordinate().getY(), 17.0);
+        T17.harbourLine
+                = new Line(
+                        C15D16.midPoint.getX(),
+                        C15D16.midPoint.getY(),
+                        T17.getHarbourCoordinate().getX(),
+                        T17.getHarbourCoordinate().getY());
+        T17.harbourLine.setStrokeWidth(4);
+        
         // T10 will always be the center (desert) tile
         T10.setCenter(true);
         T10.hexagon.setFill(new ImagePattern(desertImage));

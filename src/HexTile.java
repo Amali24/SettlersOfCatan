@@ -62,6 +62,8 @@ Activity:	  -Date-             -Person-               -Updates-
  */
 import javafx.scene.shape.Polygon;
 import static javafx.scene.paint.Color.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 /**
  *
@@ -77,7 +79,16 @@ public class HexTile {
     private boolean robber; // is robber currently on tile?
     private boolean center; // center has no yield
 
+    private boolean hasHarbor; // is tile has adjacent harbor?
+    private Coordinate harborCoordinates; // hold harbour's cordinates
+    private Coordinate[] harborBoundaryCoordinates = new Coordinate[2]; // Holds harbor's boundary coordinates 
+
     Polygon hexagon = new Polygon();
+
+    Circle harbourCircle;
+    Line harbourLine;
+
+    public int harborType = -1;
 
     Coordinate centerCoordinates;
 
@@ -100,35 +111,87 @@ public class HexTile {
             tempY += i.getLocation().getUIY();
         }
 
-        /* Getting avarage of all values to get center coordinates for each tile.
-        
-           This is how I thought it should be done: 
-        
-                * tempX = tempX / 6;
-                * tempY = tempY / 6;
-                *
-                * centerCoordinates = new Coordinates(tempX, tempY);
-        
-            And we should be all set to go. 
-            But it wasn't working how I expected. 
-            So, I came up with this...
-        
-         */
-        
-     //   tempX = tempX / 210 - 1.3;
-      //  tempY = tempY / 210 - 0.5;
-
+        // GETTING CENTER COORDINATE FOR THE TILE
+        // Idea was to get an average of x- and y-
+        // components for each tile, which is a center 
+        // of the tile. We need it for displating tile's numbers
+        // in the GUI. 
+        // Math: Sum-accumulators for the coordinates then 
+        // devided by 6(number of corners in hexagon)
+        //
+        // [ tempX/6 = centerX; tempY/6 = centerY]
+        //
+        // ... 
+        // Following numbers were found purelly experementally. 
+        // Probably they are related to Da Vinci or code 
+        // of the universe. Magic stuff 
         tempX = tempX / 210 - 1.3;
         tempY = tempY / 210 - 2;
-        
+
         centerCoordinates = new Coordinate(tempX, tempY);
-       
 
         hexagon.setFill(ALICEBLUE);
     }
 
 //                          Accessors and Mutators
 // _____________________________________________________________________________
+    /**
+     * If the hex has harbor method calculates and returns it's coordinate
+     * Otherwise returns Coordinate(-1,-1)
+     *
+     * @return returns Harbor's coordinate
+     */
+
+    public void findHarborCoordinates() {
+        double tempX;
+        double tempY;
+
+        tempX = this.harborBoundaryCoordinates[0].getUIX()
+                + this.harborBoundaryCoordinates[1].getUIX()
+                - this.centerCoordinates.getUIX();
+        tempY = this.harborBoundaryCoordinates[0].getUIY()
+                + this.harborBoundaryCoordinates[1].getUIY()
+                - this.centerCoordinates.getUIY();
+
+        //harborCoordinates = new Coordinate(tempX/60-83, tempY/60-92);
+        harborCoordinates = new Coordinate(tempX/62-38, tempY/62-44);
+    }
+    
+    public Coordinate getHarbourCoordinate() {
+        return harborCoordinates;
+    }
+
+    /**
+     *
+     * @param temp
+     */
+    public void setHarbor(int temp) {
+        this.harborType = temp;
+        hasHarbor = true;
+    }
+
+    public void setBoundaryCoordinates(Boundary temp) {
+        harborBoundaryCoordinates[0] = temp.getEndpointACoord();
+        harborBoundaryCoordinates[1] = temp.getEndpointBCoord();
+    }
+
+    /**
+     * @return hasHarbor
+     */
+    public boolean hasHarbor() {
+        return hasHarbor;
+    }
+
+    /**
+     *
+     */
+    /*
+    public void findBoundaryCoordinates() {
+        ArrayList<Boundary> tmpList;
+        for (Intersection temp: intersections)
+            if(temp.g)
+    }
+     */
     /**
      *
      * @return
@@ -276,5 +339,6 @@ public class HexTile {
     public void setIntersections(Intersection[] intersections) {
         this.intersections = intersections;
     }
+    
 
 }
