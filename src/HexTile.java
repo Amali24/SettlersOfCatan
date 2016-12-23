@@ -111,22 +111,20 @@ public class HexTile {
             tempY += i.getLocation().getUIY();
         }
 
-        /* Getting avarage of all values to get center coordinates for each tile.
-        
-           This is how I thought it should be done: 
-        
-                * tempX = tempX / 6;
-                * tempY = tempY / 6;
-                *
-                * centerCoordinates = new Coordinates(tempX, tempY);
-        
-            And we should be all set to go. 
-            But it wasn't working how I expected. 
-            So, I came up with this...
-        
-         */
-        //   tempX = tempX / 210 - 1.3;
-        //  tempY = tempY / 210 - 0.5;
+        // GETTING CENTER COORDINATE FOR THE TILE
+        // Idea was to get an average of x- and y-
+        // components for each tile, which is a center 
+        // of the tile. We need it for displating tile's numbers
+        // in the GUI. 
+        // Math: Sum-accumulators for the coordinates then 
+        // devided by 6(number of corners in hexagon)
+        //
+        // [ tempX/6 = centerX; tempY/6 = centerY]
+        //
+        // ... 
+        // Following numbers were found purelly experementally. 
+        // Probably they are related to Da Vinci or code 
+        // of the universe. Magic stuff 
         tempX = tempX / 210 - 1.3;
         tempY = tempY / 210 - 2;
 
