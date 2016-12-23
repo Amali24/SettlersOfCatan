@@ -93,6 +93,9 @@ Activity:	  -Date-             -Person-               -Updates-
             December 7, 2016            AT          * Added findAdjacentTiles
                                                       method
 
+           December 20, 2016            OB         * Rearranged externalBourners initialization 
+                                                   * Added harbor's graphical representation 
+
 
 
  */
